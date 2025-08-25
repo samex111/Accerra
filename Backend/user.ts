@@ -34,8 +34,8 @@ userRouter.post('/signup', async (req:Request , res:Response) =>{
 
     try{
         await UserModel.create({
-            email,
-            username,
+            email:email,
+            username:username,
             password: hassedPassword
         })
 
@@ -54,25 +54,25 @@ userRouter.post('/signup', async (req:Request , res:Response) =>{
 
 userRouter.post('/signin', async (req:Request, res:Response) =>{
 
-        const  requireBody = z.object({
-        email:z.string().min(3).max(100).email(),
-        password:z.string().min(8).max(20),
-        username:z.string().min(1).max(50)
-    });
+    //     const  requireBody = z.object({
+    //     email:z.string().min(3).max(100).email() ,
+    //     password:z.string().min(8).max(20),
+    //     username:z.string().min(1).max(50)
+    // });
 
-    const parseData = requireBody.safeParse(req.body);
+    // const parseData = requireBody.safeParse(req.body);
 
-    if(!parseData.success){
-        return res.status(400).json({
-              message: "Incorrect Format",
-              error: parseData.error
-        })
-    }
+    // if(!parseData.success){
+    //     return res.status(400).json({
+    //           message: "Incorrect Format",
+    //           error: parseData.error
+    //     })
+    // }
+   
 
-
-    const {email, password, username} = req.body;
+    const {identifire,  password} = req.body;
     
-   const user = await UserModel.findOne({email:email});
+   const   user = await UserModel.findOne( {$or:[{username : identifire},{email : identifire} ] });
      if(!user || !user.password){
         return res.status(403).json({
             message:"Incorrect Credentials !"
@@ -98,4 +98,3 @@ userRouter.post('/signin', async (req:Request, res:Response) =>{
         })
     }
 })
-
