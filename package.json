@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "ws" : "ts-node ./Backend/chatAi.ts",
     "start": "nodemon --exec ts-node ./Backend/index.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/mongoose": "^5.11.96",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
@@ -21,11 +23,14 @@
     "firebase": "^12.1.0",
     "framer-motion": "^12.23.12",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.542.0",
     "motion": "^12.23.12",
     "nodemon": "^3.1.10",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.8.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.8.2",
+    "ws": "^8.18.3",
     "zod": "^4.0.17"
   },
   "devDependencies": {
@@ -37,6 +42,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.33.0",

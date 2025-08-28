@@ -5,7 +5,7 @@
  import dotenv from 'dotenv';
  import bcrypt from 'bcryptjs'
  import jwt from 'jsonwebtoken';
-import { adminMiddleware } from "./auth.ts";
+import { adminMiddleware, userMiddleware } from "./auth.ts";
  
  dotenv.config();
  
@@ -43,21 +43,19 @@ import { adminMiddleware } from "./auth.ts";
      }catch(e){
          res.status(403).json({
              msg:"user already exists",
-            
          })
-          console.log("error is --: " ,e)
+          console.log("error is --: " ,e);
      }
      res.status(200).json({
          msg:"User created successfully!"
      })
- 
  });
  
  adminRouter.post('/signin', async (req:Request, res:Response) =>{
  
          const  requireBody = z.object({
-        identifire:z.string(),
-         password:z.string().min(8).max(20),
+         identifire:z.string(),
+         password:z.string().min(8).max(20)
         
      });
  
@@ -96,7 +94,7 @@ import { adminMiddleware } from "./auth.ts";
 
        res.status(200).json({
          token:token
-       })
+       }) 
       }
       else{
          // If the password does not match, return a error indicating the invalid credentials
@@ -108,8 +106,7 @@ import { adminMiddleware } from "./auth.ts";
  })
  adminRouter.post('/add/question', adminMiddleware , async (req:Request, res:Response) => {
 
-       const adminId = req.adminId;
-
+  const adminId = req.adminId;
   const requireBody = z.object({
   question: z.string(),
   option: z.array(z.string()),         // multiple options allowed

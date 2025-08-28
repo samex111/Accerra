@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Signin() {
+    const navigate = useNavigate();
     const [identifire, setIdentifire] = useState('');
     const [password, setPassword] = useState('');
 const handleSignIn = async () => {
@@ -18,7 +20,7 @@ const handleSignIn = async () => {
             console.log(data);
 
             if(res.ok){
-                alert('Signin successful');
+                navigate('/user/preview');
             }   
             else{
                 alert(data.msg || "signin failed")

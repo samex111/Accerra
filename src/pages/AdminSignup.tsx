@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export default function SignUp(){
+    const navigate = useNavigate();
     const [email , setEmail]= useState('');
     const [password , setPassword] = useState('');
     const [username , setUsername] = useState('');
@@ -19,7 +22,7 @@ export default function SignUp(){
             console.log(data);
 
             if(res.ok){
-                alert('Signup successful');
+                navigate('/admin/signup')
             }   
             else{
                 alert(data.msg || "signup failed")

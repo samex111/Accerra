@@ -1,10 +1,13 @@
-import { motion } from "motion/react";
-import Signin from "./pages/UserSignin";
-import SignUp from "./pages/UserSignup";
 import Questions from "./pages/Question";
 import AddQuestion from "./pages/AddQuestion";
 import AdminSignin from "./pages/AdminSignin";
 import AdminSignup from "./pages/AdminSignup";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Signin from "./pages/UserSignin";
+import Signup from "./pages/UserSignup";
+import LandingPage from "./pages/LandingPage";
+import Gemini from "./component/geminiHint";
+import ChatApp from "./pages/chat";
 
 function App() {
 
@@ -18,10 +21,21 @@ function App() {
         @Accerra
         <p>Your Era of Acceleration</p>
       </motion.div> */}
-      <AdminSignup></AdminSignup>
-      <AdminSignin></AdminSignin>
-      <Questions></Questions>
-      <AddQuestion></AddQuestion>
+      <BrowserRouter>
+      
+        <Routes>
+           <Route path="/" element={< LandingPage />} />
+           <Route path="/admin/signup" element={<AdminSignup />} />
+           <Route path="/admin/signin" element={<AdminSignin />} />
+           <Route path="/user/signup" element={<Signup />} />
+           <Route path="/user/signin" element={<Signin />} />
+           <Route path="/admin/addQuestion" element={<AddQuestion />} />
+           <Route path="/user/preview" element={<Questions />} />
+           <Route path="/user/chat" element={<ChatApp />} />
+      
+      
+      </Routes>
+      </BrowserRouter>
 
     </>
   );

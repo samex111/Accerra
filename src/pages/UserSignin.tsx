@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Signin() {
+    const navigate = useNavigate();
     const [identifire, setIdentifire] = useState('');
     const [password, setPassword] = useState('');
 const handleSignIn = async () => {
@@ -9,14 +11,17 @@ const handleSignIn = async () => {
                 method :"POST",
                 headers:{
                     'Content-Type':"application/json"
+                   
                 },
-                body: JSON.stringify({identifire,password})
+                body: JSON.stringify({identifire,password}),
+                credentials: "include"
             });
 
             const data = await res.json();
             console.log(data);
 
             if(res.ok){
+                navigate('/user/preview')
                 alert('Signin successful');
             }   
             else{

@@ -1,9 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp(){
+    const navigate = useNavigate();
     const [email , setEmail]= useState('');
     const [password , setPassword] = useState('');
     const [username , setUsername] = useState('');
+    const [login , setLogin] = useState(false);
+
+   const navigateSignin = () => {
+    navigate('/user/signin')
+   }
 
     const handleSignup = async () => {
         try{
@@ -19,7 +26,7 @@ export default function SignUp(){
             console.log(data);
 
             if(res.ok){
-                alert('Signup successful');
+                navigate('/user/signin')
             }   
             else{
                 alert(data.msg || "signup failed")
@@ -29,6 +36,7 @@ export default function SignUp(){
             alert('Error during signup')
         }
     }
+    
     
     return(
         <>
@@ -42,7 +50,9 @@ export default function SignUp(){
             <br />
             <label htmlFor="username">Username</label>
             <input  className="border-2" type="text" id="username" value={username} onChange={(e)=>setUsername(e.target.value)} />
-        <button className="text-xl px-4 py-1 border-[4px] " onClick={handleSignup}>register</button>
+            <br />
+        <button className="text-xl px-4 py-1 border-[4px] " onClick={handleSignup}>register</button> 
+        <button onClick={navigateSignin} className="ml-10  text-blue-600">login</button>
 
         </div>
         </>
