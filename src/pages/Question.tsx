@@ -72,7 +72,7 @@ export default function Questions() {
           </div>
 
           <div className="mt-1 text-xs text-blue-500">
-            Tags: {q.tags.join(", ")}
+            Tags: {q.tags.join(", ")}   
           </div>
           < button className="px-4 py-2 m-2 border-[4px] hover:border-red-700"
             onClick={() => {
@@ -83,11 +83,12 @@ export default function Questions() {
 
               if (isCorrect) {
                 console.log("Selected:", selected);
-                return alert("congrats 🎉");
+                return alert("congrats ");
               } else {
                 console.log("Selected:", selected);
-                return alert("wrong ❌");
+                return alert("wrong ");
               }
+
             }}
 
           >Submit</button>

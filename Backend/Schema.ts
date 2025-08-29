@@ -24,6 +24,23 @@ const questionSchema = new Schema({
     
 } ,  { timestamps: true });
 
-export const QuestionModel = mongoose.model("questions", questionSchema);
+const attemtQuestionsSchema = new Schema ({
+    question: {
+        type: mongoose.Schema.Types.ObjectId,  // Question ID store hogi
+        ref: 'questions',
+        required: true
+    },
+    status:   { type: String, required: true },
+    answer:   { type: String },
+    timeTaken:{ type: String },
+    student: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true
+    }
+});
+
+export const attemtQuestionsModel = mongoose.model("attemt", attemtQuestionsSchema );
+export const QuestionModel = mongoose.model("questions", questionSchema );
 export const UserModel = mongoose.model('users', userSchema);
 export const adminModel = mongoose.model('admin', adminSchema);

@@ -18,7 +18,7 @@ type OptionProps = {
 
 export default function AddQuestion() {
   // Main form states
-  const [question, setQuestion] = useState("");
+  const [question, setQuestion] = useState("");                                                                                                                                                                                                                                                              
   const [options, setOptions] = useState<OptionType[]>([{ id: 1, text: "Example Option" }]);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [subject, setSubject] = useState<"MATHS" | "PHYSICS" | "BIO" | "CHEMISTRY" | "">("");

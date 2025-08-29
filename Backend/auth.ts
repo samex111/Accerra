@@ -2,7 +2,6 @@ import jwt  from 'jsonwebtoken';
 import dotenv from "dotenv";
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
-import { config } from './config/environment.ts';
 
 
 dotenv.config();
@@ -14,9 +13,8 @@ const JWT_ADMIN = process.env.JWT_USER as string;
 declare global {
   namespace Express {
     interface Request {
-      adminId?: string; // ya number agar tumhe number store karna hai
-      userId?: string; // ya number agar tumhe number store karna hai
-      
+      adminId?: string; 
+      userId?: string; 
     }
   }
 }

@@ -4,7 +4,13 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}", // React project ke liye
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        'dark':'#212121',
+        'dark-light' :'#303030',
+        'text':'white'
+      }
+    },
   },
   plugins: [],
 }

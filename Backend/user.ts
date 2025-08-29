@@ -1,4 +1,4 @@
-import { QuestionModel, UserModel } from "./Schema.ts";
+import { attemtQuestionsModel, QuestionModel, UserModel } from "./Schema.ts";
 import type { Request, Response } from "express";
 import { Router } from "express";
 import z from 'zod';
@@ -6,8 +6,6 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
 import { adminMiddleware, userMiddleware } from "./auth.ts";
-// import type { AIMessage } from './types';
-// import { callGemini } from './services/Service.ts';;
 
 dotenv.config();
 
@@ -57,17 +55,17 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 
 userRouter.post('/signin', async (req: Request, res: Response) => {
 
-        const  requireBody = z.object({
-        identifire:z.string(),
-        password:z.string().min(8)
+    const requireBody = z.object({
+        identifire: z.string(),
+        password: z.string().min(8)
     });
 
     const parseData = requireBody.safeParse(req.body);
 
-    if(!parseData.success){
+    if (!parseData.success) {
         return res.status(400).json({
-              message: "Incorrect Format",
-              error: parseData.error
+            message: "Incorrect Format",
+            error: parseData.error
         });
     }
 
@@ -114,7 +112,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
 //         showQuestions
 //     })
 // })
-userRouter.get("/preview",userMiddleware, async (req: Request, res: Response) => {
+userRouter.get("/preview", userMiddleware, async (req: Request, res: Response) => {
     const showQuestions = await QuestionModel.find({});
     console.log(showQuestions)
     res.json({
@@ -133,32 +131,72 @@ userRouter.get("/preview",userMiddleware, async (req: Request, res: Response) =>
 //   }
 // });
 
-const GEMINI_API_KEY= process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-userRouter.post("/gemini", async (req, res) => { 
-  try {
-    const { prompt } = req.body;
-   console.log(GEMINI_API_KEY)
-    const response = await fetch(
-     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      }
-    );
+userRouter.post("/gemini", async (req, res) => {
+    try {
+        const { prompt } = req.body;
+        console.log(GEMINI_API_KEY)
+        const response = await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                }),
+            }
+        );
 
-    const data = await response.json();
-    console.log(data);
+        const data = await response.json();
+        console.log(data);
 
-    res.json({ text: data.candidates[0].content.parts[0].text });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Something went wrong"  });
-  }
+        res.json({ text: data.candidates[0].content.parts[0].text });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
 });
+
+userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
+
+
+    const requireBody = z.object({
+        question: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId"),  // yaha ObjectId validate karega
+        status: z.string(),
+        answer: z.string(),
+        timeTaken: z.string()
+    });
+    
+    const parseData = requireBody.safeParse(req.body);
+
+    if(!parseData.success){
+           console.log(parseData.error)
+       return res.status(400).json({msg:"Ivaild cred"});
+    
+    }
+
+    const {question, status,answer,timeTaken} = parseData.data;
+
+    try{
+        await attemtQuestionsModel.create({
+            question,
+            status,
+            answer,
+            timeTaken,
+            student: req.userId 
+        })
+
+        res.status(200).json({
+            msg:"question created succefully"
+        })
+
+    } catch (err) {
+  res.status(500).json({ error: "Server error" + err});
+}
+    
+
+})
 
