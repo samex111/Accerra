@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 const PORT = 3000;
 
-// MongoDB connect
+// MongoDB connect 
 connectDB();
 
 app.use('/api/v1/user' , userRouter);

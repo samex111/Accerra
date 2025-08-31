@@ -6,7 +6,6 @@ export default function SignUp(){
     const [email , setEmail]= useState('');
     const [password , setPassword] = useState('');
     const [username , setUsername] = useState('');
-    const [login , setLogin] = useState(false);
 
    const navigateSignin = () => {
     navigate('/user/signin')

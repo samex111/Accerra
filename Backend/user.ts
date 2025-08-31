@@ -164,27 +164,33 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
 
 
     const requireBody = z.object({
-        question: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId"),  // yaha ObjectId validate karega
+        question: z.string(),  
         status: z.string(),
-        answer: z.string(),
-        timeTaken: z.string()
+        userAnswer:z.array(z.string()),
+        answer: z.array(z.string()),
+        tags: z.array(z.string()).optional(),
+        subject:z.string(),
+        timeTaken: z.string().optional(),
     });
     
     const parseData = requireBody.safeParse(req.body);
 
     if(!parseData.success){
            console.log(parseData.error)
-       return res.status(400).json({msg:"Ivaild cred"});
+       return res.status(400).json({msg:"Invaild cred"});
     
     }
 
-    const {question, status,answer,timeTaken} = parseData.data;
+    const {question, status,userAnswer,answer,tags,subject,timeTaken} = parseData.data;
 
     try{
         await attemtQuestionsModel.create({
             question,
             status,
+            userAnswer,
             answer,
+            tags,
+            subject,
             timeTaken,
             student: req.userId 
         })

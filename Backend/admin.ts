@@ -5,7 +5,7 @@
  import dotenv from 'dotenv';
  import bcrypt from 'bcryptjs'
  import jwt from 'jsonwebtoken';
-import { adminMiddleware, userMiddleware } from "./auth.ts";
+import { adminMiddleware} from "./auth.ts";
  
  dotenv.config();
  

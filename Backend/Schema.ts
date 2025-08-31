@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { optional } from 'zod';
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const userSchema = new Schema({
@@ -26,13 +27,14 @@ const questionSchema = new Schema({
 
 const attemtQuestionsSchema = new Schema ({
     question: {
-        type: mongoose.Schema.Types.ObjectId,  // Question ID store hogi
-        ref: 'questions',
-        required: true
+       type:String, required:true
     },
+    subject:  {type:String},
     status:   { type: String, required: true },
-    answer:   { type: String },
+    userAnswer:[{type:String}],
+    answer:   [{ type: String }],
     timeTaken:{ type: String },
+    tags: [{type:String}],
     student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',

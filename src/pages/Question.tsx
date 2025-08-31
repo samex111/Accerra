@@ -42,7 +42,34 @@ export default function Questions() {
       setSelected(selected.filter((v) => v !== value));
     }
   }
-  console.log(selected)
+
+
+  async function handleAttemtQuestion(question : string,userAnswer:string[], answer : string[],subject:string,status:string,tags:string[] , timetaken:string){
+  try{
+    const res = await fetch('http://localhost:3000/api/v1/user/attempt/question', {
+      method:'POST',
+      credentials : "include",
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({question,userAnswer,answer,subject,status,tags,timetaken})
+    })
+    const data = res.json();
+    console.log("Data is :   ", data);
+
+    if(res.ok){
+      alert("question atttempt");
+    }
+    else{
+      console.log("Data is :   ", data);
+      alert(res.ok + "inside else");
+    }
+
+  }catch(e){
+    console.log(e +  "nhi ho rha kya ,, inside catch")
+  }
+  }
+
 
   return (
     <div className="p-4">
@@ -83,12 +110,15 @@ export default function Questions() {
 
               if (isCorrect) {
                 console.log("Selected:", selected);
+                handleAttemtQuestion(q.question,selected, q.answer , q.subject ,"solved" ,q.tags , "2m"  );
                 return alert("congrats ");
               } else {
                 console.log("Selected:", selected);
+                 handleAttemtQuestion(q.question, selected, q.answer, q.subject, "attempt", q.tags,"2m");
                 return alert("wrong ");
+               
               }
-
+               
             }}
 
           >Submit</button>
