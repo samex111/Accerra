@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
+import Todo from "../component/Todo";
 
 export default function Questions() {
 
@@ -124,8 +125,8 @@ export default function Questions() {
           >Submit</button>
         </div>
       ))}
+<Todo></Todo>
 
     </div>
   );
 }
-

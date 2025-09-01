@@ -42,8 +42,8 @@ const attemtQuestionsSchema = new Schema({
     }
 });
 const todosSchema = new Schema ({
-    todo:[{type:String , required:true}],
-    student: {
+    todo:{type:String , required:true},
+    student: { 
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
@@ -53,7 +53,7 @@ const notesSchema = new Schema ({
     note:[{type:String , required:true}],
     student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'users', 
         required: true
     }
 })

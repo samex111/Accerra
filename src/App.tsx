@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signin from "./pages/UserSignin";
 import Signup from "./pages/UserSignup";
 import LandingPage from "./pages/LandingPage";
-import Gemini from "./component/geminiHint";
 import ChatApp from "./pages/chat";
 
 function App() {

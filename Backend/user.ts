@@ -105,13 +105,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
         })
     }
 })
-// userRouter.get("/preview" ,adminMiddleware,  async (req:Request, res:Response) => {
-//     const showQuestions = await QuestionModel.find({});
-//     console.log(showQuestions)
-//     res.json({
-//         showQuestions
-//     })
-// })
+
 userRouter.get("/preview", userMiddleware, async (req: Request, res: Response) => {
     const showQuestions = await QuestionModel.find({});
     console.log(showQuestions)
@@ -120,16 +114,7 @@ userRouter.get("/preview", userMiddleware, async (req: Request, res: Response) =
     })
 })
 
-// userRouter.post('/ask', async (req, res) => {
-//   try {
-//     const messages: AIMessage[] = req.body.messages; // client se messages array milega
-//     const answer = await callGemini(messages, 500); // maxTokens optional
-//     res.json({ answer });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Something went wrong' });
-//   }
-// });
+
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -206,18 +191,18 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
 
 })
 
-userRouter.post("/todo", async (req,res)=>{
+userRouter.post("/todo", userMiddleware, async (req,res)=>{
     const requireBody = z.object({
         todo:z.string()
     })
-    const parseData = requireBody.safeParse(req.body);
+   const parseData = requireBody.safeParse(req.body);
 
     if(!parseData.success){
-        res.status(400).json({
-            msg: "Invaild cred"
-        })
+           console.log(parseData.error)
+       return res.status(400).json({msg:"Invaild cred"});
+    
     }
-    const todo = parseData.data;
+    const {todo} = parseData.data;
 
     try{
         await TodoModel.create({
@@ -228,27 +213,31 @@ userRouter.post("/todo", async (req,res)=>{
             msg: "todo created"
         })
     }catch(e){
+            console.log(e)
         res.status(400).json({
-            msg: "error" + e
+            msg: "error" + e.message
         })
     }
 })
-userRouter.post("/notes", async (req,res)=>{
+userRouter.post("/notes",userMiddleware,async (req,res)=>{
+    
+
     const requireBody = z.object({
-        todo:z.string()
+        note:z.string()
     })
-    const parseData = requireBody.safeParse(req.body);
+   const parseData = requireBody.safeParse(req.body);
 
     if(!parseData.success){
-        res.status(400).json({
-            msg: "Invaild cred"
-        })
+           console.log(parseData.error)
+       return res.status(400).json({msg:"Invaild cred"});
+    
     }
-    const todo = parseData.data;
+    const {note} = parseData.data;
+
 
     try{
         await NoteModel.create({
-            todo,
+            note,
             student:req.userId
         })
         res.status(200).json({
@@ -256,7 +245,7 @@ userRouter.post("/notes", async (req,res)=>{
         })
     }catch(e){
         res.status(400).json({
-            msg: "error" + e
+            msg: "error" + e.message
         })
     }
 })
