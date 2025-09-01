@@ -1,5 +1,5 @@
-import { attemtQuestionsModel, QuestionModel, UserModel } from "./Schema.ts";
 import type { Request, Response } from "express";
+import { attemtQuestionsModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
 import { Router } from "express";
 import z from 'zod';
 import dotenv from 'dotenv';
@@ -206,3 +206,123 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
 
 })
 
+userRouter.post("/todo", async (req,res)=>{
+    const requireBody = z.object({
+        todo:z.string()
+    })
+    const parseData = requireBody.safeParse(req.body);
+
+    if(!parseData.success){
+        res.status(400).json({
+            msg: "Invaild cred"
+        })
+    }
+    const todo = parseData.data;
+
+    try{
+        await TodoModel.create({
+            todo,
+            student:req.userId
+        })
+        res.status(200).json({
+            msg: "todo created"
+        })
+    }catch(e){
+        res.status(400).json({
+            msg: "error" + e
+        })
+    }
+})
+userRouter.post("/notes", async (req,res)=>{
+    const requireBody = z.object({
+        todo:z.string()
+    })
+    const parseData = requireBody.safeParse(req.body);
+
+    if(!parseData.success){
+        res.status(400).json({
+            msg: "Invaild cred"
+        })
+    }
+    const todo = parseData.data;
+
+    try{
+        await NoteModel.create({
+            todo,
+            student:req.userId
+        })
+        res.status(200).json({
+            msg: "note created"
+        })
+    }catch(e){
+        res.status(400).json({
+            msg: "error" + e
+        })
+    }
+})
+userRouter.delete("/todo/delete/:id", async (req , res) =>{
+    const {id} = req.params; 
+    try{
+    const deleteTodo = await TodoModel.findByIdAndDelete(id);
+    if(!deleteTodo){
+        res.status(400).json({msg:"todo not found "})
+    }
+    res.status(200).json({msg:"todo delete sucessfully"});
+
+   }catch(e){
+    res.status(400).json({
+        msg:"error: " +e
+    })
+   }
+
+})
+userRouter.delete("/note/delete/:id", async (req , res) =>{
+    const {id} = req.params; 
+    try{
+    const deleteTodo = await NoteModel.findByIdAndDelete(id);
+    if(!deleteTodo){
+        res.status(400).json({msg:"note not found "})
+    }
+    res.status(200).json({msg:"note delete sucessfully"});
+
+   }catch(e){
+    res.status(400).json({
+        msg:"error: " +e
+    })
+   }
+
+})
+userRouter.put("/note/update/:id", async (req , res) =>{
+    const {id} = req.params; 
+    const updateNote = req.body.updateNote;
+    try{
+    const updateData = await NoteModel.findByIdAndUpdate(id, updateNote , {new:true});
+    if(!updateData){
+        res.status(400).json({msg:"note not found "})
+    }
+    res.status(200).json({msg:"note update sucessfully"});
+
+   }catch(e){
+    res.status(400).json({
+        msg:"error: " +e
+    })
+   }
+
+})
+userRouter.put("/todo/update/:id", async (req , res) =>{
+    const {id} = req.params; 
+    const updateTodo = req.body.updateTodo;
+    try{
+    const updateData = await TodoModel.findByIdAndUpdate(id, updateTodo , {new:true});
+    if(!updateData){
+        res.status(400).json({msg:"todo not found "})
+    }
+    res.status(200).json({msg:"todo update sucessfully"});
+
+   }catch(e){
+    res.status(400).json({
+        msg:"error: " +e
+    })
+   }
+
+})

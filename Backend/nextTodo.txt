@@ -1,0 +1,7 @@
+I have to give data to ai for better understanding  the student --
+1. what question student solved 
+2. student todo
+3. student notes
+ans----
+1. In database eg-- through schemas.
+2. through api's eg: get http:/localhost:3000/api/v1/user/attempt/question 

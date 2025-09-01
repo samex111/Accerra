@@ -3,46 +3,64 @@ import { optional } from 'zod';
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const userSchema = new Schema({
-    username: {type:String, unique:true, required:true},
-    email : {type:String , unique:true, required:true},
-    password : {type:String ,  required:true}
+    username: { type: String, unique: true, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true }
 });
 const adminSchema = new Schema({
-    email: {type:String, unique:true, required:true},
-    username : {type:String , unique:true, required:true},
-    password : {type:String ,  required:true}
+    email: { type: String, unique: true, required: true },
+    username: { type: String, unique: true, required: true },
+    password: { type: String, required: true }
 });
 
 const questionSchema = new Schema({
-    question:{type:String, required:true},
-    option:[{type:String, required:true}],
-    answer:[{type:String, required:true}],
-    subject:{type:String, required:true},
-    year:{type:Number , required:true },
-    examType: [{type:String, enum:["JEE", "NEET", "OTHER"], default:"OTHER"}],
-    difficulty:[{type:String , enum:["EASY", "MEDIUM", "DIFFICULT"] ,default:"MEDIUM"}],
-    tags: [{ type: String }] ,// which topic eg - 'thermo', 'law of motion'
-    
-} ,  { timestamps: true });
+    question: { type: String, required: true },
+    option: [{ type: String, required: true }],
+    answer: [{ type: String, required: true }],
+    subject: { type: String, required: true },
+    year: { type: Number, required: true },
+    examType: [{ type: String, enum: ["JEE", "NEET", "OTHER"], default: "OTHER" }],
+    difficulty: [{ type: String, enum: ["EASY", "MEDIUM", "DIFFICULT"], default: "MEDIUM" }],
+    tags: [{ type: String }],// which topic eg - 'thermo', 'law of motion'
 
-const attemtQuestionsSchema = new Schema ({
+}, { timestamps: true });
+
+const attemtQuestionsSchema = new Schema({
     question: {
-       type:String, required:true
+        type: String, required: true
     },
-    subject:  {type:String},
-    status:   { type: String, required: true },
-    userAnswer:[{type:String}],
-    answer:   [{ type: String }],
-    timeTaken:{ type: String },
-    tags: [{type:String}],
+    subject: { type: String },
+    status: { type: String, required: true },
+    userAnswer: [{ type: String }],
+    answer: [{ type: String }],
+    timeTaken: { type: String },
+    tags: [{ type: String }],
     student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
     }
 });
+const todosSchema = new Schema ({
+    todo:[{type:String , required:true}],
+    student: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true
+    }
+})
+const notesSchema = new Schema ({
+    note:[{type:String , required:true}],
+    student: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true
+    }
+})
 
-export const attemtQuestionsModel = mongoose.model("attemt", attemtQuestionsSchema );
-export const QuestionModel = mongoose.model("questions", questionSchema );
+export const NoteModel = mongoose.model("notes", notesSchema);
+export const TodoModel = mongoose.model("todo", todosSchema);
+export const attemtQuestionsModel = mongoose.model("attempt", attemtQuestionsSchema);
+export const QuestionModel = mongoose.model("questions", questionSchema);
 export const UserModel = mongoose.model('users', userSchema);
 export const adminModel = mongoose.model('admin', adminSchema);

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "ws" : "ts-node ./Backend/chatAi.ts",
+    "ws" : "ts-node ./Backend/chatAi.ts ",
     "start": "nodemon --exec ts-node ./Backend/index.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
