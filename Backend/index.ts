@@ -3,7 +3,6 @@ import { connectDB } from "./db.ts";
 import {userRouter} from './user.ts'
 import cookieParser from "cookie-parser";
 import { adminRouter } from "./admin.ts";
-import {questionRouter} from "./question.ts"
 import cors from "cors";
 
 const app = express();
@@ -21,7 +20,6 @@ connectDB();
 
 app.use('/api/v1/user' , userRouter);
 app.use('/api/v1/admin' , adminRouter);
-app.use('/api/v1/questions' , questionRouter);
 
 
 
@@ -30,6 +28,5 @@ app.listen(PORT, () => {
   
   console.log(`Server running on http://localhost:${PORT}`);
 });
-export { questionRouter };
 
 
