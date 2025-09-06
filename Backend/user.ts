@@ -150,6 +150,7 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
 
     const requireBody = z.object({
         question: z.string(),  
+            questionDiagram: z.string().optional(),
         status: z.string(),
         userAnswer:z.array(z.string()),
         answer: z.array(z.string()),
@@ -166,11 +167,12 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
     
     }
 
-    const {question, status,userAnswer,answer,tags,subject,timeTaken} = parseData.data;
+    const {question,questionDiagram, status,userAnswer,answer,tags,subject,timeTaken} = parseData.data;
 
     try{
         await attemtQuestionsModel.create({
             question,
+            questionDiagram,
             status,
             userAnswer,
             answer,

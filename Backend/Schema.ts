@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { optional } from 'zod';
+import { optional, string } from 'zod';
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const userSchema = new Schema({
@@ -15,6 +15,7 @@ const adminSchema = new Schema({
 
 const questionSchema = new Schema({
     question: { type: String, required: true },
+    questionDiagram: {type:string},
     option: [{ type: String, required: true }],
     answer: [{ type: String, required: true }],
     subject: { type: String, required: true },
@@ -29,6 +30,8 @@ const attemtQuestionsSchema = new Schema({
     question: {
         type: String, required: true
     },
+    questionDiagram: {type:string},
+
     subject: { type: String },
     status: { type: String, required: true },
     userAnswer: [{ type: String }],

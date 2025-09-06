@@ -109,6 +109,7 @@ adminRouter.post('/add/question', adminMiddleware, async (req: Request, res: Res
   const adminId = req.adminId;
   const requireBody = z.object({
     question: z.string(),
+    questionDiagram: z.string().optional(),
     option: z.array(z.string()),         // multiple options allowed
     answer: z.array(z.string()),
     subject: z.enum(['PHYSICS', 'MATHS', 'CHEMISTRY']),
@@ -127,12 +128,13 @@ adminRouter.post('/add/question', adminMiddleware, async (req: Request, res: Res
     })
   }
 
-  const { question, option, answer, subject, year, examType, difficulty, tags } = parseDataSuccess.data;
+  const { question,questionDiagram, option, answer, subject, year, examType, difficulty, tags } = parseDataSuccess.data;
 
 
   try {
     await QuestionModel.create({
       question,
+      questionDiagram,
       option,
       answer,
       subject,

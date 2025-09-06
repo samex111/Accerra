@@ -5,6 +5,7 @@ import Todo from "../component/Todo";
 export default function Questions() {
 
   interface Question {
+    questionDiagram: string ;
     _id: string;
     question: string;
     option: string[];
@@ -45,7 +46,7 @@ export default function Questions() {
   }
 
 
-  async function handleAttemtQuestion(question : string,userAnswer:string[], answer : string[],subject:string,status:string,tags:string[] , timetaken:string){
+  async function handleAttemtQuestion(question : string,userAnswer:string[],questionDiagram:string, answer : string[],subject:string,status:string,tags:string[] , timetaken:string){
   try{
     const res = await fetch('http://localhost:3000/api/v1/user/attempt/question', {
       method:'POST',
@@ -53,7 +54,7 @@ export default function Questions() {
       headers:{
         'Content-Type':'application/json'
       },
-      body: JSON.stringify({question,userAnswer,answer,subject,status,tags,timetaken})
+      body: JSON.stringify({question,questionDiagram, userAnswer,answer,subject,status,tags,timetaken})
     })
     const data = res.json();
     console.log("Data is :   ", data);
@@ -81,7 +82,10 @@ export default function Questions() {
           <div>
           <p className="font-semibold">{q.question}</p>
            {/* <button className="border px-5 py-1">hint</button> */}
-           <div><GeminiHint prompt={q.question+ " ans in 5-6 words"}></GeminiHint></div>
+           <div><GeminiHint prompt={q.question+ " ans in 5-6 words" + q.questionDiagram}></GeminiHint></div>
+          </div>
+          <div>
+            <img src={q.questionDiagram} alt="" />
           </div>
           
           <div className="mt-2">
@@ -111,11 +115,11 @@ export default function Questions() {
 
               if (isCorrect) {
                 console.log("Selected:", selected);
-                handleAttemtQuestion(q.question,selected, q.answer , q.subject ,"solved" ,q.tags , "2m"  );
+                handleAttemtQuestion(q.question,selected,q.questionDiagram, q.answer , q.subject ,"solved" ,q.tags , "2m"  );
                 return alert("congrats ");
               } else {
                 console.log("Selected:", selected);
-                 handleAttemtQuestion(q.question, selected, q.answer, q.subject, "attempt", q.tags,"2m");
+                 handleAttemtQuestion(q.question, selected,q.questionDiagram, q.answer, q.subject, "attempt", q.tags,"2m");
                 return alert("wrong ");
                
               }

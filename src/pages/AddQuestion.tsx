@@ -27,6 +27,8 @@ export default function AddQuestion() {
   const [difficulty, setDifficulty] = useState<"EASY" | "MEDIUM" | "HARD" | "">("");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
+  const [questionDiagram,setQuestionDiagram] = useState("");
+
 
   // Add new tag
   const handleAddTag = () => {
@@ -57,6 +59,7 @@ export default function AddQuestion() {
 
     const payload = {
       question,
+      questionDiagram,
        option: options.map(o => o.text),
       answer,
       subject,
@@ -102,6 +105,7 @@ export default function AddQuestion() {
   };
   {
   }
+  console.log(questionDiagram)
 
   return (
     <div className="p-4 max-w-xl mx-auto">
@@ -115,7 +119,12 @@ export default function AddQuestion() {
         onChange={(e) => setQuestion(e.target.value)}
         className="border p-2 w-full mb-4"
       />
+      <div>
 
+      <input className="border" type="text" placeholder="enter diagram url!" value={questionDiagram} onChange={(e)=>{setQuestionDiagram(e.target.value)}} />
+      <img className="border-0 " src={questionDiagram} alt="No image" />
+      </div>
+     
       {/* Options */}
       <OptionGroup
         options={options}
