@@ -106,14 +106,6 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
     }
 })
 
-userRouter.get("/preview", userMiddleware, async (req: Request, res: Response) => {
-    const showQuestions = await QuestionModel.find({});
-    console.log(showQuestions)
-    res.json({
-        showQuestions
-    })
-})
-
 
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
