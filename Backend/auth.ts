@@ -7,7 +7,7 @@ import type { Request, Response, NextFunction } from 'express';
 dotenv.config();
 
 const JWT_USER = process.env.JWT_USER as string;
-const JWT_ADMIN = process.env.JWT_USER as string;
+const JWT_ADMIN = process.env.JWT_ADMIN as string;
 
 
 declare global {

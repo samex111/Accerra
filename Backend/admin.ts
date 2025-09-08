@@ -9,7 +9,7 @@ import { adminMiddleware } from "./auth.ts";
 
 dotenv.config();
 
-const JWT_ADMIN = process.env.JWT_USER as string;
+const JWT_ADMIN = process.env.JWT_ADMIN as string;
 
 export const adminRouter = Router();
 

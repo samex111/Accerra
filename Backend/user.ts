@@ -71,7 +71,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
     }
 
      await transporter.sendMail({
-    from: "your-email@gmail.com",
+    from: "samxpatel2@gmail.com",
     to: email,
     subject: "Verify your Email",
     text: `Your OTP is ${otp}`
