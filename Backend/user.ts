@@ -1,17 +1,33 @@
 import type { Request, Response } from "express";
 import { attemtQuestionsModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
 import { Router } from "express";
-import z from 'zod';
+import z, { number } from 'zod';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-import { adminMiddleware, userMiddleware } from "./auth.ts";
+import {  userMiddleware } from "./auth.ts";
+import noadmailer from 'nodemailer';
+import crypto from 'crypto';
 
 dotenv.config();
 
 const JWT_USER = process.env.JWT_USER as string;
 
 export const userRouter = Router();
+
+
+
+// app password ---  gqjd idzo bzww jpbf
+
+const transporter =  noadmailer.createTransport({
+    service:'gmail',
+    auth:{
+        user:'samxpatel2@gmail.com',
+        pass:'gqjd idzo bzww jpbf'
+    }
+
+});
+
 
 userRouter.post('/signup', async (req: Request, res: Response) => {
     const requireBody = z.object({
@@ -33,11 +49,17 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 
     const hassedPassword = await bcrypt.hash(password, 5);
 
+    const otp = crypto.randomInt(100000,999999).toString();
+
+    
+
     try {
         await UserModel.create({
             email: email,
             username: username,
-            password: hassedPassword
+            password: hassedPassword,
+            otp,
+            otpExpiry: Date.now() + 5 * 60 * 1000
         })
 
     } catch (e) {
@@ -47,11 +69,42 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
         })
         console.log("error is --: ", e)
     }
+
+     await transporter.sendMail({
+    from: "your-email@gmail.com",
+    to: email,
+    subject: "Verify your Email",
+    text: `Your OTP is ${otp}`
+  });
+  
     res.status(200).json({
         msg: "User created successfully!"
     })
 
 });
+userRouter.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await UserModel.findOne({ email });
+
+  if (!user) return res.status(400).json({ message: "User not found" });
+
+  if (user.otp !== otp) {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+ // @ts-ignore
+  if (Date.now() > user.otpExpiry) {
+    return res.status(400).json({ message: "OTP expired" });
+  }
+
+  user.isVerified = true;
+  user.otp = null; // OTP clear
+  user.otpExpiry = null;
+  await user.save();
+
+  res.json({ message: "Email verified successfully!" });
+});
+
 
 userRouter.post('/signin', async (req: Request, res: Response) => {
 
@@ -104,6 +157,14 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             message: "Invalid credentials!"
         })
     }
+})
+
+userRouter.get("/preview", userMiddleware, async (req: Request, res: Response) => {
+    const showQuestions = await QuestionModel.find({});
+    console.log(showQuestions)
+    res.json({
+        showQuestions
+    })
 })
 
 

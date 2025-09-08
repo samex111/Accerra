@@ -5,7 +5,10 @@ const ObjectId = mongoose.Types.ObjectId;
 const userSchema = new Schema({
     username: { type: String, unique: true, required: true },
     email: { type: String, unique: true, required: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    otp: String, 
+    otpExpiry: Date, 
+    isVerified: { type: Boolean, default: false }
 });
 const adminSchema = new Schema({
     email: { type: String, unique: true, required: true },
@@ -15,7 +18,7 @@ const adminSchema = new Schema({
 
 const questionSchema = new Schema({
     question: { type: String, required: true },
-    questionDiagram: {type:string},
+    questionDiagram: { type: string },
     option: [{ type: String, required: true }],
     answer: [{ type: String, required: true }],
     subject: { type: String, required: true },
@@ -30,7 +33,7 @@ const attemtQuestionsSchema = new Schema({
     question: {
         type: String, required: true
     },
-    questionDiagram: {type:string},
+    questionDiagram: { type: string },
 
     subject: { type: String },
     status: { type: String, required: true },
@@ -44,19 +47,19 @@ const attemtQuestionsSchema = new Schema({
         required: true
     }
 });
-const todosSchema = new Schema ({
-    todo:{type:String , required:true},
-    student: { 
+const todosSchema = new Schema({
+    todo: { type: String, required: true },
+    student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
     }
 })
-const notesSchema = new Schema ({
-    note:[{type:String , required:true}],
+const notesSchema = new Schema({
+    note: [{ type: String, required: true }],
     student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users', 
+        ref: 'users',
         required: true
     }
 })
