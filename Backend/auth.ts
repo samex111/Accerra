@@ -9,7 +9,6 @@ dotenv.config();
 const JWT_USER = process.env.JWT_USER as string;
 const JWT_ADMIN = process.env.JWT_ADMIN as string;
 
-
 declare global {
   namespace Express {
     interface Request {
@@ -54,7 +53,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         req.adminId = decoded.id;
         next();
     } catch (err) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Invalid token" + err });
     }
 };
 

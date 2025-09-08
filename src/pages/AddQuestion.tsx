@@ -28,6 +28,7 @@ export default function AddQuestion() {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [questionDiagram,setQuestionDiagram] = useState("");
+  const [solution,setSolution] = useState('');
 
 
   // Add new tag
@@ -62,6 +63,7 @@ export default function AddQuestion() {
       questionDiagram,
        option: options.map(o => o.text),
       answer,
+      solution,
       subject,
       year,
       examType,
@@ -88,10 +90,12 @@ export default function AddQuestion() {
         setOptions([{ id: 1, text: "Example Option" }]);
         setSelectedOptions([]);
         setSubject("MATHS");
+        setSolution('Solution')
         setYear(2025);
         setExamType("");
         setDifficulty("");
         setTags([]);
+         setQuestion("")
       } else {
 
         alert(data.msg  || "Failed to add question.");
@@ -134,7 +138,9 @@ export default function AddQuestion() {
         title="Options"
         type="checkbox"
       />
-
+      <div>
+        <textarea className="w-[50vw] h-[30vh] border"  placeholder="solution" value={solution} onChange={(e)=>{setSolution(e.target.value)}} />
+      </div>
       {/* Subject */}
       <div className="mt-4">
          <label className="block mb-1 text-xl">Subject</label>

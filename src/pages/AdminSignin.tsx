@@ -20,7 +20,7 @@ const handleSignIn = async () => {
             console.log(data);
 
             if(res.ok){
-                navigate('/user/preview');
+                navigate('/admin/addQuestion');
             }   
             else{
                 alert(data.msg || "signin failed")

@@ -23,6 +23,7 @@ const questionSchema = new Schema({
     answer: [{ type: String, required: true }],
     subject: { type: String, required: true },
     year: { type: Number, required: true },
+    solution:{type:String,required:true},
     examType: [{ type: String, enum: ["JEE", "NEET", "OTHER"], default: "OTHER" }],
     difficulty: [{ type: String, enum: ["EASY", "MEDIUM", "DIFFICULT"], default: "MEDIUM" }],
     tags: [{ type: String }],// which topic eg - 'thermo', 'law of motion'
