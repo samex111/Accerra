@@ -1,10 +1,10 @@
 import Questions from "./pages/Question";
 import AddQuestion from "./pages/AddQuestion";
-import AdminSignin from "./pages/AdminSignin";
-import AdminSignup from "./pages/AdminSignup";
+import AdminSignin from "./component/AdminSignin";
+import AdminSignup from "./component/AdminSignup";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Signin from "./pages/UserSignin";
-import Signup from "./pages/UserSignup";
+import Signin from "./component/UserSignin";
+import Signup from "./component/UserSignup";
 import LandingPage from "./pages/LandingPage";
 import ChatApp from "./pages/chat";
 

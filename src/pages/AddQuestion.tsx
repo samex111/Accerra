@@ -116,12 +116,12 @@ export default function AddQuestion() {
       <h1 className="text-2xl mb-4">Add Question</h1>
 
       {/* Question input */}
-      <input
-        type="text"
+      <textarea
+        
         placeholder="Type question"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
-        className="border p-2 w-full mb-4"
+        className="border p-2 w-full mb-4 h-[30vh]"
       />
       <div>
 

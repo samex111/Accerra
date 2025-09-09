@@ -30,7 +30,7 @@ export default function Questions() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setQuestions(data.showQuestions);  // 👈 andar se nikal liya
+        setQuestions(data.showQuestions);  
       })
       .catch((err) => console.error(err));
   }, []);
