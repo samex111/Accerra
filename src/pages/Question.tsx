@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
-import Todo from "../component/Todo";
+
+
 
 export default function Questions() {
 
@@ -16,13 +17,24 @@ export default function Questions() {
     difficulty: string[];
     tags: string[];
   }
-
   const [questions, setQuestions] = useState<Question[]>([]);
 
+  const [selectedSubject, setSelectedSubject] = useState('');
+
+  const handleMaths = () =>{
+    setSelectedSubject("MATHS");
+  }
+  const handlePhysics = () =>{
+    setSelectedSubject("PHYSICS");
+  }
+  const handleChemistry = () =>{
+    setSelectedSubject("CHEMISTRY");
+  }
+ 
   useEffect(() => {
-    fetch("http://localhost:3000/api/v1/user/preview", {
+    fetch(`http://localhost:3000/api/v1/user/question?subject=`+selectedSubject, {
       method: "GET",
-      credentials: "include",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json"
 
@@ -33,7 +45,7 @@ export default function Questions() {
         setQuestions(data.showQuestions);  
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [selectedSubject]);
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleChange = (e: any) => {
@@ -44,6 +56,7 @@ export default function Questions() {
       setSelected(selected.filter((v) => v !== value));
     }
   }
+
 
 
   async function handleAttemtQuestion(question : string,userAnswer:string[],questionDiagram:string, answer : string[],subject:string,status:string,tags:string[] , timetaken:string){
@@ -71,11 +84,20 @@ export default function Questions() {
     console.log(e +  "nhi ho rha kya ,, inside catch")
   }
   }
-
-
   return (
+    <>
+    <div>
+      <button onClick={handleMaths}>Maths</button>
+    </div>
+    <div>
+      <button onClick={handlePhysics}>Physics</button>
+    </div>
+    <div>
+      <button onClick={handleChemistry}>Chemistry</button>
+    </div>
+    { selectedSubject &&
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Questions Bank</h1>
+      <h1 className="text-2xl font-bold mb-4">Questions Bank + {selectedSubject}</h1>
 
       {questions.map((q) => (
         <div key={q._id} className="border p-3 mb-4 rounded shadow">
@@ -129,8 +151,9 @@ export default function Questions() {
           >Submit</button>
         </div>
       ))}
-<Todo></Todo>
 
     </div>
+}
+    </>
   );
 }

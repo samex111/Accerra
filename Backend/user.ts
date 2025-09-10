@@ -159,15 +159,6 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
     }
 })
 
-userRouter.get("/preview", userMiddleware, async (req: Request, res: Response) => {
-    const showQuestions = await QuestionModel.find({});
-    console.log(showQuestions)
-    res.json({
-        showQuestions
-    })
-})
-
-
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -369,4 +360,22 @@ userRouter.put("/todo/update/:id", async (req , res) =>{
     })
    }
 
+})
+
+userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
+    const {subject} = req.query;
+    try{
+        const showQuestions = await QuestionModel.find({subject:subject});
+        if(!showQuestions){
+           return res.status(400).json({
+                msg:"Questions not found"
+            })
+        }
+        console.log(showQuestions)
+        res.status(200).json({
+            showQuestions
+        })
+    }catch(e){
+        res.json({error:"Some error: "+e})
+    }
 })
