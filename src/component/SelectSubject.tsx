@@ -1,18 +1,20 @@
-export default async function SelectSubject() {
-    try {
-        const res = await fetch('', {
+import { useNavigate } from "react-router-dom";
 
-        })
-    } catch (e) {
 
-    }
-    return (
-        <>
-            <div >
-                <div className="border w-full">Maths</div>
-                <div  className="border w-full">Physics</div>
-                <div  className="border w-full">Chemistry</div>
-            </div>
-        </>
-    )
+export default function SelectSubject(){
+ const navigate = useNavigate();
+
+  return(
+    <>
+      <div>
+      <button className="border w-1/2 mt-2 p-3 mb-4 rounded shadow" onClick={()=>{ return navigate('/questions/maths')}}>Maths</button>
+    </div>
+    <div>
+      <button className="border w-1/2 mt-2 p-3 mb-4 rounded shadow"onClick={()=>{ return navigate('/questions/physics')}}>Physics</button>
+    </div>
+    <div>
+      <button className="border w-1/2 mt-2 p-3 mb-4 rounded shadow"onClick={()=>{ return navigate('/questions/chemistry')}}>Chemistry</button>
+    </div>
+    </>
+  )
 }

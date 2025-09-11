@@ -365,15 +365,15 @@ userRouter.put("/todo/update/:id", async (req , res) =>{
 userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
     const {subject} = req.query;
     try{
-        const showQuestions = await QuestionModel.find({subject:subject});
-        if(!showQuestions){
+        const importQuestions = await QuestionModel.find({subject:subject});
+        if(!importQuestions){
            return res.status(400).json({
                 msg:"Questions not found"
             })
         }
-        console.log(showQuestions)
+        console.log(importQuestions)
         res.status(200).json({
-            showQuestions
+            importQuestions
         })
     }catch(e){
         res.json({error:"Some error: "+e})

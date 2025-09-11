@@ -21,7 +21,7 @@ export default function Signin() {
             console.log(data);
 
             if (res.ok) {
-                navigate('/user/preview')
+                navigate('/user/select/subject')
                 alert('Signin successful');
             }
             else {

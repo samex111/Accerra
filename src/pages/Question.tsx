@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
 
 
-
-export default function Questions() {
+export default function Questions(props:any) {
 
   interface Question {
     questionDiagram: string ;
@@ -19,20 +18,10 @@ export default function Questions() {
   }
   const [questions, setQuestions] = useState<Question[]>([]);
 
-  const [selectedSubject, setSelectedSubject] = useState('');
-
-  const handleMaths = () =>{
-    setSelectedSubject("MATHS");
-  }
-  const handlePhysics = () =>{
-    setSelectedSubject("PHYSICS");
-  }
-  const handleChemistry = () =>{
-    setSelectedSubject("CHEMISTRY");
-  }
+  
  
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/question?subject=`+selectedSubject, {
+    fetch(`http://localhost:3000/api/v1/user/question?subject=`+props.subj, {
       method: "GET",
       credentials: "include", 
       headers: {
@@ -42,10 +31,10 @@ export default function Questions() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setQuestions(data.showQuestions);  
+        setQuestions(data.importQuestions);  
       })
       .catch((err) => console.error(err));
-  }, [selectedSubject]);
+  }, [props.subj]);
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleChange = (e: any) => {
@@ -86,25 +75,17 @@ export default function Questions() {
   }
   return (
     <>
-    <div>
-      <button onClick={handleMaths}>Maths</button>
-    </div>
-    <div>
-      <button onClick={handlePhysics}>Physics</button>
-    </div>
-    <div>
-      <button onClick={handleChemistry}>Chemistry</button>
-    </div>
-    { selectedSubject &&
+  
+    { 
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Questions Bank + {selectedSubject}</h1>
+      <h1 className="text-2xl font-bold mb-4">Questions Bank + {props.subj}</h1>
 
       {questions.map((q) => (
         <div key={q._id} className="border p-3 mb-4 rounded shadow">
           <div>
           <p className="font-semibold">{q.question}</p>
            {/* <button className="border px-5 py-1">hint</button> */}
-           <div><GeminiHint prompt={q.question+ " ans in 5-6 words" + q.questionDiagram}></GeminiHint></div>
+          {props.mode === "practice"&& <div><GeminiHint prompt={q.question+ " hint in 5-6 words with formula if needed" + q.questionDiagram}></GeminiHint></div>}
           </div>
           <div>
             <img src={q.questionDiagram} alt="" />

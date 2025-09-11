@@ -7,9 +7,9 @@ import Signin from "./component/UserSignin";
 import Signup from "./component/UserSignup";
 import LandingPage from "./pages/LandingPage";
 import ChatApp from "./pages/chat";
+import SelectSubject from "./component/SelectSubject";
 
 function App() {
-
  
   return (
     <>
@@ -29,7 +29,10 @@ function App() {
            <Route path="/user/signup" element={<Signup />} />
            <Route path="/user/signin" element={<Signin />} />
            <Route path="/admin/addQuestion" element={<AddQuestion />} />
-           <Route path="/user/preview" element={<Questions />} />
+           <Route path="/questions/maths" element={<Questions  subj="MATHS" mode="practice" />} />
+           <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="practice"/>} />
+           <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice"/>} />
+           <Route path="/user/select/subject" element={<SelectSubject/>} />
            <Route path="/user/chat" element={<ChatApp />} />
       
       
