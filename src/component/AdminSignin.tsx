@@ -34,7 +34,7 @@ const handleSignIn = async () => {
  return(
     <>
         <div className="flex justify-center text-4xl">Login</div>
-<div>
+        <div>
         <label htmlFor="identy">Type email or username</label>
         <input className="border-2" type="text" id="identy" value={identifire} onChange={(e) => setIdentifire(e.target.value)} />
         <br />

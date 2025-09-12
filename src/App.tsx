@@ -13,13 +13,7 @@ function App() {
  
   return (
     <>
-      {/* <motion.div className="text-5xl flex justify-center"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1.1, transition: { duration: 1 } }}
-      >
-        @Accerra
-        <p>Your Era of Acceleration</p>
-      </motion.div> */}
+     
       <BrowserRouter>
       
         <Routes>
@@ -30,7 +24,7 @@ function App() {
            <Route path="/user/signin" element={<Signin />} />
            <Route path="/admin/addQuestion" element={<AddQuestion />} />
            <Route path="/questions/maths" element={<Questions  subj="MATHS" mode="practice" />} />
-           <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="practice"/>} />
+           <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="pradctice"/>} />
            <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice"/>} />
            <Route path="/user/select/subject" element={<SelectSubject/>} />
            <Route path="/user/chat" element={<ChatApp />} />
