@@ -135,9 +135,9 @@ export default function Questions(props:any) {
 
           >Submit</button>
         </div>
-      <button   onClick={()=>{if(index>0){setIndex(index-1)} }} className="border py-2 px-4 mr-1">previous </button>
+      <button  disabled={index===0} onClick={()=>{if(index>0){setIndex(index-1)} }} className="border py-2 px-4 mr-1 ">previous </button>
 
-      <button  onClick={()=>{if(index < questions.length-1){setIndex(index+1)}}} className="py-2 px-4  border">Next</button>
+      <button disabled={index === questions.length - 1}  onClick={()=>{if(index < questions.length-1){setIndex(index+1)}}} className="py-2 px-4  border">Next</button>
     </div>
 
     </>
