@@ -47,7 +47,6 @@ export default function Questions(props:any) {
   }
 
 
-
   async function handleAttemtQuestion(question : string,userAnswer:string[],questionDiagram:string, answer : string[],subject:string,status:string,tags:string[] , timetaken:string){
   try{
     const res = await fetch('http://localhost:3000/api/v1/user/attempt/question', {
@@ -75,8 +74,26 @@ export default function Questions(props:any) {
   }
 
   const [index,setIndex] = useState(0);
-  const question = questions[index];
   
+
+  const question = questions[index];
+
+  const [answers, setAnswers] = useState(Array(questions.length).fill(null));
+  // Option select/unselect karne ka function
+const handleOptionSelect = (option: string) => {
+  const newAnswers = [...answers];
+  const selectedOptions = newAnswers[index] || [];
+
+  if (selectedOptions.includes(option)) {
+    // agar already select hai -> remove karo
+    newAnswers[index] = selectedOptions.filter((o: string) => o !== option);
+  } else {
+    // agar select nahi hai -> add karo
+    newAnswers[index] = [...selectedOptions, option];
+  }
+
+  setAnswers(newAnswers);
+};
   return (
     <>
   
@@ -96,9 +113,9 @@ export default function Questions(props:any) {
           </div>
           
           <div className="mt-2">
-            {question?.option.map((opt, i) => (
-              <label key={i} className="block">
-                <input type="checkbox" name={`q-${question?._id}`} value={opt} onChange={handleChange} /> {opt}
+            {question?.option.map((opt) => (
+              <label key={opt} className="block"> 
+                <input type="checkbox" name={`q-${question?._id}`} checked={answers[index]?.includes(opt) || false}   value={opt} onChange={()=>{handleChange ; handleOptionSelect(opt)}} /> {opt}
 
               </label>
 
@@ -139,6 +156,8 @@ export default function Questions(props:any) {
 
       <button disabled={index === questions.length - 1}  onClick={()=>{if(index < questions.length-1){setIndex(index+1)}}} className="py-2 px-4  border">Next</button>
     </div>
+
+
 
     </>
   );
