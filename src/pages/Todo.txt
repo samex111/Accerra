@@ -1,0 +1,20 @@
+what i have to build -- 
+when user click to submit , all selected options (question wise) are send to  backend for chekcking 
+  [
+    ['0' , ['A','C']],
+    ['1' , ['D']],
+    ['2' , ['B']],
+    ['3' , ['A']],
+    ['4' , ['C']],
+    ['5' , ['D','B']]
+    ['6' , ['B']],
+    ['7' , ['A']],
+ ]
+  ------
+ [Submit]
+  ------
+
+  Solution ---->
+  [
+    [key , [opt]]
+  ]

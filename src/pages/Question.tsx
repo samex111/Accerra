@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
 
-
-export default function Questions(props:any) {
-
+export default function Questions(props: any) {
   interface Question {
-    questionDiagram: string ;
+    questionDiagram: string;
     _id: string;
     question: string;
     option: string[];
@@ -16,149 +14,191 @@ export default function Questions(props:any) {
     difficulty: string[];
     tags: string[];
   }
+
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [index, setIndex] = useState(0);
 
-  
- 
+  // Answers object: { questionId: [selectedOptions] }
+  const [answers, setAnswers] = useState<{ [key: string]: string[] }>({});
+
+  // ⏰ 3 hours expiry check
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/question?subject=`+props.subj, {
-      method: "GET",
-      credentials: "include", 
-      headers: {
-        "Content-Type": "application/json"
+    const savedData = localStorage.getItem("userAnswers");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      const now = Date.now();
 
+      if (now - parsed.timestamp < 3 * 60 * 60 * 1000) {
+        setAnswers(parsed.data); // restore answers
+      } else {
+        localStorage.removeItem("userAnswers"); // expired
       }
+    }
+  }, []);
+  
+
+  // Save to localStorage whenever answers change
+  useEffect(() => {
+    localStorage.setItem(
+      "userAnswers",
+      JSON.stringify({ data: answers, timestamp: Date.now() })
+    );
+  }, [answers]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/api/v1/user/question?subject=` + props.subj, {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" }
     })
       .then((res) => res.json())
-      .then((data) => {
-        setQuestions(data.importQuestions);  
-      })
+      .then((data) => setQuestions(data.importQuestions))
       .catch((err) => console.error(err));
   }, [props.subj]);
-  const [selected, setSelected] = useState<string[]>([]);
 
-  const handleChange = (e: any) => {
+
+
+  // handle option change
+  const handleChange = (e: any, questionId: string) => {
     const value = e.target.value;
-    if (e.target.checked) {
-      setSelected([...selected, value]);
-    } else {
-      setSelected(selected.filter((v) => v !== value));
-    }
-  }
+    setAnswers((prev) => {
+      const prevAns = prev[questionId] || [];
+      let updated: string[];
+      if (e.target.checked) {
+        updated = [...prevAns, value];
+      } else {
+        updated = prevAns.filter((v) => v !== value);  
+      }
+      return { ...prev, [questionId]: updated };
+    });
+  };
+  console.log("Ans: ",answers)
+
+  // Submit function
+  const handleSubmit = (question: Question) => {
+    const selected = answers[question._id] || [];
+
+    const isCorrect =
+      question.answer.length === selected.length &&
+      question.answer.every((ans) => selected.includes(ans));
 
 
-  async function handleAttemtQuestion(question : string,userAnswer:string[],questionDiagram:string, answer : string[],subject:string,status:string,tags:string[] , timetaken:string){
-  try{
-    const res = await fetch('http://localhost:3000/api/v1/user/attempt/question', {
-      method:'POST',
-      credentials : "include",
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body: JSON.stringify({question,questionDiagram, userAnswer,answer,subject,status,tags,timetaken})
-    })
-    const data = res.json();
-    console.log("Data is :   ", data);
 
-    if(res.ok){
-      alert("question atttempt");
-    }
-    else{
+    handleAttemtQuestion(
+      question.question,
+      selected,
+      question.questionDiagram,
+      question.answer,
+      question.subject,
+      isCorrect ? "solved" : "attempt",
+      question.tags,
+      "2m"
+    );
+
+    alert(isCorrect ? "congrats 🎉" : "wrong ❌");
+
+    // 🗑️ Clear localStorage after submit
+    localStorage.removeItem("userAnswers");
+  };
+
+  async function handleAttemtQuestion(
+    question: string,
+    userAnswer: string[],
+    questionDiagram: string,
+    answer: string[],
+    subject: string,
+    status: string,
+    tags: string[],
+    timetaken: string
+  ) {
+    try {
+      const res = await fetch(
+        "http://localhost:3000/api/v1/user/attempt/question",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question,
+            questionDiagram,
+            userAnswer,
+            answer,
+            subject,
+            status,
+            tags,
+            timetaken
+          })
+        }
+      );
+      const data = res.json();
       console.log("Data is :   ", data);
-      alert(res.ok + "inside else");
+    } catch (e) {
+      console.log(e);
     }
-
-  }catch(e){
-    console.log(e +  "nhi ho rha kya ,, inside catch")
   }
-  }
-
-  const [index,setIndex] = useState(0);
-  
 
   const question = questions[index];
 
-  const [answers, setAnswers] = useState(Array(questions.length).fill(null));
-  // Option select/unselect karne ka function
-const handleOptionSelect = (option: string) => {
-  const newAnswers = [...answers];
-  const selectedOptions = newAnswers[index] || [];
 
-  if (selectedOptions.includes(option)) {
-    // agar already select hai -> remove karo
-    newAnswers[index] = selectedOptions.filter((o: string) => o !== option);
-  } else {
-    // agar select nahi hai -> add karo
-    newAnswers[index] = [...selectedOptions, option];
-  }
-
-  setAnswers(newAnswers);
-};
   return (
-    <>
-  
-     
-    <div className="p-4">
+    <div className="h-[50vh] p-4 ">
       <h1 className="text-2xl font-bold mb-4">Questions Bank + {props.subj}</h1>
 
-     
-        <div key={question?._id} className="border p-3 mb-4 rounded shadow">
-          <div>
-          <p className="font-semibold">{question?.question}</p>
-           {/* <button className="border px-5 py-1">hint</button> */}
-          {props.mode === "practice"&& <div><GeminiHint prompt={question?.question+ " hint in 5-6 words with formula if needed" + question?.questionDiagram}></GeminiHint></div>}
-          </div>
-          <div>
-            <img src={question?.questionDiagram} alt="" />
-          </div>
-          
+      {question && (
+        <div key={question._id} className="border p-3 mb-4 rounded shadow">
+          <p className="font-semibold">{question.question}</p>
+          {props.mode === "practice" && (
+            <GeminiHint
+              prompt={
+                question.question +
+                " hint with formula in 5-8 words" +
+                question.questionDiagram
+              }
+            />
+          )}
+          <img src={question.questionDiagram} alt="" />
+
           <div className="mt-2">
-            {question?.option.map((opt) => (
-              <label key={opt} className="block"> 
-                <input type="checkbox" name={`q-${question?._id}`} checked={answers[index]?.includes(opt) || false}   value={opt} onChange={()=>{handleChange ; handleOptionSelect(opt)}} /> {opt}
-
+            {question.option.map((opt, i) => (
+              <label key={i} className="block">
+                <input
+                  type="checkbox"
+                  name={`q-${question._id}`}
+                  value={opt}
+                  checked={answers[question._id]?.includes(opt) || false}
+                  onChange={(e) => handleChange(e, question._id)}
+                />{" "}
+                {opt}
               </label>
-
             ))}
           </div>
 
-          <div className="text-sm text-gray-600 mt-2">
-            Subject: {question?.subject} | Year: {question?.year} | Exam: {question?.examType.join(", ")} |
-            Difficulty: {question?.difficulty.join(", ")} |Answer:  {question?.answer}
-          </div>
-
-          <div className="mt-1 text-xs text-blue-500">
-            Tags: {question?.tags.join(", ")}   
-          </div>
-          < button className="px-4 py-2 m-2 border-[4px] hover:border-red-700"
-            onClick={() => {
-              
-              const isCorrect =
-                question?.answer.length === selected.length &&
-                question?.answer.every((ans) => selected.includes(ans));
-
-              if (isCorrect) {
-                console.log("Selected:", selected);
-                handleAttemtQuestion(question?.question,selected,question?.questionDiagram, question?.answer , question?.subject ,"solved" ,question?.tags , "2m"  );
-                return alert("congrats ");
-              } else {
-                console.log("Selected:", selected);
-                 handleAttemtQuestion(question?.question, selected,question?.questionDiagram, question?.answer, question?.subject, "attempt", question?.tags,"2m");
-                return alert("wrong ");
-               
-              }
-               
-            }}
-
-          >Submit</button>
+          <button
+            className="px-4 py-2 m-2 border-[4px] hover:border-red-700"
+            onClick={() => handleSubmit(question)}
+          >
+            Submit
+          </button>
         </div>
-      <button  disabled={index===0} onClick={()=>{if(index>0){setIndex(index-1)} }} className="border py-2 px-4 mr-1 ">previous </button>
+      )}
 
-      <button disabled={index === questions.length - 1}  onClick={()=>{if(index < questions.length-1){setIndex(index+1)}}} className="py-2 px-4  border">Next</button>
+      <button
+        disabled={index === 0}
+        onClick={() => index > 0 && setIndex(index - 1)}
+        className="border py-2 px-4 mr-1 "
+      >
+        Previous
+      </button>
+      <button
+        disabled={index === questions.length - 1}
+        onClick={() => index < questions.length - 1 && setIndex(index + 1)}
+        className="py-2 px-4 border"
+      >
+        Next
+      </button>
     </div>
-
-
-
-    </>
   );
 }
+// https://www.upwork.com/jobs/~021968703455552133869
+// https://www.upwork.com/jobs/~021963284564381569506
+//https://www.upwork.com/jobs/~021958751092249657659
