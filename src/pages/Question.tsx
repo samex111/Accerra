@@ -18,6 +18,8 @@ export default function Questions(props: any) {
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
+  const question = questions[index];
+
 
   // Answers object: { questionId: [selectedOptions] }
   const [answers, setAnswers] = useState<{ [key: string]: string[] }>({});
@@ -75,6 +77,7 @@ export default function Questions(props: any) {
       return { ...prev, [questionId]: updated };
     });
   };
+     console.log(answers)
 
   // Submit function
   const handleSubmit = (question: Question) => {
@@ -136,9 +139,30 @@ export default function Questions(props: any) {
       console.log(e);
     }
   }
-  const question = questions[index];
+  const btn = document.getElementById(`${index+1}`);
+  useEffect(()=>{
+    for(let i=0; i<questions.length; i++){
+      const q = questions[i];
+      const userAns:any = answers[q._id];
+      // const check = userAns[i];
 
+      // console.log("user is any wala",userAns[q._id])
+      console.log(`${i}`,userAns )
+      if(userAns){
+          
 
+         btn?.setAttribute('style', 'background-color: blue; color: white;') 
+         
+      }
+      // else if (userAns[index+1].removeItem){
+      //  btn?.setAttribute('style', 'background-color: white; color: black;') 
+      // }
+      
+    }
+  },[answers])
+  
+  
+  
   function submitAll() {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];              // current question
@@ -162,11 +186,14 @@ export default function Questions(props: any) {
 
   // 
   return (
-    <div className="h-[50vh] p-4 ">
-      <h1 className="text-2xl font-bold mb-4">Questions Bank + {props.subj}</h1>
-
+    <div className="w-full h-screen fixed ">
+     <div className="flex justify-center gap-2 mt-2"> 
+       
+      <div className="w-1/2">
+      <h1  className="text-2xl font-bold mb-1  ">Questions {index+1} <hr className="border-t-2 border-gray-400" /></h1>
+      <div className="h-96  overflow-y-scroll">
       {question && (
-        <div key={question._id} className="border p-3 mb-4 rounded shadow">
+        <div key={question._id} className=" p-3 mb-4 ">
           <p className="font-semibold">{question.question}</p>
           {props.mode === "practice" && (
             <GeminiHint
@@ -180,85 +207,98 @@ export default function Questions(props: any) {
           <img src={question.questionDiagram} alt="" />
 
           <div className="mt-2">
-            {question.option.map((opt, i) => (
-              <label key={i} className="block">
-                <input
-                  type="checkbox"
-                  name={`q-${question._id}`}
-                  value={opt}
-                  checked={answers[question._id]?.includes(opt) || false}
-                  onChange={(e) => handleChange(e, question._id)}
-                />{" "}
-                {opt}
-              </label>
-            ))}
+         {question.option.map((opt, i) => (
+ <div
+  key={i}
+  className="w-full"
+>
+  <input
+    type="checkbox"
+    id={`q-${question._id}-${i}`}
+    name={`q-${question._id}`}
+    value={opt}
+    checked={answers[question._id]?.includes(opt) || false}
+    onChange={(e) => handleChange(e, question._id)}
+    className="peer hidden"
+  />
+  <label
+    htmlFor={`q-${question._id}-${i}`}
+    className="flex items-center gap-3 w-full p-4 mb-3 text-gray-700 bg-white border-2 border-gray-200 rounded-lg cursor-pointer transition-colors  hover:bg-gray-50 dark:bg-white dark:text-black dark:border-gray-500 dark:hover:bg-gray-300 peer-checked:bg-blue-300 peer-checked:border-blue-300"
+  >
+    <span className="peer-checked:text-blue-600">{opt}</span>
+  </label>
+</div>
+         ))}
+           
           </div>
 
-          <button
+          {/* <button
             className="px-4 py-2 m-2 border-[4px] hover:border-red-700"
             onClick={() => handleSubmit(question)}
           >
             Submit
-          </button>
+          </button> */}
         </div>
       )}
-
+      </div>    
+<hr className="border-t-2 border-gray-400"></hr>
       <button
         disabled={index === 0}
         onClick={() => index > 0 && setIndex(index - 1)}
-        className="border py-2 px-4 mr-1 "
+        className="border py-2 px-4 mr-1 mt-1"
       >
         Previous
       </button>
       <button
         disabled={index === questions.length - 1}
         onClick={() => index < questions.length - 1 && setIndex(index + 1)}
-        className="py-2 px-4 border"
+        className="py-2 px-4 border mx-2  "
       >
         Next
       </button>
 
-      <button onClick={submitAll}  >Submit test</button>
- <div className="grid grid-cols-9 gap-2 w-[30vw] bg-gray-500 p-3 rounded-sm">
-  <SquareBox num={0} ID = {0}></SquareBox>
-  <div onClick={()=>{setIndex(1)}}><SquareBox num={1} ID = {1}></SquareBox></div>
-  <SquareBox num={2} ID = {2}></SquareBox>
-  <SquareBox num={3} ID = {3}></SquareBox>
-  <SquareBox num={4} ID = {4}></SquareBox>
-  <SquareBox num={5} ID = {5}></SquareBox>
-  <SquareBox num={6} ID = {6}></SquareBox>
-  <SquareBox num={7} ID = {7}></SquareBox>
-  <SquareBox num={8} ID = {8}></SquareBox>
-  <SquareBox num={9} ID = {9}></SquareBox>
-  <SquareBox num={10} ID = {10}></SquareBox>
-  <SquareBox num={11} ID = {11}></SquareBox>
-  <SquareBox num={12} ID = {12}></SquareBox>
-  <SquareBox num={13} ID = {13}></SquareBox>
-  <SquareBox num={14} ID = {14}></SquareBox>
-  <SquareBox num={15} ID = {15}></SquareBox>
-  <SquareBox num={16} ID = {16}></SquareBox>
-  <SquareBox num={17} ID = {17}></SquareBox>
-  <SquareBox num={18} ID = {18}></SquareBox>
-  <SquareBox num={19} ID = {19}></SquareBox>
-  <SquareBox num={20} ID = {20}></SquareBox>
-  <SquareBox num={21} ID = {21}></SquareBox>
-  <SquareBox num={22} ID = {22}></SquareBox>
-  <SquareBox num={23} ID = {23}></SquareBox>
-  <SquareBox num={24} ID = {24}></SquareBox>
-  <SquareBox num={25} ID = {25}></SquareBox>
-  <SquareBox num={26} ID = {26}></SquareBox>
-  <SquareBox num={27} ID = {27}></SquareBox>
-  <SquareBox num={28} ID = {28}></SquareBox>
-  <SquareBox num={29} ID = {29}></SquareBox>
-  <SquareBox num={30} ID = {30}></SquareBox>
-  <SquareBox num={31} ID = {31}></SquareBox>
-  <SquareBox num={32} ID = {32}></SquareBox>  
-  <SquareBox num={33} ID = {33}></SquareBox>
-  <SquareBox num={34} ID = {34}></SquareBox>
-  <SquareBox num={35} ID = {35}></SquareBox>
-  <SquareBox num={36} ID = {36}></SquareBox>
-  <SquareBox num={37} ID = {37}></SquareBox>
+      <button className="border px-4 py-2 mx-2" onClick={submitAll}  >Submit test</button>
+      </div>
+ <div className="grid  grid-cols-9 grid- auto-cols-fr  w-[30vw] h-[30vh] bg-gray-500 p-3 rounded-sm">
+  <SquareBox onClick={()=>{setIndex(0)}} num={1}   id = {1}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(1)}} num={2} id = {2}></SquareBox>
+  <SquareBox  onClick={()=>{setIndex(2)}} num={3} id = {3}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(3)}} num={4} id = {4}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(4)}} num={5} id = {5}></SquareBox>
+  <SquareBox  onClick={()=>{setIndex(5)}}  num={6} id = {6}></SquareBox>
+  <SquareBox  onClick={()=>{setIndex(6)}}  num={7} id = {7}></SquareBox>
+   <SquareBox  onClick={()=>{setIndex(7)}} num={8} id = {8}></SquareBox>
+   <SquareBox onClick={()=>{setIndex(8)}} num={9} id = {9}></SquareBox>
+   <SquareBox onClick={()=>{setIndex(9)}} num={10} id = {10}></SquareBox>
+  <SquareBox  onClick={()=>{setIndex(10)}} num={11} id = {11}></SquareBox>
+  <SquareBox  onClick={()=>{setIndex(11)}} num={12} id = {12}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(12)}} num={13} id = {13}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(13)}} num={14} id = {14}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(14)}} num={15} id = {15}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(15)}} num={16} id = {16}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(16)}} num={17} id = {17}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(17)}} num={18} id = {18}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(18)}} num={19} id = {19}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(19)}} num={20} id = {20}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(20)}} num={21} id = {21}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(21)}} num={22} id = {22}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(22)}} num={23} id = {23}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(23)}} num={24} id = {24}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(24)}} num={25} id = {25}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(25)}} num={26} id = {26}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(26)}} num={27} id = {27}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(27)}} num={28} id = {28}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(28)}} num={29} id = {29}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(29)}} num={30} id = {30}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(30)}} num={31} id = {31}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(31)}} num={32} id = {32}></SquareBox>  
+  <SquareBox onClick={()=>{setIndex(32)}} num={33} id = {33}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(33)}} num={34} id = {34}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(34)}} num={35} id = {35}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(35)}} num={36} id = {36}></SquareBox>
+  <SquareBox onClick={()=>{setIndex(36)}} num={37} id = {37}></SquareBox>
   </div>
+    </div>
     </div>
   );
 }

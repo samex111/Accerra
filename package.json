@@ -6,7 +6,7 @@
   "scripts": {
     "ws": "ts-node ./Backend/chatAi.ts ",
     "start": "nodemon --exec ts-node ./Backend/index.ts",
-    "dev": "vite",
+    "dev": "vite && nodemon --exec ts-node ./Backend/index.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
