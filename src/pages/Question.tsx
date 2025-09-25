@@ -18,21 +18,23 @@ export default function Questions(props: any) {
 
 
   type Status = "notVisited" | "notAnswered" | "answered" | "review" | "answeredReview";
-
+  const [answered, setAnswered] = useState(0);
+  const [notAnswered, setNotAnswered] = useState(0);
   const [status, setStatus] = useState<Status[]>([]);
+
   function markForReview(qIndex: number) {
-  setStatus((prev) => {
-    const newStatus = [...prev];
-    const current = newStatus[qIndex];
-    if (current === "answered") {
-      newStatus[qIndex] = "answeredReview";
-    } else {
-      newStatus[qIndex] = "review";
-    }
-    return newStatus;
-  });
-}
- 
+    setStatus((prev) => {
+      const newStatus = [...prev];
+      const current = newStatus[qIndex];
+      if (current === "answered") {
+        newStatus[qIndex] = "answeredReview";
+      } else {
+        newStatus[qIndex] = "review";
+      }
+      return newStatus;
+    });
+  }
+
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
@@ -57,6 +59,7 @@ export default function Questions(props: any) {
     }
   }, []);
 
+  console.log(status)
 
   // Save to localStorage whenever answers change
   useEffect(() => {
@@ -73,8 +76,9 @@ export default function Questions(props: any) {
       headers: { "Content-Type": "application/json" }
     })
       .then((res) => res.json())
-      .then((data) =>{ setQuestions(data.importQuestions)
-      setStatus(Array(data.importQuestions.length).fill("notVisited"));
+      .then((data) => {
+        setQuestions(data.importQuestions)
+        setStatus(Array(data.importQuestions.length).fill("notVisited"));
 
       })
       .catch((err) => console.error(err));
@@ -84,7 +88,7 @@ export default function Questions(props: any) {
 
 
   // handle option change
-  const handleChange = (e: any, questionId: string ,qIndex:number) => {
+  const handleChange = (e: any, questionId: string, qIndex: number) => {
     const value = e.target.value;
 
     setAnswers((prev) => {
@@ -95,43 +99,54 @@ export default function Questions(props: any) {
       } else {
         updated = prevAns.filter((v) => v !== value);
       }
-  setStatus((prev) => {
-  const newStatus = [...prev];
-  if (updated.length > 0) {
-    newStatus[qIndex] = "answered";
-  } else {
-    newStatus[qIndex] = "notAnswered";
-  }
-  return newStatus;
-});
+      setStatus((prev) => {
+        const newStatus = [...prev];
+        if (updated.length > 0) {
+          newStatus[qIndex] = "answered";
+          //  setAnswered((q)=>q+1)
+          //  setNotAnswered((q)=>q-1)
 
+
+        } else {
+          newStatus[qIndex] = "notAnswered";
+
+        }
+
+
+        return newStatus;
+      });
 
       // console.log("in the handleCHange: ",questionId)
       return { ...prev, [questionId]: updated };
     });
   };
-  console.log(answers)
-
-  // Submit function
-  const handleSubmit = (question: Question) => {
-    const selected = answers[question._id] || [];
-    const isCorrect =
-      question.answer.length === selected.length &&
-      question.answer.every((ans) => selected.includes(ans));
 
 
-    handleAttemtQuestion(
-      question.question,
-      selected,
-      question.questionDiagram,
-      question.answer,
-      question.subject,
-      isCorrect ? "solved" : "attempt",
-      question.tags,
-      "2m"
-    );
 
-    alert(isCorrect ? "congrats 🎉" : "wrong ❌");
+  let correctCount = 0;
+  const handleSubmit = () => {
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      const selected = answers[q._id] || [];
+      const isCorrect =
+        q.answer.length === selected.length &&
+        q.answer.every((ans) => selected.includes(ans));
+      if (isCorrect) correctCount++;
+
+      handleAttemtQuestion(
+        q.question,
+        selected,
+        q.questionDiagram,
+        q.answer,
+        q.subject,
+        isCorrect ? "solved" : "attempt",
+        q.tags,
+        "2m"
+      );
+
+    }
+    alert(`you got ${correctCount} out of ${questions.length}  correct!`)
+
 
     // 🗑️ Clear localStorage after submit
     localStorage.removeItem("userAnswers");
@@ -172,29 +187,32 @@ export default function Questions(props: any) {
       console.log(e);
     }
   }
+  const [markedForReview, setMarkedForReview] = useState(0);
+useEffect(() => {
+  let answeredCount = 0;
+  let notAnsweredCount = 0;
+  let reviewCount = 0;
 
-
-
-  function submitAll() {
-    for (let i = 0; i < questions.length; i++) {
-      const q = questions[i];              // current question
-      const userAns = answers[q._id] || []; // user ka answer is question ke liye
-
-      let isCorrect =
-        q.answer.length === userAns.length &&
-        q.answer.every((ans) => userAns.includes(ans));
-
-      console.log("QID:", q._id, "User Ans:", userAns, "Correct Ans:", q.answer);
-      console.log("✅ Correct?", isCorrect);
-
-      if (isCorrect) {
-        console.log("INSIDE if HEYY");
-      } else {
-        console.log("INSIDE else HEYY");
-      }
+  for (let i = 0; i < status.length; i++) {
+    if (status[i] === "answered") {
+      answeredCount++;
+    } 
+    else if (status[i] === "notAnswered") {
+      notAnsweredCount++;
+    } 
+    else if (status[i] === "review") {
+      reviewCount++;
     }
-    console.log("All Answers Object:", answers);
   }
+
+  setAnswered(answeredCount);
+  setNotAnswered(notAnsweredCount);
+  setMarkedForReview(reviewCount);
+
+}, [status]); 
+
+
+
 
   // 
   return (
@@ -230,7 +248,7 @@ export default function Questions(props: any) {
                         name={`q-${question._id}`}
                         value={opt}
                         checked={answers[question._id]?.includes(opt) || false}
-                        onChange={(e) => handleChange(e, question._id,index)}
+                        onChange={(e) => handleChange(e, question._id, index)}
                         className="peer hidden"
                       />
                       <label
@@ -269,9 +287,9 @@ export default function Questions(props: any) {
             Next
           </button>
 
-          <button  className="py-2 px-4 border mx-2  "onClick={()=>markForReview(index)}>Mark for review</button>
+          <button className="py-2 px-4 border mx-2  " onClick={() => markForReview(index)}>Mark for review</button>
 
-          <button className="border px-4 py-2 mx-2" onClick={submitAll}  >Submit test</button>
+          <button className="border px-4 py-2 mx-2" onClick={handleSubmit}  >Submit test</button>
         </div>
         <div className="grid grid-cols-6 gap-2 w-[30vw] h-[30vh] bg-gray-100 p-3 rounded-sm overflow-y-scroll">
           {questions.map((_, i) => (
@@ -283,9 +301,14 @@ export default function Questions(props: any) {
             />
           ))}
         </div>
+
       </div>
+      <div>Ansewed: {answered} , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
     </div>
   );
+
+
+
 }
 // https://www.upwork.com/jobs/~021968703455552133869
 // https://www.upwork.com/jobs/~021963284564381569506
