@@ -43,31 +43,55 @@ export default function Questions(props: any) {
 
   // Answers object: { questionId: [selectedOptions] }
   const [answers, setAnswers] = useState<{ [key: string]: string[] }>({});
+ const [remainingTime, setRemainingTime] = useState<number | null>(null);
 
-  // ⏰ 3 hours expiry check
+  // Restore data on mount
   useEffect(() => {
-    const savedData = localStorage.getItem("userAnswers");
-    if (savedData) {
-      const parsed = JSON.parse(savedData);
-      const now = Date.now();
+    const saved = localStorage.getItem("userAnswers");
+    if (!saved) return;
 
-      if (now - parsed.timestamp < 3 * 60 * 60 * 1000) {
-        setAnswers(parsed.data); // restore answers
-      } else {
-        localStorage.removeItem("userAnswers"); // expired
-      }
+    const parsed = JSON.parse(saved);
+    const expiry = parsed.timestamp + 3 * 60 * 60 * 1000;
+
+    if (Date.now() < expiry) {
+      setAnswers(parsed.data);
+      setRemainingTime(expiry - Date.now()); // set initial remaining time
+    } else {
+      localStorage.removeItem("userAnswers");
     }
   }, []);
 
-  console.log(status)
-
-  // Save to localStorage whenever answers change
+  // Save answers whenever they change
   useEffect(() => {
     localStorage.setItem(
       "userAnswers",
       JSON.stringify({ data: answers, timestamp: Date.now() })
     );
-  }, [answers]);
+    setRemainingTime(3 * 60 * 60 * 1000); // reset timer on every save
+  }, []);
+
+  // Countdown effect
+  useEffect(() => {
+    if (remainingTime === null) return;
+
+    const interval = setInterval(() => {
+      setRemainingTime((prev) => (prev && prev > 1000 ? prev - 1000 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [remainingTime]);
+
+  // Format milliseconds → hh:mm:ss
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${h}h ${m}m ${s}s`;
+  };
+  let d = Date.now();
+  let a = Math.floor(d/1000)
+  console.log(a)
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/v1/user/question?subject=` + props.subj, {
@@ -85,7 +109,11 @@ export default function Questions(props: any) {
 
   }, [props.subj]);
 
-
+  interface handleChangeProps{
+    e : any;
+    questionId:string;
+    qIndex:number;
+  }
 
   // handle option change
   const handleChange = (e: any, questionId: string, qIndex: number) => {
@@ -220,6 +248,12 @@ useEffect(() => {
       <div className="flex justify-center gap-2 mt-2">
 
         <div className="w-1/2">
+         <h1>Answers Auto-Save with Expiry</h1>
+      {remainingTime !== null && remainingTime > 0 ? (
+        <p>Expires in: {formatTime(remainingTime)}</p>
+      ) : (
+        <p>No saved answers or expired</p>
+      )}
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
           <div className="h-96  overflow-y-scroll">
             {question && (
