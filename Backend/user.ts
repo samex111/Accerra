@@ -400,7 +400,7 @@ userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
 
 
 // API to get daily solved counts for a student
-userRouter.get("/solved/daily/:studentId", async (req:Request, res:Response) => {
+userRouter.get("/solved/daily/:studentId",userMiddleware, async (req:Request, res:Response) => {
   try {
     const studentId = req.params.studentId;
 

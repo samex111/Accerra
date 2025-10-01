@@ -18,7 +18,7 @@ function App() {
       <BrowserRouter>
            
         <Routes>
-           <Route path="/" element={< div> <LandingPage />  <SolvedBarChart studentId="68bed5576efadf592b5058f2" /></div>} />
+           <Route path="/" element={< div> <LandingPage />  </div>} />
            <Route path="/admin/signup" element={<AdminSignup />} />
            <Route path="/admin/signin" element={<AdminSignin />} />
            <Route path="/user/signup" element={<Signup />} />
@@ -27,7 +27,7 @@ function App() {
            <Route path="/questions/maths" element={<Questions  subj="MATHS" mode="practice" />} />
            <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="pradctice"/>} />
            <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice"/>} />
-           <Route path="/user/select/subject" element={<SelectSubject/>} />
+           <Route path="/user/select/subject" element={<div><SelectSubject/> <SolvedBarChart studentId="68bed5576efadf592b5058f2" /></div>} />
            <Route path="/user/chat" element={<ChatApp />} />
       
       

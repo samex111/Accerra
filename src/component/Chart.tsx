@@ -34,7 +34,11 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/solved/daily/${studentId}`)
+    fetch(`http://localhost:3000/api/v1/user/solved/daily/${studentId}` , {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" }
+    })
       .then((res) => res.json())
       .then((data: DailySolved[]) => {
         const labels: string[] = [];
@@ -92,8 +96,8 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
   };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "auto" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Last 7 Days Solved Questions</h2>
+    <div style={{ maxWidth: "500px", margin: "auto" }}>
+      <h2 style={{ textAlign: "center" }}>Last 7 Days Solved Questions</h2>
       <Bar data={chartData} options={options} />
     </div>
   );
