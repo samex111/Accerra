@@ -8,6 +8,7 @@ import Signup from "./component/UserSignup";
 import LandingPage from "./pages/LandingPage";
 import ChatApp from "./pages/chat";
 import SelectSubject from "./component/SelectSubject";
+import SolvedBarChart from "./component/Chart";
 
 function App() {
  
@@ -15,9 +16,9 @@ function App() {
     <>
      
       <BrowserRouter>
-      
+           
         <Routes>
-           <Route path="/" element={< LandingPage />} />
+           <Route path="/" element={< div> <LandingPage />  <SolvedBarChart studentId="68bed5576efadf592b5058f2" /></div>} />
            <Route path="/admin/signup" element={<AdminSignup />} />
            <Route path="/admin/signin" element={<AdminSignin />} />
            <Route path="/user/signup" element={<Signup />} />

@@ -152,7 +152,7 @@ export default function Questions(props: any) {
 
 
   let correctCount = 0;
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
       const selected = answers[q._id] || [];
@@ -161,7 +161,7 @@ export default function Questions(props: any) {
         q.answer.every((ans) => selected.includes(ans));
       if (isCorrect) correctCount++;
 
-      handleAttemtQuestion(
+       handleAttemtQuestion(
         q.question,
         selected,
         q.questionDiagram,

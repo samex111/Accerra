@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import {  userMiddleware } from "./auth.ts";
 import noadmailer from 'nodemailer';
 import crypto from 'crypto';
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -257,7 +258,7 @@ userRouter.post("/todo", userMiddleware, async (req,res)=>{
         res.status(200).json({
             msg: "todo created"
         })
-    }catch(e){
+    }catch(e:any){
             console.log(e)
         res.status(400).json({
             msg: "error" + e.message
@@ -288,7 +289,7 @@ userRouter.post("/notes",userMiddleware,async (req,res)=>{
         res.status(200).json({
             msg: "note created"
         })
-    }catch(e){
+    }catch(e:any){
         res.status(400).json({
             msg: "error" + e.message
         })
@@ -378,3 +379,58 @@ userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
         res.json({error:"Some error: "+e})
     }
 })
+
+// userRouter.get('/attempt', userMiddleware, async (req:Request,res:Response)=>{
+//     // const {status} = req.query;
+//     try{
+//         const importQuestions = await attemtQuestionsModel.find({});
+//         if(!importQuestions){
+//            return res.status(400).json({
+//                 msg:"Questions not found"
+//             })
+//         }
+//         console.log(importQuestions)
+//         res.status(200).json({
+//             importQuestions
+//         })
+//     }catch(e){
+//         res.json({error:"Some error: "+e})
+//     }
+// })
+
+
+// API to get daily solved counts for a student
+userRouter.get("/solved/daily/:studentId", async (req:Request, res:Response) => {
+  try {
+    const studentId = req.params.studentId;
+
+    const result = await attemtQuestionsModel.aggregate([
+      // Step 1: Filter by student (convert string to ObjectId)
+      { $match: { student: new mongoose.Types.ObjectId(studentId) } },
+
+      // Step 2: Extract only the date part from createdAt
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+        }
+      },
+
+      // Step 3: Group by date and count
+      {
+        $group: {
+          _id: "$date",
+          totalSolved: { $sum: 1 }
+        }
+      },
+
+      // Step 4: Sort by date ascending
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
