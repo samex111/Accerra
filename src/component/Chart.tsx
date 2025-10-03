@@ -28,7 +28,7 @@ interface DailySolved {
   // @ts-ignore
 
 export default function SolvedBarChart() {
-  const studentContext = useContext(StudentContext);
+  const studentContext = useContext(StudentContext); 
   const studentID =  studentContext?.studentId;
   // console.log("Student Id",studentID)
   // useEffect(()=>{

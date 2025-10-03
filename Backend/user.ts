@@ -160,7 +160,9 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
 
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
+console.log(GEMINI_API_KEY)
+const a  =   process.env.GEMINI_API_KEY;
+console.log(a)
 userRouter.post("/gemini", async (req, res) => {
     try {
         const { prompt } = req.body;
