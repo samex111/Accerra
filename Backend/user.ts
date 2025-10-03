@@ -147,9 +147,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             maxAge: 1000 * 60 * 60 * 24
         })
         console.log("cookie: ", token)
-        res.status(200).json({
-            token: token
-        })
+         res.json({ studentId: user._id });  
     }
     else {
         // If the password does not match, return a error indicating the invalid credentials
@@ -405,7 +403,7 @@ userRouter.get("/solved/daily/:studentId",userMiddleware, async (req:Request, re
     const studentId = req.params.studentId;
 
     const result = await attemtQuestionsModel.aggregate([
-      // Step 1: Filter by student (convert string to ObjectId)
+      // Step 1: Filter by student (convert string to ObjectId)         
       { $match: { student: new mongoose.Types.ObjectId(studentId) } },
 
       // Step 2: Extract only the date part from createdAt

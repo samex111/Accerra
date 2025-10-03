@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { StudentContext } from "./StudentContext";
 
 export default function Signin() {
+      const studentContext = useContext(StudentContext);
     const navigate = useNavigate();
     const [identifire, setIdentifire] = useState('');
     const [password, setPassword] = useState('');
+    // const  {  setStudentId } = useAuth()!;
+        // @ts-ignore 
+  const [sID,setSId] = useState(null);
+    
     const handleSignIn = async () => {
         try {
             const res = await fetch('http://localhost:3000/api/v1/user/signin', {
@@ -18,6 +24,11 @@ export default function Signin() {
             });
 
             const data = await res.json();
+            //  setStudentId(()=>data.studentId); 
+            console.log("Data id :",data.studentId)
+            setSId(data.studentId)
+            studentContext?.setStudentId(data.studentId);
+
             console.log(data);
 
             if (res.ok) {
@@ -31,10 +42,12 @@ export default function Signin() {
             console.log(e);
             alert('Error during signin')
         }
-    }
-
+    } 
+    console.log("s Id ",sID)
+    console.log("Auth:",studentContext)
     return (
         <>
+        
             <div className="flex justify-center text-4xl">Login</div>
             <div>
                 <label htmlFor="identy">Type email or username</label>

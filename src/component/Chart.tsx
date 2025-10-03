@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import { useContext } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +12,8 @@ import {
   type ChartOptions,
   type ChartData
 } from "chart.js";
-
+import { StudentContext } from "./StudentContext";
+ 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -25,16 +27,30 @@ interface DailySolved {
   _id: string;        // date string "YYYY-MM-DD"
   totalSolved: number;
 }
+  // @ts-ignore
 
 export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
+  const studentContext = useContext(StudentContext);
+  const studentID =  studentContext?.studentId;
+  // console.log("Student Id",studentID)
+  useEffect(()=>{
+    console.log(studentID)
+  },[studentID])
+
   // Chart data state type
+  // const {studentId} = useAuth()!;
+  // @ts-ignore
+
+
   const [chartData, setChartData] = useState<ChartData<"bar", number[], string>>({
     labels: [],
     datasets: []
   });
 
+
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/solved/daily/${studentId}` , {
+    if (!studentId) return; 
+    fetch(`http://localhost:3000/api/v1/user/solved/daily/${studentID}` , {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" }
@@ -49,6 +65,7 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
         data.forEach((item) => {
           dateMap[item._id] = item.totalSolved;
         });
+       
 
         // Last 7 days
         for (let i = 6; i >= 0; i--) {
@@ -64,7 +81,7 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
           datasets: [
             {
               label: "Questions Solved",
-              data: values,
+              data: values, 
               backgroundColor: "rgba(54, 162, 235, 0.5)",
               borderColor: "rgba(54, 162, 235, 1)",
               borderWidth: 1
@@ -80,7 +97,7 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
       legend: {
         position: "top"
       },
-      title: {
+      title: {  
         display: true,
         text: "Daily Solved Questions"
       }
