@@ -27,7 +27,7 @@ function App() {
         <Route path="/user/select/subject" element={
           <div>
             <SelectSubject />  
-            <SolvedBarChart studentId={"68bed5576efadf592b5058f2"} />
+            <SolvedBarChart  />
           </div>
          
         } />

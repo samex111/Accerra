@@ -18,9 +18,7 @@ import { StudentContext } from "./StudentContext";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Define props type
-interface SolvedBarChartProps {
-  studentId: string;
-}
+
 
 // Backend response type
 interface DailySolved {
@@ -29,13 +27,13 @@ interface DailySolved {
 }
   // @ts-ignore
 
-export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
+export default function SolvedBarChart() {
   const studentContext = useContext(StudentContext);
   const studentID =  studentContext?.studentId;
   // console.log("Student Id",studentID)
-  useEffect(()=>{
-    console.log(studentID)
-  },[studentID])
+  // useEffect(()=>{
+  //   console.log(studentID)
+  // },[studentID])
 
   // Chart data state type
   // const {studentId} = useAuth()!;
@@ -49,7 +47,6 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
 
 
   useEffect(() => {
-    if (!studentId) return; 
     fetch(`http://localhost:3000/api/v1/user/solved/daily/${studentID}` , {
       method: "GET",
       credentials: "include",
@@ -89,7 +86,7 @@ export default function SolvedBarChart({ studentId }: SolvedBarChartProps) {
           ]
         });
       });
-  }, [studentId]);
+  }, [studentID]);
 
   const options: ChartOptions<"bar"> = {
     responsive: true,

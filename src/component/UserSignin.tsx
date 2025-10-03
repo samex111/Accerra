@@ -9,7 +9,6 @@ export default function Signin() {
     const [password, setPassword] = useState('');
     // const  {  setStudentId } = useAuth()!;
         // @ts-ignore 
-  const [sID,setSId] = useState(null);
     
     const handleSignIn = async () => {
         try {
@@ -24,12 +23,9 @@ export default function Signin() {
             });
 
             const data = await res.json();
-            //  setStudentId(()=>data.studentId); 
-            console.log("Data id :",data.studentId)
-            setSId(data.studentId)
+
             studentContext?.setStudentId(data.studentId);
 
-            console.log(data);
 
             if (res.ok) {
                 navigate('/user/select/subject')
@@ -43,8 +39,6 @@ export default function Signin() {
             alert('Error during signin')
         }
     } 
-    console.log("s Id ",sID)
-    console.log("Auth:",studentContext)
     return (
         <>
         
