@@ -9,13 +9,28 @@ import LandingPage from "./pages/LandingPage";
 import ChatApp from "./pages/chat";
 import SelectSubject from "./component/SelectSubject";
 import SolvedBarChart from "./component/Chart";
+import GeminiStream from "./component/SSE";
+import { useState } from "react";
 
 function App() {
-
+  const [prompt , setPrompt] = useState('Hello gemini')
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={
+          <div><LandingPage />
+
+           <GeminiStream prompt = {prompt} />
+           <input
+           value={prompt}
+           onChange={(e)=>setPrompt(e.target.value)}
+           placeholder="Ask something....."
+           className="border-4"
+           >
+           
+           </input>
+           </div>
+           } />
         <Route path="/admin/signup" element={<AdminSignup />} />
         <Route path="/admin/signin" element={<AdminSignin />} />
         <Route path="/user/signup" element={<Signup />} />

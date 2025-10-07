@@ -9,6 +9,7 @@ import {  userMiddleware } from "./auth.ts";
 import noadmailer from 'nodemailer';
 import crypto from 'crypto';
 import mongoose from "mongoose";
+import {callGeminiStream} from './Service.ts'
 
 dotenv.config();
 
@@ -18,7 +19,6 @@ export const userRouter = Router();
 
 
 
-// app password ---  gqjd idzo bzww jpbf
 
 const transporter =  noadmailer.createTransport({
     service:'gmail',
@@ -380,6 +380,22 @@ userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
     }
 })
 
+userRouter.get("/stream", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const prompt = req.query.prompt as string;
+  if (!prompt) {
+    res.write(`event: error\ndata: {"error": "Prompt missing"}\n\n`);
+    res.end();
+    return;
+  }
+
+  await callGeminiStream(prompt, res);
+});
+
+
 // userRouter.get('/attempt', userMiddleware, async (req:Request,res:Response)=>{
 //     // const {status} = req.query;
 //     try{
@@ -433,4 +449,5 @@ userRouter.get("/solved/daily/:studentId",userMiddleware, async (req:Request, re
     res.status(500).json({ error: "Server error" });
   }
 });
+
 

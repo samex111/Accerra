@@ -1,31 +1,38 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import type { AIMessage } from './AIMassage.ts';
 import dotenv from "dotenv";
-
 dotenv.config();
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-console.log(GEMINI_API_KEY);
- const a = process.env.GEMINI_API_KEY
- console.log("A: ",a)
-function mapRole(role: string): "user" | "model" | "system" {
-  if (role === "assistant") return "model";
-  return role as "user" | "model" | "system";
-}
 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY!;
 
-export async function callGemini(messages: AIMessage[]): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); // ✅ SDK version
+// SSE compatible stream function
+export async function callGeminiStream(prompt: string, res: any) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${GEMINI_API_KEY}`;
 
-  const chat = model.startChat({
-    history: messages.slice(0, -1).map((msg) => ({
-      role: mapRole(msg.role),
-      parts: [{ text: msg.content }],
-    })),
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+    }),
   });
 
-  const userMessage = messages[messages.length - 1].content;
-  const result = await chat.sendMessage(userMessage);
-  const response = await result.response;
-  return response.text();
+  if (!response.ok || !response.body) {
+    res.write(`event: error\ndata: ${JSON.stringify({ error: "Gemini stream failed" })}\n\n`);
+    res.end();
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  // Stream chunks as SSE messages
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value);
+    res.write(`data: ${chunk}\n\n`);
+  }
+
+  res.write(`event: end\ndata: done\n\n`);
+  res.end();
 }
