@@ -248,7 +248,7 @@ userRouter.post("/todo", userMiddleware, async (req,res)=>{
        return res.status(400).json({msg:"Invaild cred"});
     
     }
-    const {todo} = parseData.data;
+    const {todo} = parseData.data;  
 
     try{
         await TodoModel.create({

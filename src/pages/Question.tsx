@@ -109,11 +109,6 @@ export default function Questions(props: any) {
 
   }, [props.subj]);
 
-  interface handleChangeProps{
-    e : any;
-    questionId:string;
-    qIndex:number;
-  }
 
   // handle option change
   const handleChange = (e: any, questionId: string, qIndex: number) => {

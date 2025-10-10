@@ -14,6 +14,7 @@ import { useState } from "react";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello gemini')
+  const [op, setOp] = useState('');
   return (
     <BrowserRouter>
       <Routes>
@@ -21,14 +22,16 @@ function App() {
           <div><LandingPage />
 
            <GeminiStream prompt = {prompt} />
-           <input
-           value={prompt}
-           onChange={(e)=>setPrompt(e.target.value)}
+           <textarea       
            placeholder="Ask something....."
-           className="border-4"
-           >
+           onChange={(e)=>{setOp(e.target.value)}}
+           className="border-4 w-1/2 mx-2 mt-2 h-1/2 scroll-smooth"
            
-           </input>
+           >
+            </textarea>
+            <button onClick={()=>{setPrompt(op)}} >Send</button>
+           
+           
            </div>
            } />
         <Route path="/admin/signup" element={<AdminSignup />} />
