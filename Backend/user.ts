@@ -10,6 +10,8 @@ import noadmailer from 'nodemailer';
 import crypto from 'crypto';
 import mongoose from "mongoose";
 import {callGeminiStream} from './Service.ts'
+ import { GoogleGenerativeAI }  from '@google/generative-ai';
+
 
 dotenv.config();
 
@@ -380,20 +382,61 @@ userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
     }
 })
 
+
 userRouter.get("/stream", async (req, res) => {
+  // 🧠 Required SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader("Connection", "keep-alive");
-
+  res.flushHeaders()
   const prompt = req.query.prompt as string;
+    // console.log(res)
+  
+  // ❌ If no prompt → send proper JSON
   if (!prompt) {
-    res.write(`event: error\ndata: {"error": "Prompt missing"}\n\n`);
+    res.write(`event: error\ndata: ${JSON.stringify({ error: "Prompt missing" })}\n\n`);
     res.end();
     return;
   }
 
+  // ✅ Call streaming function
   await callGeminiStream(prompt, res);
 });
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
+
+userRouter.post('/chat1', async (req:Request, res:Response) => {
+  try {
+    const { messages } = req.body; // Expect array of {role: 'user'|'model', parts: [{text: 'message'}]}
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ error: 'Invalid messages format' });
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders(); // Ensure headers are sent
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const chat = model.startChat({ history: messages.slice(0, -1) }); // History without last user message
+    const lastMessage = messages[messages.length - 1].parts[0].text;
+
+    const stream = await chat.sendMessageStream(lastMessage);
+
+    for await (const chunk of stream.stream) {
+      const chunkText = await chunk.text();
+      res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
+    }
+
+    res.write('event: done\ndata: {}\n\n'); // Signal end of stream
+    res.end();
+  } catch (error) {
+    console.error('Error in /chat:', error);
+    res.write(`data: ${JSON.stringify({ error: 'An error occurred' })}\n\n`);
+    res.end();
+  }
+});
+
 
 
 // userRouter.get('/attempt', userMiddleware, async (req:Request,res:Response)=>{

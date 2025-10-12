@@ -9,7 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(cors({
    origin: "http://localhost:5173",   // frontend ka exact origin
-  credentials: true  
+  credentials: true  ,
+  methods: ["GET"],
+   allowedHeaders: ["Content-Type"]
 }))
 app.use(cookieParser());
 

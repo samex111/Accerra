@@ -11,10 +11,12 @@ import SelectSubject from "./component/SelectSubject";
 import SolvedBarChart from "./component/Chart";
 import GeminiStream from "./component/SSE";
 import { useState } from "react";
+import ChatWithAi from "./component/SSE2";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello gemini')
   const [op, setOp] = useState('');
+  console.log(prompt)
   return (
     <BrowserRouter>
       <Routes>
@@ -31,7 +33,7 @@ function App() {
             </textarea>
             <button onClick={()=>{setPrompt(op)}} >Send</button>
            
-           
+            {/* <ChatWithAi></ChatWithAi> */}
            </div>
            } />
         <Route path="/admin/signup" element={<AdminSignup />} />
