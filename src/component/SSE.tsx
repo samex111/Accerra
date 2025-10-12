@@ -11,8 +11,11 @@ const GeminiStream = ({prompt}:{prompt:string}) => {
 
     // 2️⃣ Listen to incoming messages
     eventSource.onmessage = (event) => {
-      console.log(messages);
-
+      // console.log("Massages: ", JSON.parse(event.data));
+    // let parsed =  JSON.parse(event.data)
+    //   const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+    //   console.log("TExt: ",text)
+      
         // @ts-ignore
       setMessages((prev) => [...prev, event.data]); // append new chunk
     };
