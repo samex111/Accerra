@@ -25,35 +25,42 @@ export async function callGeminiStream(prompt: string, res: any) {
   const reader = response.body.getReader();
   console.log("Reader: ",reader)
   const decoder = new TextDecoder();
-  let fullText = '';
-
+  let buffer = '';
+  let a  = ''
   while(true){
     const {done ,value} = await reader.read();
-    const chunk = decoder.decode(value,{stream:true});
-    console.log("Chunk: ",chunk)
     if(done) break;
-    const lines = chunk.split('\n');
-    // lines.splice("{")
-    for(const line of lines){
-       if (line.trim() === '') continue; // skip empty lines
-      console.log("Line",line)
-    try {
-      // parse JSON if valid
-      const json = JSON.parse(line)
-      const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
-      console.log("TEXT: ",text)
+    buffer += decoder.decode(value,{stream:true});
 
-      // if (text) {
-      //    fullText =   new TextDecoder().decode(text);
-      //   console.log("Full text: ",fullText); // ✅ print only text part live
-      // }
+    while(true){
+      const lineEnd = buffer.indexOf('\n');
+      console.log(lineEnd)
+      if(lineEnd===-1){
+        console.log("max token iteration")
+        break;
+      }
+      const line = buffer.slice(0,lineEnd).trim();
+      console.log(line)
+      buffer = buffer.slice(lineEnd+1);
 
-    } catch (err) {
-      // Ignore incomplete JSON fragments
-      console.log("Error in catch:  ",err)
+      if(line.startsWith('data: ')){
+        const data = line.slice(6);
+         if(data==='[DONE]') break;
+          try {
+                    const parsed = JSON.parse(data);
+                    const content = parsed.choices?.[0]?.delta?.content.text[0];
+                    console.log("Content: ",content)
+                    if (content) {
+                    a+=content;
+                    }
+                  } catch (e) {
+                    // Ignore invalid JSON - this is common in SSE streams
+                    console.warn("Failed to parse SSE data:", data, e);
+                  }
+      }
     }
-    }
-     res.write(`data: ${JSON.stringify({ content: chunk})}\n\n`);
+    
+     res.write(`data: ${JSON.stringify({ content:a})}\n\n`);
 
   }
   res.write(`event: end\ndata: done\n\n`); 
