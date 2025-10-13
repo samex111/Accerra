@@ -26,43 +26,27 @@ export async function callGeminiStream(prompt: string, res: any) {
   console.log("Reader: ",reader)
   const decoder = new TextDecoder();
   let buffer = '';
-  let a  = ''
   while(true){
     const {done ,value} = await reader.read();
     if(done) break;
-    buffer = decoder.decode(value,{stream:true});
-    // let str = JSON.stringify(buffer)
-    // let parsed = JSON.parse(str)
-    while(true){
-      const lineEnd = buffer.indexOf('\n');
-      console.log(lineEnd)
-      if(lineEnd===-1){
-        console.log("max token iteration")
-        break;
-      }
-      const line = buffer.slice(0,lineEnd).trim();
-      console.log(line)
-      buffer = buffer.slice(lineEnd+1); 
+    buffer = JSON.stringify(decoder.decode(value,{stream:true}));
+    // console.log(buffer)
+      // console.log("Buffer: ",buffer)```
+ 
+    try{
+      let parsed = JSON.parse(buffer);
+         
+      // console.log("Parsed: ",content)
+      console.log(parsed)
+      res.write(`data: ${JSON.stringify({ content:parsed})}\n\n`);
 
-      if(line.startsWith('')){
-        const data = line.slice(6);
-         if(data==='[DONE]') break;
-          try {
-            console.log("DAta:  ",data) 
-                    const parsed = JSON.parse(data);
-                    const content = parsed.choices?.[0]?.delta?.content;
-                    console.log("Content: ",content)
-                    if (content) {
-                    a+=content;
-                    res.write(`data: ${JSON.stringify({ content:a})}\n\n`);
 
-                    }
-                  } catch (e) {
-                    // Ignore invalid JSON - this is common in SSE streams
-                    console.warn("Failed to parse SSE data:", data, e);
-                  }
-      }
-    }
+     }
+     catch(e){
+      console.log("In the catch: ", e)
+     }
+     
+    
     
 
   }
