@@ -30,8 +30,9 @@ export async function callGeminiStream(prompt: string, res: any) {
   while(true){
     const {done ,value} = await reader.read();
     if(done) break;
-    buffer += decoder.decode(value,{stream:true});
-
+    buffer = decoder.decode(value,{stream:true});
+    // let str = JSON.stringify(buffer)
+    // let parsed = JSON.parse(str)
     while(true){
       const lineEnd = buffer.indexOf('\n');
       console.log(lineEnd)
@@ -41,17 +42,20 @@ export async function callGeminiStream(prompt: string, res: any) {
       }
       const line = buffer.slice(0,lineEnd).trim();
       console.log(line)
-      buffer = buffer.slice(lineEnd+1);
+      buffer = buffer.slice(lineEnd+1); 
 
-      if(line.startsWith('data: ')){
+      if(line.startsWith('')){
         const data = line.slice(6);
          if(data==='[DONE]') break;
           try {
+            console.log("DAta:  ",data) 
                     const parsed = JSON.parse(data);
-                    const content = parsed.choices?.[0]?.delta?.content.text[0];
+                    const content = parsed.choices?.[0]?.delta?.content;
                     console.log("Content: ",content)
                     if (content) {
                     a+=content;
+                    res.write(`data: ${JSON.stringify({ content:a})}\n\n`);
+
                     }
                   } catch (e) {
                     // Ignore invalid JSON - this is common in SSE streams
@@ -60,7 +64,6 @@ export async function callGeminiStream(prompt: string, res: any) {
       }
     }
     
-     res.write(`data: ${JSON.stringify({ content:a})}\n\n`);
 
   }
   res.write(`event: end\ndata: done\n\n`); 
