@@ -1,32 +1,31 @@
 import { useEffect, useState } from "react";
 
-const GeminiStream = ({prompt}:{prompt:string}) => {
-  const [messages, setMessages] = useState([]);
+const GeminiStream = ({ prompt }: { prompt: string }) => {
+  const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    // 1️⃣ EventSource connection open
     const eventSource = new EventSource(
       `http://localhost:3000/api/v1/user/stream?prompt=${encodeURIComponent(prompt)}`
     );
 
-    // 2️⃣ Listen to incoming messages
     eventSource.onmessage = (event) => {
-      // console.log("Massages: ", JSON.parse(event.data));
-    // let parsed =  JSON.parse(event.data)
-    //   const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
-    //   console.log("TExt: ",text)
-      
-        // @ts-ignore
-      setMessages((prev) => [...prev, event.data]); // append new chunk
+      try {
+        const parsed = JSON.parse(event.data);
+        if (parsed.content) {
+          setMessages((prev) => [...prev, parsed.content]);
+        } else if (parsed.error) {
+          console.error("Server se error aaya:", parsed.error);
+        }
+      } catch (e) {
+        console.error("SSE data parse karne mein error:", e);
+      }
     };
 
-    // 3️⃣ Listen to end event
     eventSource.addEventListener("end", () => {
-      console.log("Stream ended.");
+      console.log("Stream khatam hua.");
       eventSource.close();
     });
 
-    // 4️⃣ Cleanup on component unmount
     return () => {
       eventSource.close();
     };

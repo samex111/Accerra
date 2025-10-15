@@ -11,7 +11,6 @@ import SelectSubject from "./component/SelectSubject";
 import SolvedBarChart from "./component/Chart";
 import GeminiStream from "./component/SSE";
 import { useState } from "react";
-import ChatWithAi from "./component/SSE2";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello gemini')

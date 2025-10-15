@@ -3,9 +3,8 @@ dotenv.config();
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY!;
 
-// ✅ Gemini stream function (SSE compatible)
 export async function callGeminiStream(prompt: string, res: any) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -14,7 +13,6 @@ export async function callGeminiStream(prompt: string, res: any) {
       contents: [{ parts: [{ text: prompt }] }],
     }),
   });
-  console.log(response.body);
 
   if (!response.ok || !response.body) {
     res.write(`event: error\ndata: ${JSON.stringify({ error: "Gemini stream failed" })}\n\n`);
@@ -23,34 +21,38 @@ export async function callGeminiStream(prompt: string, res: any) {
   }
 
   const reader = response.body.getReader();
-  console.log("Reader: ",reader)
   const decoder = new TextDecoder();
   let buffer = '';
-  while(true){
-    const {done ,value} = await reader.read();
-    if(done) break;
-    buffer = JSON.stringify(decoder.decode(value,{stream:true}));
-    // console.log(buffer)
-      // console.log("Buffer: ",buffer)```
- 
-    try{
-      let parsed = JSON.parse(buffer);
-         
-      // console.log("Parsed: ",content)
-      console.log(parsed)
-      res.write(`data: ${JSON.stringify({ content:parsed})}\n\n`);
 
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
 
-     }
-     catch(e){
-      console.log("In the catch: ", e)
-     }
-     
-    
-    
+    // Chunk ko decode karke buffer mein add karo
+    buffer += decoder.decode(value, { stream: true });
 
+    // Buffer mein se complete JSON object nikalo
+    let boundary;
+    while ((boundary = buffer.indexOf('\n')) !== -1 || buffer.length > 0) {
+      if (boundary === -1 && !done) break;
+
+      const chunk = boundary !== -1 ? buffer.slice(0, boundary) : buffer;
+      buffer = boundary !== -1 ? buffer.slice(boundary + 1) : '';
+
+      if (chunk.trim()) {
+        try {
+          const parsed = JSON.parse(chunk);
+          const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          if (text) {
+            res.write(`data: ${JSON.stringify({ content: text })}\n\n`);
+          }
+        } catch (e) {
+          console.error("Parsing error:", e);
+        }
+      }
+    }
   }
-  res.write(`event: end\ndata: done\n\n`); 
-  res.end();
 
+  res.write(`event: end\ndata: done\n\n`);
+  res.end();
 }
