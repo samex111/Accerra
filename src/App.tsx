@@ -13,7 +13,7 @@ import GeminiStream from "./component/SSE";
 import { useState } from "react";
 
 function App() {
-  const [prompt , setPrompt] = useState('Hello gemini')
+  const [prompt , setPrompt] = useState('How to become best dev')
   const [op, setOp] = useState('');
   console.log(prompt)
   return (
