@@ -13,25 +13,23 @@ import GeminiStream from "./component/SSE";
 import { useState } from "react";
 
 function App() {
-  const [prompt , setPrompt] = useState('How to become best dev')
+  const [prompt , setPrompt] = useState('Hello gemini')
   const [op, setOp] = useState('');
-  console.log(prompt)
+  console.log(prompt);
+  function handleEvent(event:any){
+      if(event.key === "Enter"){
+        setPrompt(op);
+        console.log("Enter press")
+        
+      }
+  }
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={
           <div><LandingPage />
 
-           <GeminiStream prompt = {prompt} />
-           <textarea       
-           placeholder="Ask something....."
-           onChange={(e)=>{setOp(e.target.value)}}
-           className="border-4 w-1/2 mx-2 mt-2 h-1/2 scroll-smooth"
-           
-           >
-            </textarea>
-            <button onClick={()=>{setPrompt(op)}} >Send</button>
-           
+          
             {/* <ChatWithAi></ChatWithAi> */}
            </div>
            } />
@@ -47,6 +45,16 @@ function App() {
           <div>
             <SelectSubject />  
             <SolvedBarChart  />
+             <GeminiStream prompt = {prompt} />
+           <textarea  onKeyDown={handleEvent}     
+           placeholder="Ask something....."
+           onChange={(e)=>{setOp(e.target.value)}}
+           className="border-4 w-1/2 mx-2 mt-2 h-1/2 scroll-smooth"
+           
+           >
+            </textarea>
+            <button id="btn"  onClick={()=>{setPrompt(op)}} >Send</button>
+           
           </div>
          
         } />
