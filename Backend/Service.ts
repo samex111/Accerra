@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
-import {  DataContext } from "./src/component/StudentContext";
 import { useContext } from "react";
 
 dotenv.config();
@@ -13,13 +12,11 @@ export async function callGeminiStream(prompt: string, res: any) {
     model: "gemini-2.5-flash", 
     contents: prompt, 
   });
-  const dataContext = useContext(DataContext)
 
 
     for await (const chunk of response) {
       console.log(chunk.text);
       res.write(`data: ${JSON.stringify({ content: chunk.text })}\n\n`);
-            dataContext?.setmessages(chunk.text);
 
 
     }
