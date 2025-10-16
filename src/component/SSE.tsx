@@ -23,7 +23,7 @@ const GeminiStream = ({prompt}:{prompt:string}) => {
     // Also, make sure you append the PARSED data to your messages
     // Remove the @ts-ignore if you define your types correctly
     // @ts-ignore
-    setMessages((prev) => [...prev, parsedData]); // append new chunk (
+    setMessages((prev) => [...prev, parsedData.content]); // append new chunk (
 
   } catch (error) {
     console.error("Failed to parse event data as JSON:", error, event.data);
