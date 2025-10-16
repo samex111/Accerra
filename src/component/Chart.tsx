@@ -30,6 +30,8 @@ interface DailySolved {
 export default function SolvedBarChart() {
   const studentContext = useContext(StudentContext); 
   const studentID =  studentContext?.studentId;
+  const id = localStorage.getItem('StudentID');
+  console.log(id)
   // console.log("Student Id",studentID)
   // useEffect(()=>{
   //   console.log(studentID)
@@ -47,7 +49,7 @@ export default function SolvedBarChart() {
 
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/solved/daily/${studentID}` , {
+    fetch(`http://localhost:3000/api/v1/user/solved/daily/${id}` , {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" }
@@ -86,7 +88,7 @@ export default function SolvedBarChart() {
           ]
         });
       });
-  }, [studentID]);
+  }, [id]);
 
   const options: ChartOptions<"bar"> = {
     responsive: true,

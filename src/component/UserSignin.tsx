@@ -26,7 +26,7 @@ export default function Signin() {
 
             studentContext?.setStudentId(data.studentId);
 
-
+             localStorage.setItem("StudentID", data.studentId)
             if (res.ok) {
                 navigate('/user/select/subject')
                 alert('Signin successful');
