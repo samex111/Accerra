@@ -156,7 +156,7 @@ export default function Questions(props: any) {
         q.answer.every((ans) => selected.includes(ans));
       if (isCorrect) correctCount++;
 
-       handleAttemtQuestion(
+      handleAttemtQuestion(
         q.question,
         selected,
         q.questionDiagram,

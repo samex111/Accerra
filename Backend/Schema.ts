@@ -67,7 +67,7 @@ const notesSchema = new Schema({
 
 export const NoteModel = mongoose.model("notes", notesSchema);
 export const TodoModel = mongoose.model("todo", todosSchema);
-export const attemtQuestionsModel = mongoose.model("attemptquestion", attemtQuestionsSchema);
+export const attemtQuestionsModel = mongoose.model("attemptquestions", attemtQuestionsSchema);
 export const QuestionModel = mongoose.model("questions", questionSchema);
 export const UserModel = mongoose.model('users', userSchema);
 export const adminModel = mongoose.model('admin', adminSchema);

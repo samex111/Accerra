@@ -196,7 +196,7 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
 
     const requireBody = z.object({
         question: z.string(),  
-            questionDiagram: z.string().optional(),
+        questionDiagram: z.string().optional(),
         status: z.string(),
         userAnswer:z.array(z.string()),
         answer: z.array(z.string()),

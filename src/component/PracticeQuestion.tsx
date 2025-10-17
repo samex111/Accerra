@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
-import SquareBox from "../component/QuestionSquareBox";
 
 export default function PracticeQuestion(props: any) {
   interface Question {
@@ -24,8 +23,6 @@ export default function PracticeQuestion(props: any) {
   const question = questions[index];
 
 
-  // Answers object: { questionId: [selectedOptions] }
-
   const [selected,setSelected] = useState<string[]>([]);
 
 
@@ -48,22 +45,16 @@ export default function PracticeQuestion(props: any) {
 
 
   // handle option change
-  const handleChange = (e: any, questionId: string, qIndex: number) => {
+  const handleChange = (e: any ) => {
     const value = e.target.value;
    
-        
-    //  }
     if(e.target.checked){
       setSelected([...selected,value])
     }else{
       const updateItems =  selected.filter((v)=>v!==value);
       console.log("updated Item: ", updateItems)
       setSelected(updateItems);
-    
     }
-    
-
-   
 
   };
   useEffect(()=>{
@@ -71,42 +62,34 @@ export default function PracticeQuestion(props: any) {
   },[index])
          console.log("Selected: ",selected)    
         
-   
 
 
   let correctCount = 0;
   const handleSubmit = async () => {
-    for (let i = 0; i < questions.length; i++) {
-      const q = questions[i];
-      const selected1 = selected || [];
-      const isCorrect =
-        q.answer.length === selected1.length &&
-        q.answer.every((ans) => selected1.includes(ans));
-      if (isCorrect) correctCount++;
+  
+    // muujhe  hya jrna hai 
+    // mujhe submit karna hai mene jo answres select kiya hai 
+    // mujhe check karna padega selected and answres ke between;
+       const isCorrect = question.answer.length === selected.length && question.answer.every((ans)=>selected.includes(ans))
 
-       handleAttemtQuestion(
-        q.question,
-        selected1,
-        q.questionDiagram,
-        q.answer,
-        q.subject,
+     handleAttemtQuestion(
+        question.question,
+        question.questionDiagram,
+        selected,
+        question.answer,
+        question.subject,
         isCorrect ? "solved" : "attempt",
-        q.tags,
+        question.tags,
         "2m"
       );
-
-    }
-    alert(`you got ${correctCount} out of ${questions.length}  correct!`)
-
-
     // 🗑️ Clear localStorage after submit
     localStorage.removeItem("userAnswers");
   };
 
   async function handleAttemtQuestion(
     question: string,
-    userAnswer: string[],
     questionDiagram: string,
+    userAnswer: string[],
     answer: string[],
     subject: string,
     status: string,
@@ -124,7 +107,7 @@ export default function PracticeQuestion(props: any) {
             question,
             questionDiagram,
             userAnswer,
-            selected,
+            answer,
             subject,
             status,
             tags,
@@ -132,7 +115,7 @@ export default function PracticeQuestion(props: any) {
           })
         }
       );
-      const data = res.json();
+      const data = await res.json();
       console.log("Data is :   ", data);
     } catch (e) {
       console.log(e);
@@ -174,8 +157,8 @@ export default function PracticeQuestion(props: any) {
                         id={`q-${question._id}-${i}`}
                         name={`q-${question._id}`}
                         value={opt}
-                        checked={answers[question._id]?.includes(opt) || false}
-                        onChange={(e) => handleChange(e, question._id, index)}
+                        checked={selected.includes(opt) || false}
+                        onChange={(e) => handleChange(e)}
                         className="peer hidden"
                       />
                       <label
