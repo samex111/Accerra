@@ -25,7 +25,6 @@ export default function PracticeQuestion(props: any) {
 
 
   // Answers object: { questionId: [selectedOptions] }
-  const [answers, setAnswers] = useState<{ [key: string]: string[] }>({});
 
   const [selected,setSelected] = useState<string[]>([]);
 
@@ -49,44 +48,45 @@ export default function PracticeQuestion(props: any) {
 
 
   // handle option change
-  
   const handleChange = (e: any, questionId: string, qIndex: number) => {
     const value = e.target.value;
-      setSelected([...selected,value]);
+   
+        
+    //  }
+    if(e.target.checked){
+      setSelected([...selected,value])
+    }else{
+      const updateItems =  selected.filter((v)=>v!==value);
+      console.log("updated Item: ", updateItems)
+      setSelected(updateItems);
+    
+    }
+    
 
-    setAnswers((prev) => {
-      const prevAns = prev[questionId] || [];
-      let updated: string[];
-      if (e.target.checked) {
-        updated = [...prevAns, value];
-      } else {
-        updated = prevAns.filter((v) => v !== value);
-      }
- 
+   
 
-      // console.log("in the handleCHange: ",questionId)
-      return { ...prev, [questionId]: updated };
-    });
   };
-  console.log("Answers: ",answers)
-  console.log("Selected: ",selected)
-
-
+  useEffect(()=>{
+    setSelected([])
+  },[index])
+         console.log("Selected: ",selected)    
+        
+   
 
 
   let correctCount = 0;
   const handleSubmit = async () => {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
-      const selected = answers[q._id] || [];
+      const selected1 = selected || [];
       const isCorrect =
-        q.answer.length === selected.length &&
-        q.answer.every((ans) => selected.includes(ans));
+        q.answer.length === selected1.length &&
+        q.answer.every((ans) => selected1.includes(ans));
       if (isCorrect) correctCount++;
 
        handleAttemtQuestion(
         q.question,
-        selected,
+        selected1,
         q.questionDiagram,
         q.answer,
         q.subject,
@@ -124,7 +124,7 @@ export default function PracticeQuestion(props: any) {
             question,
             questionDiagram,
             userAnswer,
-            answer,
+            selected,
             subject,
             status,
             tags,
@@ -180,7 +180,7 @@ export default function PracticeQuestion(props: any) {
                       />
                       <label
                         htmlFor={`q-${question._id}-${i}`}
-                        className="flex items-center gap-3 w-full p-4 mb-3 text-gray-700 bg-white border-2 border-gray-200 rounded-lg cursor-pointer transition-colors  hover:bg-gray-50 dark:bg-white dark:text-black dark:border-gray-500 dark:hover:bg-gray-300 peer-checked:bg-blue-300 peer-checked:border-blue-300"
+                        className="flex items-center gap-3 w-full p-4 mb-3 text-gray-700 bg-white border-2 border-gray-200  rounded-lg cursor-pointer transition-colors  hover:bg-gray-50 dark:bg-white dark:text-black dark:border-gray-500 dark:hover:bg-gray-300 peer-checked:bg-blue-300 peer-checked:border-blue-300"
                       >
                         <span className="peer-checked:text-blue-600">{opt}</span>
                       </label>
@@ -196,7 +196,7 @@ export default function PracticeQuestion(props: any) {
             Submit
           </button> */}
               </div>
-            )}
+            )}  
           </div>
           <hr className="border-t-2 border-gray-400"></hr>
           <button
