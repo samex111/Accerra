@@ -192,8 +192,7 @@ userRouter.post("/gemini", async (req, res) => {
 });
 
 userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
-
-
+     const id = req.userId;
     const requireBody = z.object({
         question: z.string(),  
         questionDiagram: z.string().optional(),
@@ -227,7 +226,6 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
             timeTaken,
             student: req.userId 
         })
-
         res.status(200).json({
             msg:"question created succefully"
         })
