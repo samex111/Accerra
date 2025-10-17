@@ -295,9 +295,17 @@ userRouter.post("/notes",userMiddleware,async (req,res)=>{
         })
     }
 })
-userRouter.get('/todo', async (req:Request,res:Response) =>{
-    
-
+userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
+    const userId = req.userId;
+    // hame ye karna hai ki date wise todo show karna hai 
+    try{
+        const response = await TodoModel.find({});
+        console.log(response);
+         res.status(200).json(response)
+    }catch(e){
+        console.log(e)
+        res.status(400).json("Todo not found: "+e)
+    }
 })
 userRouter.delete("/todo/delete/:id", async (req , res) =>{
     const {id} = req.params; 
