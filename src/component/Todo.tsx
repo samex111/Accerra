@@ -11,9 +11,9 @@ export default function Todo() {
                     'Content-Type': 'application/json'
                 },
                 credentials: "include",
-                body: JSON.stringify({ todo })
+                body: JSON.stringify({ todo })                      
             });
-            const data = res.json();
+            const data = await res.json();    
             console.log(data);
         } catch (e) {
             console.log(e)

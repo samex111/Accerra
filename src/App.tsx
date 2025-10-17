@@ -11,6 +11,7 @@ import SelectSubject from "./component/SelectSubject";
 import SolvedBarChart from "./component/Chart";
 import GeminiStream from "./component/SSE";
 import { useState } from "react";
+import PracticeQuestion from "./component/PracticeQuestion";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello gemini')
@@ -38,7 +39,7 @@ function App() {
         <Route path="/user/signup" element={<Signup />} />
         <Route path="/user/signin" element={<Signin />} />
         <Route path="/admin/addQuestion" element={<AddQuestion />} />
-        <Route path="/questions/maths" element={<Questions subj="MATHS" mode="practice" />} />
+        <Route path="/questions/maths" element={<PracticeQuestion subj="MATHS" mode="practice" />} />
         <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="practice" />} />
         <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice" />} />
         <Route path="/user/select/subject" element={

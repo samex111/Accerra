@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
 import SquareBox from "../component/QuestionSquareBox";
 
-export default function Questions(props: any) {
+export default function PracticeQuestion(props: any) {
   interface Question {
     questionDiagram: string;
     _id: string;
@@ -17,23 +17,6 @@ export default function Questions(props: any) {
   }
 
 
-  type Status = "notVisited" | "notAnswered" | "answered" | "review" | "answeredReview";
-  const [answered, setAnswered] = useState(0);
-  const [notAnswered, setNotAnswered] = useState(0);
-  const [status, setStatus] = useState<Status[]>([]);
-
-  function markForReview(qIndex: number) {
-    setStatus((prev) => {
-      const newStatus = [...prev];
-      const current = newStatus[qIndex];
-      if (current === "answered") {
-        newStatus[qIndex] = "answeredReview";
-      } else {
-        newStatus[qIndex] = "review";
-      }                                                              
-      return newStatus;
-    });
-  }
 
 
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -43,55 +26,11 @@ export default function Questions(props: any) {
 
   // Answers object: { questionId: [selectedOptions] }
   const [answers, setAnswers] = useState<{ [key: string]: string[] }>({});
- const [remainingTime, setRemainingTime] = useState<number | null>(null);
 
-  // Restore data on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("userAnswers");
-    if (!saved) return;
+  const [selected,setSelected] = useState<string[]>([]);
 
-    const parsed = JSON.parse(saved);
-    const expiry = parsed.timestamp + 3 * 60 * 60 * 1000;
 
-    if (Date.now() < expiry) {
-      setAnswers(parsed.data);
-      setRemainingTime(expiry - Date.now()); // set initial remaining time
-    } else {
-      localStorage.removeItem("userAnswers");
-    }
-  }, []);
 
-  // Save answers whenever they change
-  useEffect(() => {
-    localStorage.setItem(
-      "userAnswers",
-      JSON.stringify({ data: answers, timestamp: Date.now() })
-    );
-    setRemainingTime(3 * 60 * 60 * 1000); // reset timer on every save
-  }, []);
-
-  // Countdown effect
-  useEffect(() => {
-    if (remainingTime === null) return;
-
-    const interval = setInterval(() => {
-      setRemainingTime((prev) => (prev && prev > 1000 ? prev - 1000 : 0));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [remainingTime]);
-
-  // Format milliseconds → hh:mm:ss
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-    return `${h}h ${m}m ${s}s`;
-  };
-  let d = Date.now();
-  let a = Math.floor(d/1000)
-  console.log(a)
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/v1/user/question?subject=` + props.subj, {
@@ -102,8 +41,7 @@ export default function Questions(props: any) {
       .then((res) => res.json())
       .then((data) => {
         setQuestions(data.importQuestions)
-        setStatus(Array(data.importQuestions.length).fill("notVisited"));
-
+       
       })
       .catch((err) => console.error(err));
 
@@ -111,8 +49,10 @@ export default function Questions(props: any) {
 
 
   // handle option change
+  
   const handleChange = (e: any, questionId: string, qIndex: number) => {
     const value = e.target.value;
+      setSelected([...selected,value]);
 
     setAnswers((prev) => {
       const prevAns = prev[questionId] || [];
@@ -122,27 +62,15 @@ export default function Questions(props: any) {
       } else {
         updated = prevAns.filter((v) => v !== value);
       }
-      setStatus((prev) => {
-        const newStatus = [...prev];
-        if (updated.length > 0) {
-          newStatus[qIndex] = "answered";
-          //  setAnswered((q)=>q+1)
-          //  setNotAnswered((q)=>q-1)
-
-
-        } else {
-          newStatus[qIndex] = "notAnswered";
-
-        }
-
-
-        return newStatus;
-      });
+ 
 
       // console.log("in the handleCHange: ",questionId)
       return { ...prev, [questionId]: updated };
     });
   };
+  console.log("Answers: ",answers)
+  console.log("Selected: ",selected)
+
 
 
 
@@ -210,31 +138,6 @@ export default function Questions(props: any) {
       console.log(e);
     }
   }
-  const [markedForReview, setMarkedForReview] = useState(0);
-useEffect(() => {
-  let answeredCount = 0;
-  let notAnsweredCount = 0;
-  let reviewCount = 0;
-
-  for (let i = 0; i < status.length; i++) {
-    if (status[i] === "answered") {
-      answeredCount++;
-    } 
-    else if (status[i] === "notAnswered") {
-      notAnsweredCount++;
-    } 
-    else if (status[i] === "review") {
-      reviewCount++;
-    }
-  }
-
-  setAnswered(answeredCount);
-  setNotAnswered(notAnsweredCount);
-  setMarkedForReview(reviewCount);
-
-}, [status]); 
-
-
 
 
   // 
@@ -243,12 +146,7 @@ useEffect(() => {
       <div className="flex justify-center gap-2 mt-2">
 
         <div className="w-1/2">
-         <h1>Answers Auto-Save with Expiry</h1>
-      {remainingTime !== null && remainingTime > 0 ? (
-        <p>Expires in: {formatTime(remainingTime)}</p>
-      ) : (
-        <p>No saved answers or expired</p>
-      )}
+     
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
           <div className="h-96  overflow-y-scroll">
             {question && (
@@ -316,33 +214,15 @@ useEffect(() => {
             Next
           </button>
 
-          <button className="py-2 px-4 border mx-2  " onClick={() => markForReview(index)}>Mark for review</button>
 
           <button className="border px-4 py-2 mx-2" onClick={handleSubmit}  >Submit test</button>
         </div>
-        <div className="grid grid-cols-6 gap-2 w-[30vw] h-[30vh] bg-gray-100 p-3 rounded-sm overflow-y-scroll">
-          {questions.map((_, i) => (
-            <SquareBox
-              key={i}
-              num={i + 1}
-              state={status[i]}
-              onClick={() => setIndex(i)}
-            />
-          ))}
-        </div>
+      
 
       </div>
-      <div>Ansewed: {answered} , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
     </div>
   );
 
 
 
 }
-// https://www.upwork.com/jobs/~021968703455552133869
-// https://www.upwork.com/jobs/~021963284564381569506
-// https://www.upwork.com/jobs/~021958751092249657659
-
-//  6:30 to 8:10 problem solve dsa + read more depth about core arrays linked stacks hashmap
-//  3:00 to 4:30 understanding syntax mtlb reading more code + planning what feature to add
-//  6:00 to 10:00 code building projects  
