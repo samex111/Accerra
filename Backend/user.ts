@@ -295,6 +295,10 @@ userRouter.post("/notes",userMiddleware,async (req,res)=>{
         })
     }
 })
+userRouter.get('/todo', async (req:Request,res:Response) =>{
+    
+
+})
 userRouter.delete("/todo/delete/:id", async (req , res) =>{
     const {id} = req.params; 
     try{

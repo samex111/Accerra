@@ -12,6 +12,7 @@ import SolvedBarChart from "./component/Chart";
 import GeminiStream from "./component/SSE";
 import { useState } from "react";
 import PracticeQuestion from "./component/PracticeQuestion";
+import Todo from "./component/Todo";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello gemini')
@@ -44,7 +45,8 @@ function App() {
         <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice" />} />
         <Route path="/user/select/subject" element={
           <div>
-            <SelectSubject />  
+            <SelectSubject />
+            <Todo></Todo>
             <SolvedBarChart  />
              <GeminiStream prompt = {prompt} />
            <textarea  onKeyDown={handleEvent}     

@@ -48,7 +48,7 @@ const attemtQuestionsSchema = new Schema({
         required: true
     }
 }, { timestamps: true });
-const todosSchema = new Schema({
+const todosSchema = new Schema({    
     todo: { type: String, required: true },
     student: {
         type: mongoose.Schema.Types.ObjectId,
