@@ -299,7 +299,28 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
     const userId = req.userId;
     // hame ye karna hai ki date wise todo show karna hai 
     try{
-        const response = await TodoModel.find({});
+        const response = await TodoModel.aggregate([
+           // Step 1: Filter by student (convert string to ObjectId)         
+      { $match: { student: new mongoose.Types.ObjectId(userId) } },
+
+      // Step 2: Extract only the date part from createdAt
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+        }
+      },
+
+      // Step 3: Group by date and count
+      {
+        $group: {
+          _id: "$date",
+          totalSolved: { $sum: 1 }
+        }
+      },
+
+      // Step 4: Sort by date ascending
+      { $sort: { _id: 1 } }
+        ])
         console.log(response);
          res.status(200).json(response)
     }catch(e){
@@ -470,9 +491,9 @@ userRouter.post('/chat1', async (req:Request, res:Response) => {
 
 // API to get daily solved counts for a student
 userRouter.get("/solved/daily/:studentId",userMiddleware, async (req:Request, res:Response) => {
-  try {
-    const studentId = req.params.studentId;
-
+  try { 
+      
+      const studentId = req.params.studentId;
     const result = await attemtQuestionsModel.aggregate([
       // Step 1: Filter by student (convert string to ObjectId)         
       { $match: { student: new mongoose.Types.ObjectId(studentId) } },
