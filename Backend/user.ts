@@ -305,8 +305,9 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
 
       // Step 2: Extract only the date part from createdAt
       {
-        $project: {
-          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+        $project: {                     
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            todoss: { $toString: "$todo" } 
         }
       },
 
@@ -314,7 +315,9 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
       {
         $group: {
           _id: "$date",
-          todos: { $sum: 1 }
+          todos: { $sum: 1 },
+         todoss: { $push: "$todoss" } 
+
         }
       },
 
