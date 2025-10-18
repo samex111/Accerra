@@ -35,7 +35,6 @@ export default function Todo() {
             })
             .catch((e)=>{console.error(e)})
     },[todo])
-     console.log(getTodo)
     return (
         <>
             <div className="h-10 w-[fit]">
@@ -43,7 +42,7 @@ export default function Todo() {
                  <button onClick={handleAdd}>Add</button>
             </div>
             <div>
-                {/* {getTodo} */}
+                {getTodo.map(item=>item.todoss)}
             </div>
         </>
 )
