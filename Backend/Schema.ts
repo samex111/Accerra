@@ -55,7 +55,7 @@ const todosSchema = new Schema({
         ref: 'users',
         required: true
     }
-})
+},{ timestamps: true })
 const notesSchema = new Schema({
     note: [{ type: String, required: true }],
     student: {
