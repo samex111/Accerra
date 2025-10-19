@@ -20,11 +20,14 @@ export default function Todo() {
   }
    const a  = getTodo.map(item=>item.id)
    console.log(a)
-
+   const d  = a[0];
+  //  console.log("d:",d[0]) 
+  console.log(todo)
   const handleAdd = async () => {
     try {
       await fetch('http://localhost:3000/api/v1/user/todo', {
         method: "POST",
+        headers:{'Content-Type':'application/json'},
         credentials: "include",
         body: JSON.stringify({ todo })
       });
@@ -34,13 +37,14 @@ export default function Todo() {
       console.log(e)
     }
   }
-  const handleDelete = async () =>{
+  const handleDelete = async (id:string) =>{
     try{
-        await fetch(`http://localhost:3000/api/v1/user/todo/68f2fb3a4e1d1af9ec47fb5b`, {
+        await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
         method:"DELETE",
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
         })
+         fetchTodos();
     }catch(e){
   console.log(e)
     }
@@ -48,7 +52,6 @@ export default function Todo() {
 
   useEffect(() => {
     fetchTodos();
-  handleDelete();
   }, []);
 
   return (
@@ -66,7 +69,7 @@ export default function Todo() {
         {getTodo.map((item, idx) => (
           <div key={idx}>
             {item.todoss.map((t: string, i: number) => (
-              <p key={i}>{t}</p>
+              <p key={i}>{t} <button onClick={()=>handleDelete(d[i])}>Delete</button></p>
             ))}
           </div>
         ))}
