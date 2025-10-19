@@ -303,11 +303,11 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
            // Step 1: Filter by student (convert string to ObjectId)         
       { $match: { student: new mongoose.Types.ObjectId(userId) } },
 
-      // Step 2: Extract only the date part from createdAt
       {
         $project: {                     
           date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            todoss: { $toString: "$todo" } 
+            todoss: { $toString: "$todo" } ,
+          id:{$toString : "$_id"}
         }
       },
 
@@ -316,10 +316,11 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
         $group: {
           _id: "$date",
           todos: { $sum: 1 },
-         todoss: { $push: "$todoss" } 
+         todoss: { $push: "$todoss" } ,
+         id: { $push: "$id" } 
 
         }
-      },
+      }, 
 
       // Step 4: Sort by date ascending
       { $sort: { _id: 1 } }
@@ -331,7 +332,7 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
         res.status(400).json("Todo not found: "+e)
     }
 })
-userRouter.delete("/todo/delete/:id", async (req , res) =>{
+userRouter.delete("/todo/:id", userMiddleware,async (req , res) =>{
     const {id} = req.params; 
     try{
     const deleteTodo = await TodoModel.findByIdAndDelete(id);

@@ -18,12 +18,13 @@ export default function Todo() {
       console.error(e);
     }
   }
+   const a  = getTodo.map(item=>item.id)
+   console.log(a)
 
   const handleAdd = async () => {
     try {
       await fetch('http://localhost:3000/api/v1/user/todo', {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
         credentials: "include",
         body: JSON.stringify({ todo })
       });
@@ -33,9 +34,21 @@ export default function Todo() {
       console.log(e)
     }
   }
+  const handleDelete = async () =>{
+    try{
+        await fetch(`http://localhost:3000/api/v1/user/todo/68f2fb3a4e1d1af9ec47fb5b`, {
+        method:"DELETE",
+        headers: { 'Content-Type': 'application/json' },
+        credentials: "include",
+        })
+    }catch(e){
+  console.log(e)
+    }
+  }
 
   useEffect(() => {
     fetchTodos();
+  handleDelete();
   }, []);
 
   return (
