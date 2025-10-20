@@ -1,114 +1,149 @@
 import { useEffect, useState } from "react";
 
+// Define TypeScript interface for todo items
+interface TodoItem {
+  id: string[];
+  todoss: string[];
+  _id: string;
+}
+
 export default function Todo() {
   const [todo, setTodo] = useState("");
-  const [getTodo, setGetTodo] = useState<any[]>([]);
-  const [editTodo,setEditTodo] = useState('');
-  const [isedit,setIsEdit] = useState(false);
+  const [getTodo, setGetTodo] = useState<TodoItem[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+
   const fetchTodos = async () => {
     try {
       const res = await fetch('http://localhost:3000/api/v1/user/todo', {
-      method: 'GET',
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
       });
-      console.log(res)
       const data = await res.json();
       setGetTodo(data);
     } catch (e) {
       console.error(e);
     }
-  }
-   const a  = getTodo.map(item=>item.id)
-   console.log(a)
-   const d  = a[0];
-  //  console.log("d:",d[0]) 
-  console.log(todo)
+  };
+
   const handleAdd = async () => {
     try {
       await fetch('http://localhost:3000/api/v1/user/todo', {
         method: "POST",
-        headers:{'Content-Type':'application/json'},
-        credentials: "include",
-        body: JSON.stringify({ todo })
-      });
-      setTodo(""); // clear input
-      fetchTodos(); // update UI
-    } catch (e) {
-      console.log(e)
-    }
-  }
-  function edit(editText:string){
-    
-    return(
-      <>
-      </>
-    )
-  }
-  const handleDelete = async (id:string) =>{
-    try{
-        await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
-        method:"DELETE",
-        // headers: { 'Content-Type': 'application/json' },
-        credentials: "include",
-        })
-         fetchTodos();
-    }catch(e){
-  console.log(e)
-    }
-  }
-  const handleEdit = async (id:string) =>{
-    try{
-        await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
-        method:"PUT",
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
-        })
-         fetchTodos();
-    }catch(e){
-  console.log(e)
+        body: JSON.stringify({ todo }),
+      });
+      setTodo(""); // Clear input
+      fetchTodos(); // Update UI
+    } catch (e) {
+      console.log(e);
     }
-  }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      fetchTodos();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleEdit = async (id: string, newTodo: string) => {
+    try {
+      await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json' },
+        credentials: "include",
+        body: JSON.stringify({ todo: newTodo }),
+      });
+      setEditingId(null);
+      setEditText("");
+      fetchTodos();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const startEditing = (id: string, currentTodo: string) => {
+    setEditingId(id);
+    setEditText(currentTodo);
+  };
 
   useEffect(() => {
     fetchTodos();
   }, []);
-  console.log(isedit)
 
   return (
-    <>
-      <div className="h-10 w-[fit]">
-        <input 
-          placeholder="add todo" 
-          type="text" 
-          value={todo} 
+    <div className="p-4">
+      <div className="flex gap-2 mb-4">
+        <input
+          placeholder="Add todo"
+          type="text"
+          value={todo}
           onChange={(e) => setTodo(e.target.value)}
+          className="border p-2 rounded"
         />
-        <button onClick={handleAdd}>Add</button>
+        <button
+          onClick={handleAdd}
+          className="bg-blue-500 text-white p-2 rounded"
+        >
+          Add
+        </button>
       </div>
       <div>
         {getTodo.map((item, idx) => (
-          <div key={idx}>
+          <div key={idx} className="mb-2">
             {item.todoss.map((t: string, i: number) => (
-              <p key={i}>{t}
-               <button className="p-2" onClick={()=>handleDelete(d[i])}>delete</button>
-               <button onClick={()=>setIsEdit(!isedit)}>edit</button>
-               {
-                isedit && (
-              <input type="text" value={t} onChange={(e)=>setEditTodo(e.target.value)}/>
-                    
-                  
-                )
-               }
-               </p>
-                            
-              )
-              
-            )}
+              <div key={i} className="flex items-center gap-2">
+                {editingId === item.id[i] ? (
+                  <>
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      className="border p-1 rounded"
+                    />
+                    <button
+                      onClick={() => handleEdit(item.id[i], editText)}
+                      className="bg-green-500 text-white p-1 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="bg-gray-500 text-white p-1 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>{t}</p>
+                    <button
+                      onClick={() => startEditing(item.id[i], t)}
+                      className="bg-yellow-500 text-white p-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id[i])}
+                      className="bg-red-500 text-white p-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         ))}
-
       </div>
-    </>
-  )
+    </div>
+  );
 }
