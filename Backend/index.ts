@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors({
    origin: "http://localhost:5173",   // frontend ka exact origin
   credentials: true  ,
-  methods: ["GET","DELETE","POST"],
+  methods: ["GET","DELETE","POST","PUT"],
    allowedHeaders: ["Content-Type"]
 }))
 app.use(cookieParser());

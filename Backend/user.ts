@@ -249,7 +249,9 @@ userRouter.post("/todo", userMiddleware, async (req,res)=>{
     
     }
     const {todo} = parseData.data;  
-
+    //  if(todo.trim()===""){
+    //     return
+    //  }
     try{
         await TodoModel.create({
             todo,
@@ -342,7 +344,7 @@ userRouter.delete("/todo/:id", userMiddleware,async (req , res) =>{
     res.status(200).json({msg:"todo delete sucessfully"});
 
    }catch(e){
-    res.status(400).json({
+    res.status(400).json({ 
         msg:"error: " +e
     })
    }
@@ -381,15 +383,17 @@ userRouter.put("/note/update/:id", async (req , res) =>{
    }
 
 })
-userRouter.put("/todo/update/:id", async (req , res) =>{
+userRouter.put("/todo/:id", async (req , res) =>{
     const {id} = req.params; 
-    const updateTodo = req.body.updateTodo;
+    const todo = req.body.todo;
     try{
-    const updateData = await TodoModel.findByIdAndUpdate(id, updateTodo , {new:true});
+    const updateData = await TodoModel.findByIdAndUpdate(id, {todo:todo} , {new:true});
     if(!updateData){
         res.status(400).json({msg:"todo not found "})
     }
-    res.status(200).json({msg:"todo update sucessfully"});
+    console.log(updateData)
+    console.log(todo)
+    res.status(200).json({msg:"todo update sucessfully" , updateData});
 
    }catch(e){
     res.status(400).json({

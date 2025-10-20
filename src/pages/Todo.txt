@@ -1,20 +1,11 @@
-what i have to build -- 
-when user click to submit , all selected options (question wise) are send to  backend for chekcking 
-  [
-    ['0' , ['A','C']],
-    ['1' , ['D']],
-    ['2' , ['B']],
-    ['3' , ['A']],
-    ['4' , ['C']],
-    ['5' , ['D','B']]
-    ['6' , ['B']],
-    ['7' , ['A']],
- ]
-  ------
- [Submit]
-  ------
+problem --
+when we click to edit button
+1. a input box appear to selected todo
+3. and a save button 
+4. when user click to save it save in backend 
 
-  Solution ---->
-  [
-    [key , [opt]]
-  ]
+solution -- 
+1. we have to track what todo user select when user click to button
+2. uss selected todo par input box appear karenge (with old text): solution-- through conditional rendering 
+3. we have to create  a save button jo onClick karta hai handleSave() function ko 
+4. we have to create a cancel button so user cancel edit : solution -- conditional rendredering false 

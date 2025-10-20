@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 export default function Todo() {
   const [todo, setTodo] = useState("");
   const [getTodo, setGetTodo] = useState<any[]>([]);
-
+  const [editTodo,setEditTodo] = useState('');
+  const [isedit,setIsEdit] = useState(false);
   const fetchTodos = async () => {
     try {
       const res = await fetch('http://localhost:3000/api/v1/user/todo', {
-        method: 'GET',
+      method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
       });
@@ -37,10 +38,29 @@ export default function Todo() {
       console.log(e)
     }
   }
+  function edit(editText:string){
+    
+    return(
+      <>
+      </>
+    )
+  }
   const handleDelete = async (id:string) =>{
     try{
         await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
         method:"DELETE",
+        // headers: { 'Content-Type': 'application/json' },
+        credentials: "include",
+        })
+         fetchTodos();
+    }catch(e){
+  console.log(e)
+    }
+  }
+  const handleEdit = async (id:string) =>{
+    try{
+        await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
+        method:"PUT",
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
         })
@@ -53,6 +73,7 @@ export default function Todo() {
   useEffect(() => {
     fetchTodos();
   }, []);
+  console.log(isedit)
 
   return (
     <>
@@ -69,10 +90,24 @@ export default function Todo() {
         {getTodo.map((item, idx) => (
           <div key={idx}>
             {item.todoss.map((t: string, i: number) => (
-              <p key={i}>{t} <button onClick={()=>handleDelete(d[i])}>Delete</button></p>
-            ))}
+              <p key={i}>{t}
+               <button className="p-2" onClick={()=>handleDelete(d[i])}>delete</button>
+               <button onClick={()=>setIsEdit(!isedit)}>edit</button>
+               {
+                isedit && (
+              <input type="text" value={t} onChange={(e)=>setEditTodo(e.target.value)}/>
+                    
+                  
+                )
+               }
+               </p>
+                            
+              )
+              
+            )}
           </div>
         ))}
+
       </div>
     </>
   )
