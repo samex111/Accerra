@@ -15,7 +15,7 @@ import PracticeQuestion from "./component/PracticeQuestion";
 import Todo from "./component/Todo";
 
 function App() {
-  const [prompt , setPrompt] = useState('Hello gemini')
+  const [prompt , setPrompt] = useState('Hello how to be crack dev ans in 2 line ')
   const [op, setOp] = useState('');
   console.log(prompt);
   function handleEvent(event:any){

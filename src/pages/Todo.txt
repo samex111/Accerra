@@ -13,4 +13,4 @@ solution --
 
 problem -- i have to show todo systemetically 
            eg.  date based like user see his/her todo date wised 
-           interface -- show today's todo and a button to see history of todo they created 
+           interface -- show today's todo and a button to see history of todo they created  

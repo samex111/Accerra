@@ -64,14 +64,20 @@ export default function SolvedBarChart() {
         data.forEach((item) => {
           dateMap[item._id] = item.totalSolved;
         });
+        console.log(dateMap)
        
 
         // Last 7 days
         for (let i = 6; i >= 0; i--) {
           const d = new Date();
+          console.log("d: ",d)
           d.setDate(d.getDate() - i);
           const dateStr = d.toISOString().slice(0, 10);
-          labels.push(dateStr);
+          const s1 = d.toDateString()
+          const fdate = s1.substring(4,10)
+          
+
+          labels.push(fdate);
           values.push(dateMap[dateStr] || 0);
         }
 
@@ -99,7 +105,7 @@ export default function SolvedBarChart() {
       title: {  
         display: true,
         text: "Daily Solved Questions"
-      }
+          }
     },
     scales: {
       y: {

@@ -79,6 +79,11 @@ export default function Todo() {
     fetchTodos();
   }, []);
   console.log(getTodo)
+  const d = new Date()
+  const dateStr = d.toISOString().slice(0, 10);
+  console.log('dateStr:',dateStr)
+  const todayDate = getTodo.map(item=>item._id)
+  console.log("today date: ",todayDate)
   return (
     <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
       <div className="flex gap-2 mb-4">
@@ -96,6 +101,7 @@ export default function Todo() {
           Add
         </button>
       </div>
+
       <div>
         {getTodo.map((item, idx) => (
           <div key={idx} className="mb-2">
