@@ -317,10 +317,8 @@ userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
       {
         $group: {
           _id: "$date",
-          todos: { $sum: 1 },
          todoss: { $push: "$todoss" } ,
          id: { $push: "$id" } 
-
         }
       }, 
 

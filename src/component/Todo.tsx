@@ -81,9 +81,11 @@ export default function Todo() {
   console.log(getTodo)
   const d = new Date()
   const dateStr = d.toISOString().slice(0, 10);
-  console.log('dateStr:',dateStr)
-  const todayDate = getTodo.map(item=>item._id)
+  console.log('dateStr:',dateStr) 
+  const todayDate = getTodo.filter(item=>item._id===dateStr)
   console.log("today date: ",todayDate)
+  //  me filter kar sakta hu today ki date ko and then uske based par 
+  // todos show kar sakta hu 
   return (
     <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
       <div className="flex gap-2 mb-4">
