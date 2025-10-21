@@ -45,8 +45,10 @@ function App() {
         <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice" />} />
         <Route path="/user/select/subject" element={
           <div>
+            <div className="flex justify-end mr-[10vw] mt-[5vh]">
             <SelectSubject />
             <Todo></Todo>
+            </div>
             <SolvedBarChart  />
              <GeminiStream prompt = {prompt} />
            <textarea  onKeyDown={handleEvent}     

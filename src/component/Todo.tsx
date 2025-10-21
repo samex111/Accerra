@@ -78,9 +78,9 @@ export default function Todo() {
   useEffect(() => {
     fetchTodos();
   }, []);
-
+  console.log(getTodo)
   return (
-    <div className="p-4">
+    <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
       <div className="flex gap-2 mb-4">
         <input
           placeholder="Add todo"
@@ -103,6 +103,7 @@ export default function Todo() {
               <div key={i} className="flex items-center gap-2">
                 {editingId === item.id[i] ? (
                   <>
+
                     <input
                       type="text"
                       value={editText}
@@ -128,12 +129,12 @@ export default function Todo() {
                     <button
                       onClick={() => startEditing(item.id[i], t)}
                       className="bg-yellow-500 text-white p-1 rounded"
-                    >
+                    > 
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(item.id[i])}
-                      className="bg-red-500 text-white p-1 rounded"
+                      className="bg-red-500 text-whitej p-1 rounded"
                     >
                       Delete
                     </button>
