@@ -13,6 +13,7 @@ import GeminiStream from "./component/SSE";
 import { useState } from "react";
 import PracticeQuestion from "./component/PracticeQuestion";
 import Todo from "./component/Todo";
+import { Navbar } from "./component/Navbar";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello how to be crack dev ans in 2 line ')
@@ -35,6 +36,7 @@ function App() {
             {/* <ChatWithAi></ChatWithAi> */}
            </div>
            } />
+     
         <Route path="/admin/signup" element={<AdminSignup />} />
         <Route path="/admin/signin" element={<AdminSignin />} />
         <Route path="/user/signup" element={<Signup />} />
@@ -44,8 +46,9 @@ function App() {
         <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="practice" />} />
         <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice" />} />
         <Route path="/user/select/subject" element={
-          <div>
-            <div className="flex justify-end mr-[10vw] mt-[5vh]">
+          <div className="bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)]" >
+              <Navbar></Navbar>
+            <div className="flex justify-end p-10 ">
             <SelectSubject />
             <Todo></Todo>
             </div>

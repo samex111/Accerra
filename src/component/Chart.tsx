@@ -87,7 +87,7 @@ export default function SolvedBarChart() {
             {
               label: "Questions Solved",
               data: values, 
-              backgroundColor: "rgba(54, 162, 235, 0.5)",
+              backgroundColor: "rgb(59,53,240)",
               borderColor: "rgba(54, 162, 235, 1)",
               borderWidth: 1
             }

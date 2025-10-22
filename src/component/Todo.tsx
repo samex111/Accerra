@@ -12,6 +12,8 @@ export default function Todo() {
   const [getTodo, setGetTodo] = useState<TodoItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [isShowHistory,setIsShowHistory] = useState(false);
+  const [history,setHistory] = useState([])
 
   const fetchTodos = async () => {
     try {
@@ -82,10 +84,22 @@ export default function Todo() {
   const d = new Date()
   const dateStr = d.toISOString().slice(0, 10);
   console.log('dateStr:',dateStr) 
-  const todayDate = getTodo.filter(item=>item._id===dateStr)
-  console.log("today date: ",todayDate)
+  const todayTodo = getTodo.filter(item=>item._id===dateStr)
+  console.log("today date: ",todayTodo)
   //  me filter kar sakta hu today ki date ko and then uske based par 
   // todos show kar sakta hu 
+  // test this code tomarrow 
+   const todossss = todayTodo.map(item=>item.todoss)
+   console.log("only today: ",todossss[0])
+   console.log(getTodo)
+   const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+
+console.log('Today:', today.toDateString());
+console.log('Yesterday:', yesterday.toDateString());
+
+   
   return (
     <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
       <div className="flex gap-2 mb-4">
@@ -102,16 +116,17 @@ export default function Todo() {
         >
           Add
         </button>
+        <button onClick={()=>setIsShowHistory(!isShowHistory)} className="ml-2 bg-gray-500 rounded-md p-2 text-white">history</button>
       </div>
 
+
       <div>
-        {getTodo.map((item, idx) => (
+        {todayTodo.map((item, idx) => (
           <div key={idx} className="mb-2">
             {item.todoss.map((t: string, i: number) => (
               <div key={i} className="flex items-center gap-2">
                 {editingId === item.id[i] ? (
                   <>
-
                     <input
                       type="text"
                       value={editText}
