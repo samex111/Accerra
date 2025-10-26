@@ -130,8 +130,8 @@ export default function SignUp() {
 
         <CardFooter className="flex flex-col gap-2">
           {!otpSent ? (
-            <Button onClick={handleSignup} disabled={loading}>
-              {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Send OTP"}
+            <Button onClick={handleSignup} disabled={loading || !email  || !password }>
+              {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Send OTP "}
             </Button>
           ) : (
             <Button onClick={handleVerifyOtp} disabled={loading}>

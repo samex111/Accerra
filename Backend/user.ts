@@ -39,7 +39,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
         username: z.string().min(1).max(50)
     });
 
-    const parseData = requireBody.safeParse(req.body);
+    const parseData = requireBody.safeParse(req.body);                                      
 
     if (!parseData.success) {
         return res.status(400).json({
@@ -62,7 +62,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
             username: username,
             password: hassedPassword,
             otp,
-            otpExpiry: Date.now() + 5 * 60 * 1000
+            otpExpiry: Date.now() + 5 * 60 * 1000       
         })
 
     } catch (e) {
