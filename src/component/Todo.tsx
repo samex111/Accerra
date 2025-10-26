@@ -1,4 +1,5 @@
-        import { useEffect, useState } from "react";
+        import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 // Define TypeScript interface for todo items
 interface TodoItem {
@@ -110,13 +111,13 @@ console.log('Yesterday:', yesterday.toDateString());
           onChange={(e) => setTodo(e.target.value)}
           className="border p-2 rounded"
         />
-        <button
+        <Button
           onClick={handleAdd}
-          className="bg-blue-500 text-white p-2 rounded"
+          className="bg-blue-600 hover:bg-blue-900"
         >
           Add
-        </button>
-        <button onClick={()=>setIsShowHistory(!isShowHistory)} className="ml-2 bg-gray-500 rounded-md p-2 text-white">history</button>
+        </Button>
+        <Button onClick={()=>setIsShowHistory(!isShowHistory)} className="ml-2 bg-gray-500 rounded-md p-2 text-white">history</Button>
       </div>
 
 
@@ -131,36 +132,32 @@ console.log('Yesterday:', yesterday.toDateString());
                       type="text"
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
-                      className="border p-1 rounded"
                     />
-                    <button
+                    <Button
                       onClick={() => handleEdit(item.id[i], editText)}
-                      className="bg-green-500 text-white p-1 rounded"
+                      
                     >
                       Save
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setEditingId(null)}
-                      className="bg-gray-500 text-white p-1 rounded"
                     >
                       Cancel
-                    </button>
+                    </Button>
                   </>
                 ) : (
                   <>
-                    <p>{t}</p>
-                    <button
+                    <p className="w-[20vw]">{t}</p>
+                    <Button
                       onClick={() => startEditing(item.id[i], t)}
-                      className="bg-yellow-500 text-white p-1 rounded"
                     > 
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => handleDelete(item.id[i])}
-                      className="bg-red-500 text-whitej p-1 rounded"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>

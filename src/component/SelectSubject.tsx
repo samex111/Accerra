@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 export default function SelectSubject(){
@@ -7,13 +8,13 @@ export default function SelectSubject(){
     <>
     <div className="mr-[2vw]">
       <div>
-      <button className="border   mt-2 p-3 mb-4 rounded shadow" onClick={()=>{ return navigate('/questions/maths')}}>Maths</button>
+      <Button size = "lg" variant={'outline'} className="mb-1" onClick={()=>{ return navigate('/questions/maths')}}>Maths</Button>
     </div>
     <div>
-      <button className="border  mt-2 p-3 mb-4 rounded shadow"onClick={()=>{ return navigate('/questions/physics')}}>Physics</button>
+      <Button size = "lg" variant={'outline'} className="mb-1" onClick={()=>{ return navigate('/questions/physics')}}>Physics</Button>
     </div>
     <div>
-      <button className="border mt-2 p-3 mb-4 rounded shadow"onClick={()=>{ return navigate('/questions/chemistry')}}>Chemistry</button>
+      <Button size = "lg" variant={'outline'} className="mb-1" onClick={()=>{ return navigate('/questions/chemistry')}}>Chemistry</Button>
     </div>
     </div>
     </>

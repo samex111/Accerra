@@ -76,6 +76,7 @@ export default function SolvedBarChart() {
           const s1 = d.toDateString()
           const fdate = s1.substring(4,10)
           
+          
 
           labels.push(fdate);
           values.push(dateMap[dateStr] || 0);
