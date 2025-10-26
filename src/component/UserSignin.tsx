@@ -6,6 +6,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { User, Lock, Loader2 } from "lucide-react"
+import { Eye } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
+
 
 export default function Signin() {
   const studentContext = useContext(StudentContext)
@@ -14,6 +17,7 @@ export default function Signin() {
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [type,setType] = useState('password')
 
   const handleSignIn = async () => {
     setLoading(true)
@@ -76,12 +80,15 @@ export default function Signin() {
               <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
               <Input
                 id="password"
-                type="password"
+                type={type}
                 placeholder="••••••••"
                 className="pl-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                
               />
+              { type === "password" ?<Eye onClick={()=>setType("text")}  className="absolute right-3 top-2.5 h-5 w-5 text-gray-500"/>
+              : <EyeOff onClick={()=>setType("password")}  className="absolute right-3 top-2.5 h-5 w-5 text-gray-500"/>}
             </div>
           </div>
         </CardContent>

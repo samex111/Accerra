@@ -47,7 +47,7 @@ function App() {
         <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice" />} />
         <Route path="/user/select/subject" element={
           <div className="bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)] w-full " >
-              <Navbar></Navbar>
+              {/* <Navbar></Navbar> */}
             <div className="flex justify-end p-10 ">
             <SelectSubject />
             <Todo></Todo>
