@@ -89,22 +89,28 @@ userRouter.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
 
   const user = await UserModel.findOne({ email });
-
+ 
   if (!user) return res.status(400).json({ message: "User not found" });
-
+//   if(user.isVerified === false){
+//     return res.status(400).json({ message: "User not varified" });
+//   }
   if (user.otp !== otp) {
+    await user.deleteOne();
     return res.status(400).json({ message: "Invalid OTP" });
   }
  // @ts-ignore
   if (Date.now() > user.otpExpiry) {
+    user.deleteOne(email);
     return res.status(400).json({ message: "OTP expired" });
+
   }
+  
 
   user.isVerified = true;
   user.otp = null; // OTP clear
   user.otpExpiry = null;
   await user.save();
-
+  
   res.json({ message: "Email verified successfully!" });
 });
 
@@ -124,6 +130,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             error: parseData.error
         });
     }
+    
 
 
     const { identifire, password } = req.body;
@@ -133,6 +140,11 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
         return res.status(403).json({
             message: "Incorrect Credentials !"
         });
+    }
+    if(user.isVerified === false){
+        return res.status(403).json({
+            message: "Not varified user!"   
+        });;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);

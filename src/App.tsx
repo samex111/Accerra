@@ -13,10 +13,9 @@ import GeminiStream from "./component/SSE";
 import { useState } from "react";
 import PracticeQuestion from "./component/PracticeQuestion";
 import Todo from "./component/Todo";
-import { Navbar } from "./component/Navbar";
 
 function App() {
-  const [prompt , setPrompt] = useState('Hello how to be crack dev ans in 2 line ')
+  const [prompt , setPrompt] = useState('Hello how to be crack dev ans in 2 1 para')
   const [op, setOp] = useState('');
   console.log(prompt);
   function handleEvent(event:any){

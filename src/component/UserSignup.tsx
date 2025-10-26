@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label" // ✅ correct import (not from radix directly)
-import { Loader2 } from "lucide-react"
+import { Eye, Mail } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
+import { User, Lock, Loader2 } from "lucide-react"
+
+
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -14,6 +18,8 @@ export default function SignUp() {
   const [otp, setOtp] = useState("")
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
+  const [type,setType] = useState('password')
+
 
   const handleSignup = async () => {
     setLoading(true)
@@ -58,6 +64,7 @@ export default function SignUp() {
         navigate("/user/signin")
       } else {
         alert(data.msg || "OTP verification failed ❌")
+        setOtpSent(false)
       }
     } catch (e) {
       console.error(e)
@@ -80,37 +87,53 @@ export default function SignUp() {
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-2.5 text-gray-500 h-5 w-5" />
             <Input
               id="email"
               type="email"
               placeholder="you@example.com"
+              className="pl-10"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            </div>
           </div>
 
           {/* Username */}
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
+            <div className="relative  ">
+            <User className="absolute left-3 top-2.5 w-5 h-5 text-gray-500" />
             <Input
               id="username"
               type="text"
               placeholder="Enter username"
+              className="pl-10"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+            </div>
+
           </div>
 
           {/* Password */}
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
+            <div className="relative">
+
+              <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
             <Input
               id="password"
-              type="password"
+              type={type}
               placeholder="••••••••"
+                className="pl-10"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+           { type === "password" ?<Eye onClick={()=>setType("text")}  className="absolute right-3 top-2.5 h-5 w-5 text-gray-500"/>
+              : <EyeOff onClick={()=>setType("password")}  className="absolute right-3 top-2.5 h-5 w-5 text-gray-500"/>}
+          </div>
           </div>
 
           {/* OTP Field (show only after signup) */}

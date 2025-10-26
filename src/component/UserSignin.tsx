@@ -17,7 +17,7 @@ export default function Signin() {
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const [type,setType] = useState('password')
+  const [type, setType] = useState('password')
 
   const handleSignIn = async () => {
     setLoading(true)
@@ -61,7 +61,6 @@ export default function Signin() {
           <div className="space-y-2">
             <Label htmlFor="identifier">Username or Email</Label>
             <div className="relative">
-              <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
               <Input
                 id="identifier"
                 type="text"
@@ -78,6 +77,8 @@ export default function Signin() {
             <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
+              {type === "password" ? <Eye onClick={() => setType("text")} className="absolute right-3 top-2.5 h-5 w-5 text-gray-500" />
+                : <EyeOff onClick={() => setType("password")} className="absolute right-3 top-2.5 h-5 w-5 text-gray-500" />}
               <Input
                 id="password"
                 type={type}
@@ -85,10 +86,8 @@ export default function Signin() {
                 className="pl-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                
+
               />
-              { type === "password" ?<Eye onClick={()=>setType("text")}  className="absolute right-3 top-2.5 h-5 w-5 text-gray-500"/>
-              : <EyeOff onClick={()=>setType("password")}  className="absolute right-3 top-2.5 h-5 w-5 text-gray-500"/>}
             </div>
           </div>
         </CardContent>
