@@ -132,7 +132,9 @@ console.log('Yesterday:', yesterday.toDateString());
                     <Input
                       type="text"
                       value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
+                     onChange={(e) => setEditText(e.target.value)}
+                      className="bg-gradient-to-r from-pink-300 to-blue-200 placeholder:text-black text-black"
+
                     />
                     <Button
                       onClick={() => handleEdit(item.id[i], editText)}
