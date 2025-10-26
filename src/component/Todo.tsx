@@ -1,4 +1,5 @@
         import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 
 // Define TypeScript interface for todo items
@@ -104,12 +105,12 @@ console.log('Yesterday:', yesterday.toDateString());
   return (
     <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
       <div className="flex gap-2 mb-4">
-        <input
+        <Input
           placeholder="Add todo"
           type="text"
           value={todo}
           onChange={(e) => setTodo(e.target.value)}
-          className="border p-2 rounded"
+          className="bg-gradient-to-r from-pink-300 to-blue-200 placeholder:text-black text-black"
         />
         <Button
           onClick={handleAdd}
@@ -128,14 +129,14 @@ console.log('Yesterday:', yesterday.toDateString());
               <div key={i} className="flex items-center gap-2">
                 {editingId === item.id[i] ? (
                   <>
-                    <input
+                    <Input
                       type="text"
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
                     />
                     <Button
                       onClick={() => handleEdit(item.id[i], editText)}
-                      
+
                     >
                       Save
                     </Button>
