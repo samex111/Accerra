@@ -154,7 +154,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             httpOnly: true,
             secure: false,
             sameSite: "strict",
-            maxAge: 1000 * 60 * 60 * 24
+            maxAge: 1000 * 60 * 60 * 24 
         })
         console.log("cookie: ", token)
          res.json({ studentId: user._id });  
