@@ -34,7 +34,7 @@ const transporter =  noadmailer.createTransport({
 
 userRouter.post('/signup', async (req: Request, res: Response) => {
     const requireBody = z.object({
-        email: z.string().min(3).max(100).email(),
+        email: z.email(),
         password: z.string().min(8).max(20),
         username: z.string().min(1).max(50)
     });

@@ -1,6 +1,6 @@
-        import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Define TypeScript interface for todo items
 interface TodoItem {
@@ -101,6 +101,8 @@ yesterday.setDate(today.getDate() - 1);
 console.log('Today:', today.toDateString());
 console.log('Yesterday:', yesterday.toDateString());
 
+
+
    
   return (
     <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
@@ -167,6 +169,7 @@ console.log('Yesterday:', yesterday.toDateString());
             ))}
           </div>
         ))}
+        
       </div>
     </div>
   );
