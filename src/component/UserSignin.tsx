@@ -48,7 +48,7 @@ export default function Signin() {
   }
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4">
+    <div className="w-full h-screen flex items-center justify-center bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)] px-4">
       <Card className="w-full max-w-md shadow-md border border-gray-200">
         <CardHeader>
           <CardTitle className="text-2xl text-center font-semibold text-gray-800">
@@ -57,7 +57,6 @@ export default function Signin() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Username or Email */}
           <div className="space-y-2">
             <Label htmlFor="identifier">Username or Email</Label>
             <div className="relative">

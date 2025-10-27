@@ -75,7 +75,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 px-4">
+    <div className="w-full h-screen flex items-center justify-center  px-4 bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)]">
       <Card className="w-full max-w-md shadow-md border border-gray-200">
         <CardHeader>
           <CardTitle className="text-2xl text-center font-semibold text-gray-800">
