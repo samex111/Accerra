@@ -141,6 +141,11 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             message: "Incorrect Credentials !"
         });
     }
+    if(user.isVerified == false){
+        return res.status(403).json({
+            message: "user not varified !"
+        });
+    }
  
 
     const passwordMatch = await bcrypt.compare(password, user.password);
