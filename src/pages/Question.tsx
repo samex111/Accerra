@@ -94,7 +94,7 @@ export default function Questions(props: any) {
   console.log(a)
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/question?subject=` + props.subj, {
+    fetch(`http://localhost:3000/api/v1/user/questions`, {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" }

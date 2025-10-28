@@ -16,6 +16,9 @@ export default function SelectSubject(){
     <div>
       <Button size = "lg" variant={'outline'} className="mb-1 "  onClick={()=>{ return navigate('/questions/chemistry')}}>Chemistry</Button>
     </div>
+    <div>
+      <Button size = "lg" variant={'outline'} className="mb-1 "  onClick={()=>{ return navigate('/questions/test')}}>test</Button>
+    </div>
     </div>
     </>
   )

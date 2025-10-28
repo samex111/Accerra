@@ -431,6 +431,22 @@ userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
         res.json({error:"Some error: "+e})
     }
 })
+userRouter.get('/questions', userMiddleware, async (req:Request,res:Response)=>{
+    try{
+        const importQuestions = await QuestionModel.find({});
+        if(!importQuestions){
+           return res.status(400).json({
+                msg:"Questions not found"
+            })
+        }
+        console.log(importQuestions)
+        res.status(200).json({
+            importQuestions
+        })
+    }catch(e){
+        res.json({error:"Some error: "+e})
+    }
+})
 
 
 userRouter.get("/stream", async (req, res) => {

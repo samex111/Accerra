@@ -42,8 +42,9 @@ function App() {
         <Route path="/user/signin" element={<Signin />} />
         <Route path="/admin/addQuestion" element={<AddQuestion />} />
         <Route path="/questions/maths" element={<PracticeQuestion subj="MATHS" mode="practice" />} />
-        <Route path="/questions/physics" element={<Questions subj="PHYSICS" mode="practice" />} />
-        <Route path="/questions/chemistry" element={<Questions subj="CHEMISTRY" mode="practice" />} />
+        <Route path="/questions/physics" element={<PracticeQuestion subj="PHYSICS" mode="practice" />} />
+        <Route path="/questions/chemistry" element={<PracticeQuestion subj="CHEMISTRY" mode="practice" />} />
+        <Route path="/questions/test" element={<Questions subj="CHEMISTRY" mode="practice" />} />
         <Route path="/user/select/subject" element={
           <div className="bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)] w-full " >
               {/* <Navbar></Navbar> */}
