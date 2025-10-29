@@ -257,26 +257,26 @@ useEffect(() => {
     console.error("Error: ",e)
       }
     }
-    // const handleDeleteBookmark = async(questionId:string)=>{
-    //   console.log(questionId)
-    //   console.log(id)
+    const handleDeleteBookmark = async(questionId:string)=>{
+      console.log(questionId)
+      console.log(id)
 
-    //   try{
-    //     const res  = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`,{
-    //       method:"POST",
-    //       headers:{
-    //         "Content-Type":"application/json"
-    //       },
-    //       credentials: "include",
-    //       body: JSON.stringify({questionId:questionId , student:id})
-    //     })
-    //     const data = await res.json()
-    //     console.log(data)
-    //   }
-    //   catch(e){
-    // console.error("Error: ",e)
-    //   }
-    // }
+      try{
+        const res  = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`,{
+          method:"DELETE",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          credentials: "include",
+          // body: JSON.stringify({questionId:questionId , student:id})
+        })
+        const data = await res.json()
+        console.log(data)
+      }
+      catch(e){
+    console.error("Error: ",e)
+      }
+    }
 
 
 
@@ -294,7 +294,7 @@ useEffect(() => {
         <p>No saved answers or expired</p>
       )}   <div className="flex justify-around">
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
-          { isBookmark ? <BookmarkMinus onClick={()=>{handleAddBookmark(question._id); setIsBookmark(false)}} /> : <BookmarkPlus onClick={()=>{handleAddBookmark(question._id); setIsBookmark(true) }}/> }
+          { isBookmark ? <BookmarkMinus onClick={()=>{handleDeleteBookmark(question._id); setIsBookmark(false)}} /> : <BookmarkPlus onClick={()=>{handleAddBookmark(question._id); setIsBookmark(true) }}/> }
           </div>
           <div className="h-96  overflow-y-scroll">
             {question && (

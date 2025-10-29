@@ -533,7 +533,7 @@ userRouter.post('/add/bookmark/question/:questionId', userMiddleware, async (req
     }
 })
 userRouter.delete('/delete/bookmark/:questionId', async (req: Request, res: Response) => {
-    const questionId  = req.params.questionId
+    const questionId   = req.params
     try {
         const deleteBookmark = await BookMarkModel.findOneAndDelete(questionId);
         if (!deleteBookmark) {
