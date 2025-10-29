@@ -535,24 +535,32 @@ userRouter.post('/add/bookmark/question/:questionId', userMiddleware ,async (req
 
 
 
-// userRouter.get('/attempt', userMiddleware, async (req:Request,res:Response)=>{
-//     // const {status} = req.query;
-//     try{
-//         const importQuestions = await attemtQuestionsModel.find({});
-//         if(!importQuestions){
-//            return res.status(400).json({
-//                 msg:"Questions not found"
-//             })
-//         }
-//         console.log(importQuestions)
-//         res.status(200).json({
-//             importQuestions
-//         })
-//     }catch(e){
-//         res.json({error:"Some error: "+e})
-//     }
-// })
+ userRouter.get('/questions/bookmarked:studentId' , async (req:Request,res:Response)=>{
+    try{
+        const studentId = req.params.studentId;
+        const result = await BookMarkModel.aggregate([
+            {$match: {student : new mongoose.Types.ObjectId(studentId)}},
+            {
+                $project :{
+                    question : {$toString:"$questionId"}
+                }
+            },
+            {
+                $group:{
+                    _id : "$question"
+                }
+            },
+                  { $sort: { _id: 1 } }
+        ])
 
+        res.json(result)
+    }
+    catch(e){
+        res.status(400).json({
+          msg : "err: " + e  
+        })
+    }
+ })
 
 // API to get daily solved counts for a student
 userRouter.get("/solved/daily/:studentId",userMiddleware, async (req:Request, res:Response) => {
