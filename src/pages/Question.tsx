@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
 import SquareBox from "../component/QuestionSquareBox";
+import { BookmarkMinus, BookmarkPlus } from "lucide-react";
 
 export default function Questions(props: any) {
   interface Question {
@@ -21,6 +22,7 @@ export default function Questions(props: any) {
   const [answered, setAnswered] = useState(0);
   const [notAnswered, setNotAnswered] = useState(0);
   const [status, setStatus] = useState<Status[]>([]);
+  const [isBookmark , setIsBookmark] = useState(false);
 
   function markForReview(qIndex: number) {
     setStatus((prev) => {
@@ -91,7 +93,7 @@ export default function Questions(props: any) {
   };
   let d = Date.now();
   let a = Math.floor(d/1000)
-  console.log(a)
+  // console.log(a)
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/v1/user/questions`, {
@@ -233,6 +235,28 @@ useEffect(() => {
   setMarkedForReview(reviewCount);
 
 }, [status]); 
+  const id = localStorage.getItem('StudentID');
+ 
+    const handleAddBookmark = async(questionId:string)=>{
+      console.log(questionId)
+      console.log(id)
+
+      try{
+        const res  = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`,{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({questionId:questionId , student:id})
+        })
+        const data = await res.json()
+        console.log(data)
+      }
+      catch(e){
+    console.error("Error: ",e)
+      }
+    }
 
 
 
@@ -248,8 +272,10 @@ useEffect(() => {
         <p>Expires in: {formatTime(remainingTime)}</p>
       ) : (
         <p>No saved answers or expired</p>
-      )}
+      )}   <div className="flex justify-around">
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
+          { isBookmark ? <BookmarkMinus onClick={()=>handleAddBookmark(question._id)} /> : <BookmarkPlus onClick={()=>handleAddBookmark(question._id)}/> }
+          </div>
           <div className="h-96  overflow-y-scroll">
             {question && (
               <div key={question._id} className=" p-3 mb-4 ">

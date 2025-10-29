@@ -535,7 +535,7 @@ userRouter.post('/add/bookmark/question/:questionId', userMiddleware ,async (req
 
 
 
- userRouter.get('/questions/bookmarked:studentId' , async (req:Request,res:Response)=>{
+ userRouter.get('/questions/bookmarked/:studentId' , async (req:Request,res:Response)=>{
     try{
         const studentId = req.params.studentId;
         const result = await BookMarkModel.aggregate([
