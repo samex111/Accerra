@@ -5,13 +5,13 @@ import z, { number } from 'zod';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-import {  userMiddleware } from "./auth.ts";
+import { userMiddleware } from "./auth.ts";
 import noadmailer from 'nodemailer';
 import crypto from 'crypto';
 import mongoose from "mongoose";
-import {callGeminiStream} from './Service.ts'
- import { GoogleGenerativeAI }  from '@google/generative-ai';
- import { ObjectId } from "mongodb";
+import { callGeminiStream } from './Service.ts'
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { ObjectId } from "mongodb";
 
 
 
@@ -24,11 +24,11 @@ export const userRouter = Router();
 
 
 
-const transporter =  noadmailer.createTransport({
-    service:'gmail',
-    auth:{
-        user:'samxpatel2@gmail.com',
-        pass:'gqjd idzo bzww jpbf'
+const transporter = noadmailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'samxpatel2@gmail.com',
+        pass: 'gqjd idzo bzww jpbf'
     }
 
 });
@@ -41,7 +41,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
         username: z.string().min(1).max(50)
     });
 
-    const parseData = requireBody.safeParse(req.body);                                      
+    const parseData = requireBody.safeParse(req.body);
 
     if (!parseData.success) {
         return res.status(400).json({
@@ -54,9 +54,9 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 
     const hassedPassword = await bcrypt.hash(password, 5);
 
-    const otp = crypto.randomInt(100000,999999).toString();
+    const otp = crypto.randomInt(100000, 999999).toString();
 
-    
+
 
     try {
         await UserModel.create({
@@ -64,7 +64,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
             username: username,
             password: hassedPassword,
             otp,
-            otpExpiry: Date.now() + 5 * 60 * 1000       
+            otpExpiry: Date.now() + 5 * 60 * 1000
         })
 
     } catch (e) {
@@ -75,45 +75,45 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
         console.log("error is --: ", e)
     }
 
-     await transporter.sendMail({
-    from: "samxpatel2@gmail.com",
-    to: email,
-    subject: "Verify your Email",
-    text: `Your OTP is ${otp}`
-  });
-  
+    await transporter.sendMail({
+        from: "samxpatel2@gmail.com",
+        to: email,
+        subject: "Verify your Email",
+        text: `Your OTP is ${otp}`
+    });
+
     res.status(200).json({
         msg: "User created successfully!"
     })
 
 });
 userRouter.post("/verify-otp", async (req, res) => {
-  const { email, otp } = req.body;
+    const { email, otp } = req.body;
 
-  const user = await UserModel.findOne({ email });
- 
-  if (!user) return res.status(400).json({ message: "User not found" });
-//   if(user.isVerified === false){
-//     return res.status(400).json({ message: "User not varified" });
-//   }
-  if (user.otp !== otp) {
-    await user.deleteOne();
-    return res.status(400).json({ message: "Invalid OTP" });
-  }
- // @ts-ignore
-  if (Date.now() > user.otpExpiry) {
-    user.deleteOne(email);
-    return res.status(400).json({ message: "OTP expired" });
+    const user = await UserModel.findOne({ email });
 
-  }
-  
+    if (!user) return res.status(400).json({ message: "User not found" });
+    //   if(user.isVerified === false){
+    //     return res.status(400).json({ message: "User not varified" });
+    //   }
+    if (user.otp !== otp) {
+        await user.deleteOne();
+        return res.status(400).json({ message: "Invalid OTP" });
+    }
+    // @ts-ignore
+    if (Date.now() > user.otpExpiry) {
+        user.deleteOne(email);
+        return res.status(400).json({ message: "OTP expired" });
 
-  user.isVerified = true;
-  user.otp = null; // OTP clear
-  user.otpExpiry = null;
-  await user.save();
-  
-  res.json({ message: "Email verified successfully!" });
+    }
+
+
+    user.isVerified = true;
+    user.otp = null; // OTP clear
+    user.otpExpiry = null;
+    await user.save();
+
+    res.json({ message: "Email verified successfully!" });
 });
 
 
@@ -132,7 +132,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             error: parseData.error
         });
     }
-    
+
 
 
     const { identifire, password } = req.body;
@@ -143,12 +143,12 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             message: "Incorrect Credentials !"
         });
     }
-    if(user.isVerified == false){
+    if (user.isVerified == false) {
         return res.status(403).json({
             message: "user not varified !"
         });
     }
- 
+
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -161,10 +161,10 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             httpOnly: true,
             secure: false,
             sameSite: "strict",
-            maxAge: 1000 * 60 * 60 * 24 
+            maxAge: 1000 * 60 * 60 * 24
         })
         console.log("cookie: ", token)
-         res.json({ studentId: user._id });  
+        res.json({ studentId: user._id });
     }
     else {
         // If the password does not match, return a error indicating the invalid credentials
@@ -178,7 +178,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 console.log(GEMINI_API_KEY)
-const a  =   process.env.GEMINI_API_KEY;
+const a = process.env.GEMINI_API_KEY;
 console.log(a)
 userRouter.post("/gemini", async (req, res) => {
     try {
@@ -206,30 +206,30 @@ userRouter.post("/gemini", async (req, res) => {
     }
 });
 
-userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
-     const id = req.userId;
+userRouter.post('/attempt/question', userMiddleware, async (req, res) => {
+    const id = req.userId;
     const requireBody = z.object({
-        question: z.string(),  
+        question: z.string(),
         questionDiagram: z.string().optional(),
         status: z.string(),
-        userAnswer:z.array(z.string()),
+        userAnswer: z.array(z.string()),
         answer: z.array(z.string()),
         tags: z.array(z.string()).optional(),
-        subject:z.string(),
+        subject: z.string(),
         timeTaken: z.string().optional(),
     });
-    
+
     const parseData = requireBody.safeParse(req.body);
 
-    if(!parseData.success){
-           console.log(parseData.error)
-       return res.status(400).json({msg:"Invaild cred"});
-    
+    if (!parseData.success) {
+        console.log(parseData.error)
+        return res.status(400).json({ msg: "Invaild cred" });
+
     }
 
-    const {question,questionDiagram, status,userAnswer,answer,tags,subject,timeTaken} = parseData.data;
+    const { question, questionDiagram, status, userAnswer, answer, tags, subject, timeTaken } = parseData.data;
 
-    try{
+    try {
         await attemtQuestionsModel.create({
             question,
             questionDiagram,
@@ -239,362 +239,379 @@ userRouter.post('/attempt/question',userMiddleware, async (req, res) => {
             tags,
             subject,
             timeTaken,
-            student: req.userId 
+            student: req.userId
         })
         res.status(200).json({
-            msg:"question created succefully"
+            msg: "question created succefully"
         })
 
     } catch (err) {
-  res.status(500).json({ error: "Server error" + err});
-}
-    
+        res.status(500).json({ error: "Server error" + err });
+    }
+
 
 })
 
-userRouter.post("/todo", userMiddleware, async (req,res)=>{
+userRouter.post("/todo", userMiddleware, async (req, res) => {
     const requireBody = z.object({
-        todo:z.string()
+        todo: z.string()
     })
-   const parseData = requireBody.safeParse(req.body);
+    const parseData = requireBody.safeParse(req.body);
 
-    if(!parseData.success){
-           console.log(parseData.error)
-       return res.status(400).json({msg:"Invaild cred"});
-    
+    if (!parseData.success) {
+        console.log(parseData.error)
+        return res.status(400).json({ msg: "Invaild cred" });
+
     }
-    const {todo} = parseData.data;  
+    const { todo } = parseData.data;
     //  if(todo.trim()===""){
     //     return
     //  }
-    try{
+    try {
         await TodoModel.create({
             todo,
-            student:req.userId
+            student: req.userId
         })
         res.status(200).json({
             msg: "todo created"
         })
-    }catch(e:any){
-            console.log(e)
+    } catch (e: any) {
+        console.log(e)
         res.status(400).json({
             msg: "error" + e.message
         })
     }
 })
-userRouter.post("/notes",userMiddleware,async (req,res)=>{
-    
+userRouter.post("/notes", userMiddleware, async (req, res) => {
+
 
     const requireBody = z.object({
-        note:z.string()
+        note: z.string()
     })
-   const parseData = requireBody.safeParse(req.body);
+    const parseData = requireBody.safeParse(req.body);
 
-    if(!parseData.success){
-           console.log(parseData.error)
-       return res.status(400).json({msg:"Invaild cred"});
-    
+    if (!parseData.success) {
+        console.log(parseData.error)
+        return res.status(400).json({ msg: "Invaild cred" });
+
     }
-    const {note} = parseData.data;
+    const { note } = parseData.data;
 
 
-    try{
+    try {
         await NoteModel.create({
             note,
-            student:req.userId
+            student: req.userId
         })
         res.status(200).json({
             msg: "note created"
         })
-    }catch(e:any){
+    } catch (e: any) {
         res.status(400).json({
             msg: "error" + e.message
         })
     }
 })
-userRouter.get('/todo', userMiddleware , async (req:Request,res:Response) =>{
+userRouter.get('/todo', userMiddleware, async (req: Request, res: Response) => {
     const userId = req.userId;
     // hame ye karna hai ki date wise todo show karna hai 
-    try{
+    try {
         const response = await TodoModel.aggregate([
-           // Step 1: Filter by student (convert string to ObjectId)         
-      { $match: { student: new mongoose.Types.ObjectId(userId) } },
+            // Step 1: Filter by student (convert string to ObjectId)         
+            { $match: { student: new mongoose.Types.ObjectId(userId) } },
 
-      {
-        $project: {                     
-          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            todoss: { $toString: "$todo" } ,
-          id:{$toString : "$_id"}
-        }
-      },
+            {
+                $project: {
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    todoss: { $toString: "$todo" },
+                    id: { $toString: "$_id" }
+                }
+            },
 
-      // Step 3: Group by date and count
-      {
-        $group: {
-          _id: "$date",
-         todoss: { $push: "$todoss" } ,
-         id: { $push: "$id" } 
-        }
-      }, 
+            // Step 3: Group by date and count
+            {
+                $group: {
+                    _id: "$date",
+                    todoss: { $push: "$todoss" },
+                    id: { $push: "$id" }
+                }
+            },
 
-      // Step 4: Sort by date ascending
-      { $sort: { _id: 1 } }
+            // Step 4: Sort by date ascending
+            { $sort: { _id: 1 } }
         ])
         console.log(response);
-         res.status(200).json(response)
-    }catch(e){
+        res.status(200).json(response)
+    } catch (e) {
         console.log(e)
-        res.status(400).json("Todo not found: "+e)
+        res.status(400).json("Todo not found: " + e)
     }
 })
-userRouter.delete("/todo/:id", userMiddleware,async (req , res) =>{
-    const {id} = req.params; 
-    try{
-    const deleteTodo = await TodoModel.findByIdAndDelete(id);
-    if(!deleteTodo){
-        res.status(400).json({msg:"todo not found "})
-    }
-    res.status(200).json({msg:"todo delete sucessfully"});
+userRouter.delete("/todo/:id", userMiddleware, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleteTodo = await TodoModel.findByIdAndDelete(id);
+        if (!deleteTodo) {
+            res.status(400).json({ msg: "todo not found " })
+        }
+        res.status(200).json({ msg: "todo delete sucessfully" });
 
-   }catch(e){
-    res.status(400).json({ 
-        msg:"error: " +e
-    })
-   }
+    } catch (e) {
+        res.status(400).json({
+            msg: "error: " + e
+        })
+    }
 
 })
-userRouter.delete("/note/delete/:id", async (req , res) =>{
-    const {id} = req.params; 
-    try{
-    const deleteTodo = await NoteModel.findByIdAndDelete(id);
-    if(!deleteTodo){
-        res.status(400).json({msg:"note not found "})
-    }
-    res.status(200).json({msg:"note delete sucessfully"});
+userRouter.delete("/note/delete/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleteTodo = await NoteModel.findByIdAndDelete(id);
+        if (!deleteTodo) {
+            res.status(400).json({ msg: "note not found " })
+        }
+        res.status(200).json({ msg: "note delete sucessfully" });
 
-   }catch(e){
-    res.status(400).json({
-        msg:"error: " +e
-    })
-   }
+    } catch (e) {
+        res.status(400).json({
+            msg: "error: " + e
+        })
+    }
 
 })
-userRouter.put("/note/update/:id", async (req , res) =>{
-    const {id} = req.params; 
+userRouter.put("/note/update/:id", async (req, res) => {
+    const { id } = req.params;
     const updateNote = req.body.updateNote;
-    try{
-    const updateData = await NoteModel.findByIdAndUpdate(id, updateNote , {new:true});
-    if(!updateData){
-        res.status(400).json({msg:"note not found "})
-    }
-    res.status(200).json({msg:"note update sucessfully"});
+    try {
+        const updateData = await NoteModel.findByIdAndUpdate(id, updateNote, { new: true });
+        if (!updateData) {
+            res.status(400).json({ msg: "note not found " })
+        }
+        res.status(200).json({ msg: "note update sucessfully" });
 
-   }catch(e){
-    res.status(400).json({
-        msg:"error: " +e
-    })
-   }
+    } catch (e) {
+        res.status(400).json({
+            msg: "error: " + e
+        })
+    }
 
 })
-userRouter.put("/todo/:id", async (req , res) =>{
-    const {id} = req.params; 
+userRouter.put("/todo/:id", async (req, res) => {
+    const { id } = req.params;
     const todo = req.body.todo;
-    try{
-    const updateData = await TodoModel.findByIdAndUpdate(id, {todo:todo} , {new:true});
-    if(!updateData){
-        res.status(400).json({msg:"todo not found "})
-    }
-    console.log(updateData)
-    console.log(todo)
-    res.status(200).json({msg:"todo update sucessfully" , updateData});
+    try {
+        const updateData = await TodoModel.findByIdAndUpdate(id, { todo: todo }, { new: true });
+        if (!updateData) {
+            res.status(400).json({ msg: "todo not found " })
+        }
+        console.log(updateData)
+        console.log(todo)
+        res.status(200).json({ msg: "todo update sucessfully", updateData });
 
-   }catch(e){
-    res.status(400).json({
-        msg:"error: " +e
-    })
-   }
+    } catch (e) {
+        res.status(400).json({
+            msg: "error: " + e
+        })
+    }
 
 })
 
-userRouter.get('/question', userMiddleware, async (req:Request,res:Response)=>{
-    const {subject} = req.query;
-    try{
-        const importQuestions = await QuestionModel.find({subject:subject});
-        if(!importQuestions){
-           return res.status(400).json({
-                msg:"Questions not found"
+userRouter.get('/question', userMiddleware, async (req: Request, res: Response) => {
+    const { subject } = req.query;
+    try {
+        const importQuestions = await QuestionModel.find({ subject: subject });
+        if (!importQuestions) {
+            return res.status(400).json({
+                msg: "Questions not found"
             })
         }
         console.log(importQuestions)
         res.status(200).json({
             importQuestions
         })
-    }catch(e){
-        res.json({error:"Some error: "+e})
+    } catch (e) {
+        res.json({ error: "Some error: " + e })
     }
 })
-userRouter.get('/questions', userMiddleware, async (req:Request,res:Response)=>{
-    try{
+userRouter.get('/questions', userMiddleware, async (req: Request, res: Response) => {
+    try {
         const importQuestions = await QuestionModel.find({});
-        if(!importQuestions){
-           return res.status(400).json({
-                msg:"Questions not found"
+        if (!importQuestions) {
+            return res.status(400).json({
+                msg: "Questions not found"
             })
         }
         console.log(importQuestions)
         res.status(200).json({
             importQuestions
         })
-    }catch(e){
-        res.json({error:"Some error: "+e})
+    } catch (e) {
+        res.json({ error: "Some error: " + e })
     }
 })
 
 
 userRouter.get("/stream", async (req, res) => {
-  // 🧠 Required SSE headers
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader("Connection", "keep-alive");
-  res.flushHeaders()
-  const prompt = req.query.prompt as string;
+    // 🧠 Required SSE headers
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders()
+    const prompt = req.query.prompt as string;
     // console.log(res)
-  
-  // ❌ If no prompt → send proper JSON
-  if (!prompt) {
-    res.write(`event: error\ndata: ${JSON.stringify({ error: "Prompt missing" })}\n\n`);
-    res.end();
-    return;
-  }
 
-  // ✅ Call streaming function
-  await callGeminiStream(prompt, res);
+    // ❌ If no prompt → send proper JSON
+    if (!prompt) {
+        res.write(`event: error\ndata: ${JSON.stringify({ error: "Prompt missing" })}\n\n`);
+        res.end();
+        return;
+    }
+
+    // ✅ Call streaming function
+    await callGeminiStream(prompt, res);
 });
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 
-userRouter.post('/chat1', async (req:Request, res:Response) => {
-  try {
-    const { messages } = req.body; // Expect array of {role: 'user'|'model', parts: [{text: 'message'}]}
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: 'Invalid messages format' });
+userRouter.post('/chat1', async (req: Request, res: Response) => {
+    try {
+        const { messages } = req.body; // Expect array of {role: 'user'|'model', parts: [{text: 'message'}]}
+        if (!messages || !Array.isArray(messages)) {
+            return res.status(400).json({ error: 'Invalid messages format' });
+        }
+
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.flushHeaders(); // Ensure headers are sent
+
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const chat = model.startChat({ history: messages.slice(0, -1) }); // History without last user message
+        const lastMessage = messages[messages.length - 1].parts[0].text;
+
+        const stream = await chat.sendMessageStream(lastMessage);
+
+        for await (const chunk of stream.stream) {
+            const chunkText = await chunk.text();
+            res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
+        }
+
+        res.write('event: done\ndata: {}\n\n'); // Signal end of stream
+        res.end();
+    } catch (error) {
+        console.error('Error in /chat:', error);
+        res.write(`data: ${JSON.stringify({ error: 'An error occurred' })}\n\n`);
+        res.end();
     }
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders(); // Ensure headers are sent
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const chat = model.startChat({ history: messages.slice(0, -1) }); // History without last user message
-    const lastMessage = messages[messages.length - 1].parts[0].text;
-
-    const stream = await chat.sendMessageStream(lastMessage);
-
-    for await (const chunk of stream.stream) {
-      const chunkText = await chunk.text();
-      res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
-    }
-
-    res.write('event: done\ndata: {}\n\n'); // Signal end of stream
-    res.end();
-  } catch (error) {
-    console.error('Error in /chat:', error);
-    res.write(`data: ${JSON.stringify({ error: 'An error occurred' })}\n\n`);
-    res.end();
-  }
 });
-userRouter.post('/add/bookmark/question/:questionId', userMiddleware ,async (req:Request,res:Response)=>{
-      const student = req.userId;
-      const questionId = req.params.questionId;
-      console.log("Student: ",student)
-      const requireBody = z.object({
-        student : z.string(),
-        questionId:z.string()
-      });
-      const parseSucess = requireBody.safeParse(req.body);
-      if(!parseSucess.success){
+userRouter.post('/add/bookmark/question/:questionId', userMiddleware, async (req: Request, res: Response) => {
+    const student = req.userId;
+    const questionId = req.params.questionId;
+    console.log("Student: ", student)
+    const requireBody = z.object({
+        student: z.string(),
+        questionId: z.string()
+    });
+    const parseSucess = requireBody.safeParse(req.body);
+    if (!parseSucess.success) {
         return res.status(403).json({
             massage: "error : " + parseSucess.error
         })
-      }
-      try{
-        await BookMarkModel.create ({
+    }
+    try {
+        await BookMarkModel.create({
             student,
             questionId
         })
         res.status(200).json({
-            massage:'question bookmarked'
+            massage: 'question bookmarked'
         })
-      }catch(e){
-         return res.status(403).json({
+    } catch (e) {
+        return res.status(403).json({
             massage: "error : " + e
         })
-      }
+    }
+})
+userRouter.delete('/delete/bookmark/:questionId', async (req: Request, res: Response) => {
+    const { questionId } = req.params
+    try {
+        const deleteBookmark = await BookMarkModel.findByIdAndDelete(questionId);
+        if (!deleteBookmark) {
+            res.status(400).json({ msg: "Bookmark not found " })
+        }
+        res.status(200).json({ msg: "Bookmark delete sucessfully" });
+
+    } catch (e) {
+        res.status(400).json({
+            msg: "error: " + e
+        })
+    }
+
 })
 
 
 
- userRouter.get('/questions/bookmarked/:studentId' , async (req:Request,res:Response)=>{
-    try{
+
+userRouter.get('/questions/bookmarked/:studentId', async (req: Request, res: Response) => {
+    try {
         const studentId = req.params.studentId;
         const result = await BookMarkModel.aggregate([
-            {$match: {student : new mongoose.Types.ObjectId(studentId)}},
+            { $match: { student: new mongoose.Types.ObjectId(studentId) } },
             {
-                $project :{
-                    question : {$toString:"$questionId"}
+                $project: {
+                    question: { $toString: "$questionId" }
                 }
             },
             {
-                $group:{
-                    _id : "$question"
+                $group: {
+                    _id: "$question"
                 }
             },
-                  { $sort: { _id: 1 } }
+            { $sort: { _id: 1 } }
         ])
 
         res.json(result)
     }
-    catch(e){
+    catch (e) {
         res.status(400).json({
-          msg : "err: " + e  
+            msg: "err: " + e
         })
     }
- })
+})
 
 // API to get daily solved counts for a student
-userRouter.get("/solved/daily/:studentId",userMiddleware, async (req:Request, res:Response) => {
-  try { 
-      
-      const studentId = req.params.studentId;
-    const result = await attemtQuestionsModel.aggregate([
-      // Step 1: Filter by student (convert string to ObjectId)         
-      { $match: { student: new mongoose.Types.ObjectId(studentId) } },
+userRouter.get("/solved/daily/:studentId", userMiddleware, async (req: Request, res: Response) => {
+    try {
 
-      // Step 2: Extract only the date part from createdAt
-      {
-        $project: {
-          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
-        }
-      },
+        const studentId = req.params.studentId;
+        const result = await attemtQuestionsModel.aggregate([
+            // Step 1: Filter by student (convert string to ObjectId)         
+            { $match: { student: new mongoose.Types.ObjectId(studentId) } },
 
-      // Step 3: Group by date and count
-      {
-        $group: {
-          _id: "$date",
-          totalSolved: { $sum: 1 }
-        }
-      },
+            // Step 2: Extract only the date part from createdAt
+            {
+                $project: {
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+                }
+            },
 
-      // Step 4: Sort by date ascending
-      { $sort: { _id: 1 } }
-    ]);
+            // Step 3: Group by date and count
+            {
+                $group: {
+                    _id: "$date",
+                    totalSolved: { $sum: 1 }
+                }
+            },
 
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
+            // Step 4: Sort by date ascending
+            { $sort: { _id: 1 } }
+        ]);
+
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
 });
 
 

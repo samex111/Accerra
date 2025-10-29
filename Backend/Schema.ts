@@ -65,7 +65,7 @@ const notesSchema = new Schema({
     }
 })
 const BookMarkedSchema = new Schema({
-    questionId: {type :mongoose.Schema.Types.ObjectId ,required:true},
+    questionId: {type :mongoose.Schema.Types.ObjectId ,required:true , unique:true},
     student :{
         type : mongoose.Schema.Types.ObjectId,
         ref:'user',
