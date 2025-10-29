@@ -64,6 +64,15 @@ const notesSchema = new Schema({
         required: true
     }
 })
+const BookMarkedSchema = new Schema({
+    questionId: {type :mongoose.Schema.Types.ObjectId ,required:true},
+    student :{
+        type : mongoose.Schema.Types.ObjectId,
+        ref:'user',
+        required:true
+    }
+
+})
 
 export const NoteModel = mongoose.model("notes", notesSchema);
 export const TodoModel = mongoose.model("todo", todosSchema);
@@ -71,3 +80,4 @@ export const attemtQuestionsModel = mongoose.model("attempts", attemtQuestionsSc
 export const QuestionModel = mongoose.model("questions", questionSchema);
 export const UserModel = mongoose.model('users', userSchema);
 export const adminModel = mongoose.model('admin', adminSchema);
+export const BookMarkModel = mongoose.model('bookmark',BookMarkedSchema);

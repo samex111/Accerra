@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
-import { useContext } from "react";
 
 dotenv.config();
 

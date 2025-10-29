@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { attemtQuestionsModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
+import { attemtQuestionsModel, BookMarkModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
 import { Router } from "express";
 import z, { number } from 'zod';
 import dotenv from 'dotenv';
@@ -11,6 +11,8 @@ import crypto from 'crypto';
 import mongoose from "mongoose";
 import {callGeminiStream} from './Service.ts'
  import { GoogleGenerativeAI }  from '@google/generative-ai';
+ import { ObjectId } from "mongodb";
+
 
 
 dotenv.config();
@@ -502,6 +504,34 @@ userRouter.post('/chat1', async (req:Request, res:Response) => {
     res.end();
   }
 });
+userRouter.post('/add/bookmark/question/:questionId', userMiddleware ,async (req:Request,res:Response)=>{
+      const student = req.userId;
+      const questionId = req.params.questionId;
+      console.log("Student: ",student)
+      const requireBody = z.object({
+        student : z.string(),
+        questionId:z.string()
+      });
+      const parseSucess = requireBody.safeParse(req.body);
+      if(!parseSucess.success){
+        return res.status(403).json({
+            massage: "error : " + parseSucess.error
+        })
+      }
+      try{
+        await BookMarkModel.create ({
+            student,
+            questionId
+        })
+        res.status(200).json({
+            massage:'question bookmarked'
+        })
+      }catch(e){
+         return res.status(403).json({
+            massage: "error : " + e
+        })
+      }
+})
 
 
 
