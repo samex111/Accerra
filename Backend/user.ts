@@ -27,8 +27,8 @@ export const userRouter = Router();
 const transporter = noadmailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'samxpatel2@gmail.com',
-        pass: 'gqjd idzo bzww jpbf'
+        user: process.env.EMAIL,
+        pass: process.env.PASS
     }
 
 });
