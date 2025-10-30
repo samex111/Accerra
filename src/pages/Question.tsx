@@ -40,6 +40,7 @@ export default function Questions(props: any) {
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
+  const [bookmark , setBookmark] = useState([]);
   const question = questions[index];
 
 
@@ -286,12 +287,17 @@ useEffect(() => {
           credentials:"include"
         })
         const data = await res.json();
-        console.log(data)
+        setBookmark(data);
       }
       catch(e){
         console.error('get bookmark error: ', e)
       }
     }
+    useEffect(()=>{
+      handleGetBookMarkQuestion()
+    console.log(bookmark)
+
+    },[])
 
 
 
