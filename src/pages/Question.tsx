@@ -278,6 +278,21 @@ useEffect(() => {
       }
     }
 
+    const handleGetBookMarkQuestion = async ()=>{
+      try{
+        const res =  await fetch(`http://localhost:3000/api/v1/user/questions/bookmarked/${id}`, {
+          method:'GET',
+          headers:{"Content-Type":"application/json"},
+          credentials:"include"
+        })
+        const data = await res.json();
+        console.log(data)
+      }
+      catch(e){
+        console.error('get bookmark error: ', e)
+      }
+    }
+
 
 
 

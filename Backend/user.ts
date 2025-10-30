@@ -528,14 +528,15 @@ userRouter.post('/add/bookmark/question/:questionId', userMiddleware, async (req
         })
     } catch (e) {
         return res.status(403).json({
-            massage: "error : " + e
+            massage: "error in catch 1: " + e 
         })
     }
 })
-userRouter.delete('/delete/bookmark/:questionId', async (req: Request, res: Response) => {
-    const questionId   = req.params
+
+userRouter.delete('/delete/bookmark/:questionId', userMiddleware , async (req: Request, res: Response) => {
+    const questionId  = req.params.questionId
     try {
-        const deleteBookmark = await BookMarkModel.findOneAndDelete(questionId);
+        const deleteBookmark = await BookMarkModel.findOneAndDelete({ questionId:questionId , student: req.userId });
         if (!deleteBookmark) {
             res.status(400).json({ msg: "Bookmark not found " })
         }
@@ -543,7 +544,7 @@ userRouter.delete('/delete/bookmark/:questionId', async (req: Request, res: Resp
 
     } catch (e) {
         res.status(400).json({
-            msg: "error: " + e
+            msg: "error in catch: " + e
         })
     }
 
@@ -552,7 +553,7 @@ userRouter.delete('/delete/bookmark/:questionId', async (req: Request, res: Resp
 
 
 
-userRouter.get('/questions/bookmarked/:studentId', async (req: Request, res: Response) => {
+userRouter.get('/questions/bookmarked/:studentId', userMiddleware, async (req: Request, res: Response) => {
     try {
         const studentId = req.params.studentId;
         const result = await BookMarkModel.aggregate([
