@@ -6,8 +6,8 @@ const userSchema = new Schema({
     username: { type: String, unique: true, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    otp: String, 
-    otpExpiry: Date, 
+    otp: String,
+    otpExpiry: Date,
     isVerified: { type: Boolean, default: false }
 });
 const adminSchema = new Schema({
@@ -23,7 +23,7 @@ const questionSchema = new Schema({
     answer: [{ type: String, required: true }],
     subject: { type: String, required: true },
     year: { type: Number, required: true },
-    solution:{type:String,required:true},
+    solution: { type: String, required: true },
     examType: [{ type: String, enum: ["JEE", "NEET", "OTHER"], default: "OTHER" }],
     difficulty: [{ type: String, enum: ["EASY", "MEDIUM", "DIFFICULT"], default: "MEDIUM" }],
     tags: [{ type: String }],// which topic eg - 'thermo', 'law of motion'
@@ -48,14 +48,14 @@ const attemtQuestionsSchema = new Schema({
         required: true
     }
 }, { timestamps: true });
-const todosSchema = new Schema({    
+const todosSchema = new Schema({
     todo: { type: String, required: true },
     student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
     }
-},{ timestamps: true })
+}, { timestamps: true })
 const notesSchema = new Schema({
     note: [{ type: String, required: true }],
     student: {
@@ -65,11 +65,13 @@ const notesSchema = new Schema({
     }
 })
 const BookMarkedSchema = new Schema({
-    questionId: {type :mongoose.Schema.Types.ObjectId ,required:true , unique : false },
-    student :{
-        type : mongoose.Schema.Types.ObjectId,
-        ref:'user',
-        required:true
+    questionId: {
+        type: mongoose.Schema.Types.ObjectId, required: true, ref: "questions"
+    },
+    student: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true
     }
 
 })
@@ -80,4 +82,4 @@ export const attemtQuestionsModel = mongoose.model("attempts", attemtQuestionsSc
 export const QuestionModel = mongoose.model("questions", questionSchema);
 export const UserModel = mongoose.model('users', userSchema);
 export const adminModel = mongoose.model('admin', adminSchema);
-export const BookMarkModel = mongoose.model('bookmark',BookMarkedSchema);
+export const BookMarkModel = mongoose.model('bookmark', BookMarkedSchema);
