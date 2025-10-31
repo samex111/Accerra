@@ -327,7 +327,7 @@ useEffect(() => {
                       question.question +
                       " hint with formula in 5-8 words" +
                       question.questionDiagram
-                    }
+                    }               
                   />
                 )}
                 <img src={question.questionDiagram} alt="" />
