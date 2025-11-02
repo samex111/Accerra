@@ -14,5 +14,7 @@ export async function getEmbedding(text:string) {
     return results.data[0].embedding;
 }
 
-const ans  = await getEmbedding("Hello");
-console.log("Embedding : ",ans);
+// const ans  = await getEmbedding("Hello");
+
+
+// console.log("Embedding : ",ans);

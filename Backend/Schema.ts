@@ -22,6 +22,10 @@ const questionSchema = new Schema({
     option: [{ type: String, required: true }],
     answer: [{ type: String, required: true }],
     subject: { type: String, required: true },
+     embedding: {
+    type: [Number],   // Array of numbers
+    default: [],
+  },
     year: { type: Number, required: true },
     solution: { type: String, required: true },
     examType: [{ type: String, enum: ["JEE", "NEET", "OTHER"], default: "OTHER" }],
