@@ -4,7 +4,7 @@ import { QuestionModel } from './Schema.ts';
 
 async function run() {
     try {
-        //  await connectDB();
+         await connectDB();
         const batchSize = 2;
         const documents = await QuestionModel.find({ embedding: { $exists: false } }).limit(batchSize);
 
@@ -15,7 +15,7 @@ async function run() {
         await Promise.all(
             documents.map(async (doc) => {
                 const tags = Array.isArray(doc.tags) ? doc.tags.join(" ") : "";
-                const text = `${doc.question || ""} ${tags} Difficulty: ${doc.difficulty || "Medium"} Year: ${doc.year || "Unknown"}`;
+                const text = `${doc.question } ${tags} Difficulty: ${doc.difficulty } Year: ${doc.year }`;
 
                 try {
                     const embedding = await getEmbedding(text);
