@@ -64,8 +64,13 @@ export default function SolvedBarChart() {
         data.forEach((item) => {
           dateMap[item._id] = item.totalSolved;
         });
-        console.log(dateMap)
-       
+         console.log(dateMap)
+          const today = new Date();
+         const yesterday = new Date(today);
+         yesterday.setDate(today.getDate() - 1); 
+         const a =  (today.toDateString()).slice(4,10);
+         console.log("a", a)
+         const b=  (yesterday.toDateString()).slice(4,10);
 
         // Last 7 days
         for (let i = 6; i >= 0; i--) {
@@ -75,10 +80,16 @@ export default function SolvedBarChart() {
           const dateStr = d.toISOString().slice(0, 10);
           const s1 = d.toDateString()
           const fdate = s1.substring(4,10)
-          
+          if(fdate === a){
+          labels.push("Today");
+          } else if (fdate === b){
+            labels.push("Yesterday")
+          }
+          else{
+          labels.push(fdate);
+          }
           
 
-          labels.push(fdate);
           values.push(dateMap[dateStr] || 0);
         }
 
@@ -119,7 +130,7 @@ export default function SolvedBarChart() {
   };
 
   return (
-    <div style={{ maxWidth: "500px", margin: "auto" }}>
+    <div style={{ maxWidth: '500px', margin: "auto" }} >
       <h2 style={{ textAlign: "center" }}>Last 7 Days Solved Questions</h2>
       <Bar data={chartData} options={options} />
     </div>

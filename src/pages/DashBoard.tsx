@@ -105,7 +105,7 @@ export default function DashBoard() {
         <SelectSubject />
         <Todo />
         </div>
-        <div className="flex w-full h-[40vh]" >
+        <div className=" w-full h-[40vh]" >
           <SolvedBarChart  />
         </div>
       </main> : item ==="Understand with AI" ?   <GeminiStream   /> : 
