@@ -13,6 +13,7 @@ import GeminiStream from "./component/SSE";
 import { useState } from "react";
 import PracticeQuestion from "./component/PracticeQuestion";
 import Todo from "./component/Todo";
+import DashBoard from "./pages/DashBoard";
 
 function App() {
   const [prompt , setPrompt] = useState('Hello how to be crack dev ans in 2 1 para')
@@ -45,27 +46,9 @@ function App() {
         <Route path="/questions/physics" element={<PracticeQuestion subj="PHYSICS" mode="practice" />} />
         <Route path="/questions/chemistry" element={<PracticeQuestion subj="CHEMISTRY" mode="practice" />} />
         <Route path="/questions/test" element={<Questions subj="CHEMISTRY" mode="practice" />} />
-        <Route path="/user/select/subject" element={
-          <div className="bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)] w-full " >
-              {/* <Navbar></Navbar> */}
-            <div className="flex justify-end p-10 ">
-            <SelectSubject />
-            <Todo></Todo>
-            </div>
-            <SolvedBarChart  />
-             <GeminiStream prompt = {prompt} />
-           <textarea  onKeyDown={handleEvent}     
-           placeholder="Ask something....."
-           onChange={(e)=>{setOp(e.target.value)}}
-           className="border-4 w-1/2 mx-2 mt-2 h-1/2 scroll-smooth"
-           
-           >
-            </textarea>
-            <button id="btn"  onClick={()=>{setPrompt(op)}} >Send</button>
-           
-          </div>
-         
-        } />
+        <Route path="/dashboard" element={<DashBoard/>} />
+       
+
 
         <Route path="/user/chat" element={<ChatApp />} />
       </Routes>

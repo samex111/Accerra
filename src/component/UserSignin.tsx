@@ -35,7 +35,7 @@ export default function Signin() {
 
       if (res.ok) {
         alert("Signin successful ✅")
-        navigate("/user/select/subject")
+        navigate("/dashboard")
       } else {
         alert(data.msg || "Signin failed ❌")
       }

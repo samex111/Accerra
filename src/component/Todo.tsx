@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Pen } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 // Define TypeScript interface for todo items
@@ -105,7 +107,10 @@ console.log('Yesterday:', yesterday.toDateString());
 
    
   return (
-    <div className="p-4 border-gray-500 shadow-md border w-fit h-fit">
+    <Card className="p-4  shadow-md  w-[30vw] h-[40vh] overflow-y-auto rounded-sm">
+      <div className="flex space-x-1">
+      <Pen /><h1 className="text-xl font-bold">Todo list</h1>
+      </div>
       <div className="flex gap-2 mb-4">
         <Input
           placeholder="Add todo"
@@ -152,13 +157,13 @@ console.log('Yesterday:', yesterday.toDateString());
                   </>
                 ) : (
                   <>
-                    <p className="w-[20vw]">{t}</p>
-                    <Button
+                    <p className="w-[20vw] ">{t}</p>
+                    <Button className="mt-1"
                       onClick={() => startEditing(item.id[i], t)}
                     > 
                       Edit
                     </Button>
-                    <Button
+                    <Button className="nt-1"
                       onClick={() => handleDelete(item.id[i])}
                     >
                       Delete
@@ -171,6 +176,6 @@ console.log('Yesterday:', yesterday.toDateString());
         ))}
         
       </div>
-    </div>
+    </Card>
   );
 }
