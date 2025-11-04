@@ -198,7 +198,7 @@ export default function PracticeQuestion(props: any) {
           </button>
 
 
-          <button className="border px-4 py-2 mx-2" onClick={handleSubmit}  >Submit test</button>
+          <button className="border px-4 py-2 mx-2" onClick={handleSubmit}  >Submit question</button>
         </div>
       
 
