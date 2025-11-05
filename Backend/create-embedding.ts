@@ -1,12 +1,12 @@
 import { connectDB } from './db.ts';
 import { getEmbedding } from './get-embeddings.ts';
-import { QuestionModel } from './Schema.ts';
+import { attemtQuestionsModel, QuestionModel } from './Schema.ts';
 
 async function run() {
     try {
          await connectDB();
         const batchSize = 2;
-        const documents = await QuestionModel.find({ embedding: { $exists: false } }).limit(batchSize);
+        const documents = await attemtQuestionsModel.find({ embedding: { $exists: false } }).limit(batchSize);
 
         console.log(`Processing ${documents.length} questions...`);
 
@@ -15,7 +15,7 @@ async function run() {
         await Promise.all(
             documents.map(async (doc) => {
                 const tags = Array.isArray(doc.tags) ? doc.tags.join(" ") : "";
-                const text = `${doc.question } ${tags} Difficulty: ${doc.difficulty } Year: ${doc.year }`;
+                const text = `question:${doc.question } ,tags:${tags}, Status: ${doc.status } user answer: ${doc.userAnswer} .`;
 
                 try {
                     const embedding = await getEmbedding(text);
@@ -33,7 +33,7 @@ async function run() {
         );
 
         if (updateDocuments.length > 0) {
-            const collection = QuestionModel.collection;
+            const collection = attemtQuestionsModel.collection;
             const result = await collection.bulkWrite(updateDocuments, { ordered: false });
             console.log("✅ Documents updated:", result.modifiedCount);
         } else {
@@ -45,4 +45,4 @@ async function run() {
     }
 }
 
-run().catch(console.dir);
+setInterval(()=>{run().catch(console.dir)},60000);

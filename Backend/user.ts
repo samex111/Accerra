@@ -616,3 +616,20 @@ userRouter.get("/solved/daily/:studentId", userMiddleware, async (req: Request, 
 });
 
 
+userRouter.post('/send/context' , async(req:Request, res:Response)=>{
+ 
+} )
+
+// mujhe ye banana hai ki jab user koi prompt bheje to 
+// data  rag pipline se hokar guzre 
+// if user ne bola anylzr my proformance then 
+// data  hamko solved question se laana hai data 
+// also come from notes 
+
+// 1. propmt --> embedding 
+// 2. embedding --> solved questions 
+// 3. embedding --> notes which are relavent
+// 4. embedding --> content modules 
+// 5. embedding --> pyq if level is sufficent 
+// const context = propmt + 2+3+4+5
+// send to ai =  context 

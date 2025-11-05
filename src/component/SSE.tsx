@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -7,6 +8,7 @@ const GeminiStream: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [prompt , setPrompt] = useState('')
   const [onPrompt , setOnPrompt] = useState('')
+  const [isAnlyze, setIsAnylyze] = useState(false)
 
   useEffect(() => {
     // 1️⃣ SSE connection
@@ -40,7 +42,7 @@ const GeminiStream: React.FC = () => {
       eventSource.close();
     };
   }, [prompt]);
-
+    const [buttonBg , setButtonBg] = useState('blue-300')
   return (
     <div className="absolute left-[16vw]  bg-gray-100 w-[84vw] h-screen">
       <h2 className="text-2xl font-mono p-1 text-blue-500 ">Ace Ai</h2>
@@ -53,13 +55,14 @@ const GeminiStream: React.FC = () => {
           </div>
         ))}
        <div className="fixed bottom-[2vh] left-[30vw] items-center flex">   
+        <Button  onClick={()=>{if(isAnlyze){setButtonBg('blue-500')}else setButtonBg('blue-300'); setIsAnylyze(!isAnlyze)}}  className={`fixed bg-${buttonBg} hover:${buttonBg==='bg-blue-300'?'bg-blue-500':'bg-blue-300'}  z-90 bottom-[12vh]`}>Anylze</Button>
       <textarea onChange={(e)=>setOnPrompt(e.target.value)} className= " border-[2px] px-2 py-1  rounded-3xl z-20  w-[60vw]  items-center" placeholder="Solve doubt "></textarea>
       <ArrowUp onClick={()=>{setPrompt(onPrompt)}} className="absolute text-bl-500 left-[57vw] rounded-full text-blue-500 z-50  bg-gray-900 mt-1 hover:bg-black hover:rounded-full"  size={35} />
       </div>
       </div>
     
     </div>
-  );
+  );                    
 };
 
 export default GeminiStream;

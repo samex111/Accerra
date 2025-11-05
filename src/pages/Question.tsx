@@ -271,6 +271,8 @@ useEffect(() => {
           credentials: "include",
           // body: JSON.stringify({questionId:questionId , student:id})
         })
+      await handleGetBookMarkQuestion();
+
         const data = await res.json()
         console.log(data)
       }
@@ -287,7 +289,9 @@ useEffect(() => {
           credentials:"include"
         })
         const data = await res.json();
-        setBookmark(data);
+        console.log(data.questionID)
+        setBookmark(data.student);
+        console.log("Bookmark : ",bookmark)
       }
       catch(e){
         console.error('get bookmark error: ', e)
@@ -295,11 +299,12 @@ useEffect(() => {
     }
     useEffect(()=>{
       handleGetBookMarkQuestion()
-    console.log(bookmark)
+    // console.log("Bookmark : ",bookmark)
 
-    },[])
-
-
+    },[])  
+  // @ts-ignore
+    // const bookmarks = bookmark.map(item=>item.questionId)
+    // console.log("Bookmarks with questionID: ",bookmarks)
 
 
   // 
@@ -330,7 +335,7 @@ useEffect(() => {
                     }               
                   />
                 )}
-                <img src={question.questionDiagram} alt="" />
+                <img src={question.questionDiagram}  />
 
                 <div className="mt-2">
                   {question.option.map((opt, i) => (

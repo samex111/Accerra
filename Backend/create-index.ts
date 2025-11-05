@@ -1,4 +1,4 @@
-    import { QuestionModel } from './Schema.ts';
+    import { attemtQuestionsModel, QuestionModel } from './Schema.ts';
     import { connectDB } from './db.ts';
 
     async function run() {
@@ -24,7 +24,7 @@
         }
 
         // Call the method to create the index
-        const result = await QuestionModel.createSearchIndex(index);
+        const result = await attemtQuestionsModel.createSearchIndex(index);
         
 
         console.log("result ",result);
