@@ -58,7 +58,7 @@ const GeminiStream: React.FC = () => {
        <div className="fixed bottom-[2vh] left-[30vw] items-center flex">   
         <Button  onClick={()=>{if(isAnlyze){setButtonBg('blue-500')}else setButtonBg('blue-300'); setIsAnylyze(!isAnlyze)}}  size={'lg'} className={`fixed bg-${buttonBg} rounded-full hover:${buttonBg==='bg-blue-300'?'bg-blue-500':'bg-blue-300'}  z-90 bottom-[12vh]`}>Anylze</Button>
       <textarea onChange={(e)=>setOnPrompt(e.target.value)} className= "focus:outline-none focus:ring-0 shadow-md border-[2px] px-2 py-1  rounded-3xl z-20  w-[60vw]  items-center" placeholder="Solve doubt "></textarea>
-      <div  className="fixed w-fit flex left-[39vw] items-center bottom-[12vh]"><Paperclip/><Input placeholder="" type="file" /></div>
+      <div  className="fixed w-fit flex left-[39vw] items-center bottom-[12vh] border rounded-full"><Paperclip/><Input className="border-0"   type="file" /></div>
       <ArrowUp onClick={()=>{setPrompt(onPrompt)}} className="absolute text-bl-500 left-[57vw] rounded-full text-blue-500 z-50  bg-gray-900 mt-1 hover:bg-black hover:rounded-full"  size={35} />
       </div>
       </div>
