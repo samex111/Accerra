@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Home, Settings, Bookmark, Pen, Menu, Brain, User } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import GeminiStream from "@/component/SSE";
+import GeminiStream from "@/component/geminiResponse";
  
 const items = [
   { title: "Home", icon: Home },
