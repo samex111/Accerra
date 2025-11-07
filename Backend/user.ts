@@ -3,6 +3,7 @@ import { attemtQuestionsModel, BookMarkModel, NoteModel, QuestionModel, TodoMode
 import { Router } from "express";
 import z, { number } from 'zod';
 import dotenv from 'dotenv';
+import multer from "multer";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
 import { userMiddleware } from "./auth.ts";
@@ -12,6 +13,8 @@ import mongoose from "mongoose";
 import { callGeminiStream } from './Service.ts'
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ObjectId } from "mongodb";
+import { createClient } from "@supabase/supabase-js";
+import fs from "fs";
 
 
 
@@ -633,3 +636,40 @@ userRouter.post('/send/context' , async(req:Request, res:Response)=>{
 // 5. embedding --> pyq if level is sufficent 
 // const context = propmt + 2+3+4+5
 // send to ai =  context 
+const upload = multer({ dest: "uploads/" });
+ const supabase = createClient(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+userRouter.post('/upload',userMiddleware,upload.single("file"), async (req:Request,res:Response)=>{
+
+ try {
+    const file = req.file!;
+   
+    // Upload file to Supabase bucket
+    const { data, error } = await supabase.storage
+      .from("uploads")
+      .upload(
+        `ai_uploads/${Date.now()}_${file.originalname}`,
+        fs.readFileSync(file.path),
+        { contentType: file.mimetype }
+      );
+
+    if (error) throw error;
+
+    // Get public URL of uploaded file
+    const { data: publicUrlData } = supabase.storage
+      .from("uploads")
+      .getPublicUrl(data.path);
+
+    const imageUrl = publicUrlData.publicUrl;
+    console.log("✅ Image uploaded:", imageUrl);
+
+    // Return only the URL — no AI call yet
+    res.json({ success: true, imageUrl });
+  } catch (err) {
+    console.error("❌ Upload error:", err);
+    res.status(500).json({ success: false, message: "Upload failed" });
+  }
+})
+
