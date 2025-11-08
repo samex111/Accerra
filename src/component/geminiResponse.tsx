@@ -1,23 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowUp, Paperclip } from "lucide-react";
-import { use, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-
 
 const GeminiStream: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
-  const [prompt, setPrompt] = useState('')
-  const [onPrompt, setOnPrompt] = useState('')
-  const [isAnlyze, setIsAnylyze] = useState(false)
-  const [file, setFile] = useState<null | any>(null)
+  const [prompt, setPrompt] = useState("");
+  const [onPrompt, setOnPrompt] = useState("");
+  const [isAnalyze, setIsAnalyze] = useState(false);
+  const [file, setFile] = useState<null | File>(null);
   const [loading, setLoading] = useState(false);
-  const [fileUrl, setFileUrl] = useState(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [isFileUrl, setIsFileUrl] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // 🔄 Auto scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // 📂 Handle File Upload
   const handleFileChange = async (e: any) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
     if (!selectedFile) return;
+    setFile(selectedFile);
 
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -26,6 +33,7 @@ const GeminiStream: React.FC = () => {
     const res = await fetch("http://localhost:3000/api/v1/user/upload", {
       method: "POST",
       body: formData,
+      credentials: "include",
     });
 
     const data = await res.json();
@@ -34,75 +42,110 @@ const GeminiStream: React.FC = () => {
     if (data.success) {
       setFileUrl(data.imageUrl);
     } else {
-      alert("Upload failed");
+      alert("Upload failed " + data.error);
     }
   };
-  useEffect(() => {
-    // 1️⃣ SSE connection
 
+  // 🔁 Stream Setup
+  useEffect(() => {
+    if (!prompt) return;
+
+    if (fileUrl) setIsFileUrl(fileUrl);
+    else setIsFileUrl("");
 
     const eventSource = new EventSource(
-      `http://localhost:3000/api/v1/user/stream?prompt=${encodeURIComponent(prompt+fileUrl)}`
+      `http://localhost:3000/api/v1/user/stream?prompt=${encodeURIComponent(
+        prompt + isFileUrl
+      )}`
     );
 
-    // 2️⃣ Incoming messages
     eventSource.onmessage = (event) => {
       try {
-        // Parse only if valid JSON
         const parsedData = JSON.parse(event.data);
         if (parsedData?.content) {
           setMessages((prev) => [...prev, parsedData.content]);
         }
-      } catch (error) {
-        console.error("Failed to parse SSE data:", event.data, error);
-        // Agar plain text hai, toh directly append kar sakte ho
+      } catch {
         setMessages((prev) => [...prev, event.data]);
       }
     };
-    // const handleUpload = async () => {
-    //   const formData = new FormData();
-    //   formData.append('file', file);
 
-    //   const res = await fetch('http://localhost:3000/api/v1/user/upload', {
-    //     method: "POST",
-    //     body: formData
-    //   })
-
-    //   const data = res.json();
-    //   console.log(data)
-    // }
-
-    // 3️⃣ Stream end
     eventSource.addEventListener("end", () => {
-      console.log("Stream ended.");
       eventSource.close();
     });
 
-    // 4️⃣ Cleanup
     return () => {
       eventSource.close();
     };
   }, [prompt]);
-  const [buttonBg, setButtonBg] = useState('blue-300');
+
   return (
-    <div className="absolute left-[16vw]  bg-gray-100 w-[84vw] h-screen">
-      <h2 className="text-2xl font-mono p-1 text-blue-500 ">Ace Ai</h2>
+    <div className="flex flex-col bg-[#FFFF] text-gray-100 h-screen relative left-[16vw] w-[84vw] overflow-hidden">
+      {/* Header */}
+      <header className="p-4 text-center border-b border-gray-700 text-2xl font-semibold text-blue-400">
+        Ace AI 💫
+      </header>
 
-      <div className="   absolute left-[15vw]  w-[50vw] h-screen overflow-y-auto rounded-lg  overflow-x-auto">
-
+      {/* Chat Section */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6  scrollbar-thin scrollbar-thumb-gray-600">
         {messages.map((msg, index) => (
-          <div key={index} className="mb-4 left-[100%] ">
-            <ReactMarkdown>{msg}</ReactMarkdown>
+          <div
+            key={index}
+            className={``}
+          >
+            <div
+              className={`relative bottom-[20vh] max-w-[70%] px-4 py-2 rounded-2xl text-black`}
+            >
+              <ReactMarkdown>{msg}</ReactMarkdown>
+            </div>
           </div>
         ))}
-        <div className="fixed bottom-[2vh] left-[30vw] items-center flex">
-          <Button onClick={() => { if (isAnlyze) { setButtonBg('blue-500') } else setButtonBg('blue-300'); setIsAnylyze(!isAnlyze) }} size={'lg'} className={`fixed bg-${buttonBg} rounded-full hover:${buttonBg === 'bg-blue-300' ? 'bg-blue-500' : 'bg-blue-300'}  z-90 bottom-[12vh]`}>Anylze</Button>
-          <textarea onChange={(e) => setOnPrompt(e.target.value)} className="focus:outline-none focus:ring-0 shadow-md border-[2px] px-2 py-1  rounded-3xl z-20  w-[60vw]  items-center" placeholder="Solve doubt "></textarea>
-          <div className="fixed w-fit flex left-[39vw] items-center bottom-[12vh] border rounded-full"><Paperclip /><Input id="choose-file" className="border-0" accept="images/*" onChange={handleFileChange} type="file" /></div>
-          <ArrowUp onClick={() => { setPrompt(onPrompt) }} className="absolute text-bl-500 left-[57vw] rounded-full text-blue-500 z-50  bg-gray-900 mt-1 hover:bg-black hover:rounded-full" size={35} />
-        </div>
+        <div ref={messagesEndRef} />
       </div>
 
+      {/* Input Section */}
+      <div className="border-t border-gray-700 bg-[#1A1A1A]/80 backdrop-blur-md  p-4 flex items-center gap-3 fixed bottom-0 w-[84vw]">
+        {/* File Upload */}
+        <label className="cursor-pointer hover:scale-105 transition-transform">
+          <Paperclip className="text-gray-300 hover:text-white" />
+          <Input
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </label>
+
+        {/* Textarea */}
+        <textarea
+          rows={1}
+          value={onPrompt}
+          onChange={(e) => setOnPrompt(e.target.value)}
+          placeholder="Send a message..."
+          className="flex-1 resize-none rounded-2xl bg-[#2A2A2A] text-gray-100 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
+        />
+
+        {/* Send Button */}
+        <Button
+          size="icon"
+          className="rounded-full bg-blue-600 hover:bg-blue-700 transition-transform hover:scale-105"
+          onClick={() => setPrompt(onPrompt)}
+        >
+          <ArrowUp className="text-white" />
+        </Button>
+
+        {/* Analyze Toggle */}
+        <Button
+          onClick={() => setIsAnalyze((prev) => !prev)}
+          className={`rounded-full ml-2 ${
+            isAnalyze
+              ? "bg-blue-600 hover:bg-blue-500"
+              : "bg-gray-700 hover:bg-gray-600"
+          }`}
+        >
+        Analyze
+        </Button>
+      </div>
     </div>
   );
 };

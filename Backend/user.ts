@@ -399,7 +399,7 @@ userRouter.put("/note/update/:id", async (req, res) => {
     }
 
 })
-userRouter.put("/todo/:id", async (req, res) => {
+userRouter.put("/todo/:id", userMiddleware, async (req, res) => {
     const { id } = req.params;
     const todo = req.body.todo;
     try {
@@ -454,12 +454,13 @@ userRouter.get('/questions', userMiddleware, async (req: Request, res: Response)
 })
 
 
-userRouter.get("/stream", async (req, res) => {
+userRouter.get("/stream",  async (req, res) => {
     // 🧠 Required SSE headers
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader("Connection", "keep-alive");
+    // res.setHeader("credentials","include")
     res.flushHeaders()
     const prompt = req.query.prompt as string;
     // console.log(res)
@@ -474,9 +475,9 @@ userRouter.get("/stream", async (req, res) => {
     // ✅ Call streaming function
     await callGeminiStream(prompt, res);
 });
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 
-userRouter.post('/chat1', async (req: Request, res: Response) => {
+userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
     try {
         const { messages } = req.body; // Expect array of {role: 'user'|'model', parts: [{text: 'message'}]}
         if (!messages || !Array.isArray(messages)) {
@@ -486,6 +487,7 @@ userRouter.post('/chat1', async (req: Request, res: Response) => {
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
+    //   res.setHeader("credentials","include")
         res.flushHeaders(); // Ensure headers are sent
 
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });

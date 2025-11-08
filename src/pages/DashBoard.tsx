@@ -80,7 +80,6 @@ export default function DashBoard() {
                               <item.icon  size={18} />
                               <span>{item.title}</span>
                             </button>
-                            
                           </SidebarMenuButton>
                           
                         </SidebarMenuItem>
@@ -107,9 +106,10 @@ export default function DashBoard() {
         </div>
         <div className=" w-full h-[40vh]" >
           <SolvedBarChart  />
+
         </div>
       </main> : item ==="Understand with AI" ?   <GeminiStream   /> : 
-       <div> Not found </div>
+       <div className="absolute  left-[50vw] top-[50vh]"> Not found </div>
 }
     </div>
   );
