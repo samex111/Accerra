@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input";
 import { ArrowUp, Paperclip } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const GeminiStream: React.FC = () => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [prompt, setPrompt] = useState("");
   const [onPrompt, setOnPrompt] = useState("");
   const [isAnalyze, setIsAnalyze] = useState(false);
@@ -15,12 +16,12 @@ const GeminiStream: React.FC = () => {
   const [isFileUrl, setIsFileUrl] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 🔄 Auto scroll to bottom on new messages
+  // Auto scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 📂 Handle File Upload
+  // File Upload
   const handleFileChange = async (e: any) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
@@ -46,9 +47,15 @@ const GeminiStream: React.FC = () => {
     }
   };
 
-  // 🔁 Stream Setup
+  // Streaming
   useEffect(() => {
     if (!prompt) return;
+
+    // Add user message first
+    setMessages((prev) => [...prev, { role: "user", content: onPrompt }]);
+
+    // Add placeholder for AI response
+    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     if (fileUrl) setIsFileUrl(fileUrl);
     else setIsFileUrl("");
@@ -63,15 +70,32 @@ const GeminiStream: React.FC = () => {
       try {
         const parsedData = JSON.parse(event.data);
         if (parsedData?.content) {
-          setMessages((prev) => [...prev, parsedData.content]);
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            const lastMsg = newMessages[newMessages.length - 1];
+            if (lastMsg.role === "assistant") {
+              lastMsg.content += parsedData.content;
+            }
+            return newMessages;
+          });
         }
       } catch {
-        setMessages((prev) => [...prev, event.data]);
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          const lastMsg = newMessages[newMessages.length - 1];
+          if (lastMsg.role === "assistant") {
+            lastMsg.content += event.data;
+          }
+          return newMessages;
+        });
       }
     };
 
     eventSource.addEventListener("end", () => {
       eventSource.close();
+      setPrompt("");
+      setOnPrompt("");
+      setFileUrl(null);
     });
 
     return () => {
@@ -79,62 +103,90 @@ const GeminiStream: React.FC = () => {
     };
   }, [prompt]);
 
+  const sendMessage = () => {
+    if (!onPrompt.trim()) return;
+    setPrompt(onPrompt);
+  };
+
   return (
     <div className="flex flex-col bg-[#FFFF] text-gray-100 h-screen relative left-[16vw] w-[84vw] overflow-hidden">
       {/* Header */}
       <header className="p-4 text-center border-b border-gray-700 text-2xl font-semibold text-blue-400">
-        Ace AI 💫
+        Ace AI
       </header>
 
-      {/* Chat Section */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6  scrollbar-thin scrollbar-thumb-gray-600">
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-600">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={``}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`relative bottom-[20vh] max-w-[70%] px-4 py-2 rounded-2xl text-black`}
+              className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${
+                msg.role === "user"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-black dark:bg-gray-800 dark:text-gray-100"
+              }`}
             >
-              <ReactMarkdown>{msg}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code: ({ node, inline, className, children, ...props }) => {
+                    return inline ? (
+                      <code className="bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-medium" {...props}>
+                        {children}
+                      </code>
+                    ) : (
+                      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm my-2">
+                        <code>{children}</code>
+                      </pre>
+                    );
+                  },
+                  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1">{children}</ol>,
+                }}
+              >
+                {msg.role === "assistant" && msg.content === ""
+                  ? "Thinking"
+                  : msg.content}
+              </ReactMarkdown>
+
+              {/* Typing cursor */}
+              {msg.role === "assistant" && index === messages.length - 1 && msg.content && (
+                <span className="inline-block w-2 h-5 bg-gray-600 animate-pulse ml-1 align-middle">▍</span>
+              )}
             </div>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Section */}
-      <div className="border-t border-gray-700 bg-[#1A1A1A]/80 backdrop-blur-md  p-4 flex items-center gap-3 fixed bottom-0 w-[84vw]">
-        {/* File Upload */}
+      {/* Input Bar */}
+      <div className="border-t border-gray-700 bg-[#1A1A1A]/80 backdrop-blur-md p-4 flex items-center gap-3 fixed bottom-0 w-[84vw] left-[16vw]">
         <label className="cursor-pointer hover:scale-105 transition-transform">
           <Paperclip className="text-gray-300 hover:text-white" />
-          <Input
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <Input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
         </label>
 
-        {/* Textarea */}
         <textarea
           rows={1}
           value={onPrompt}
           onChange={(e) => setOnPrompt(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendMessage())}
           placeholder="Send a message..."
           className="flex-1 resize-none rounded-2xl bg-[#2A2A2A] text-gray-100 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
         />
 
-        {/* Send Button */}
         <Button
           size="icon"
           className="rounded-full bg-blue-600 hover:bg-blue-700 transition-transform hover:scale-105"
-          onClick={() => setPrompt(onPrompt)}
+          onClick={sendMessage}
         >
           <ArrowUp className="text-white" />
         </Button>
 
-        {/* Analyze Toggle */}
         <Button
           onClick={() => setIsAnalyze((prev) => !prev)}
           className={`rounded-full ml-2 ${
@@ -143,7 +195,7 @@ const GeminiStream: React.FC = () => {
               : "bg-gray-700 hover:bg-gray-600"
           }`}
         >
-        Analyze
+          Analyze
         </Button>
       </div>
     </div>
