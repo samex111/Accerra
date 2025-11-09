@@ -675,6 +675,16 @@ userRouter.post('/upload',userMiddleware,upload.single("file"), async (req:Reque
   }
 })
 userRouter.get('/question/:questionId', async(req:Request,res:Response)=>{
-    
+    const {questionId} = req.params
+    try{
+        const response = await QuestionModel.findById({_id:questionId});
+        res.status(200).json({
+        response
+        })   
+    }catch(e){
+        res.status(400).json({
+            error:'error'+e
+        })
+    }
 })
 
