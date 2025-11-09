@@ -24,7 +24,6 @@ const items = [
   { title: "Understand with AI", icon: Brain },
   { title: "Bookmark", icon: Bookmark },
   { title: "Settings", icon: Settings },
-  {title : "Profile" , icon : User}
 ];
 
 export default function DashBoard() {

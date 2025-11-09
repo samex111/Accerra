@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
 import SquareBox from "../component/QuestionSquareBox";
-import { BookmarkMinus, BookmarkPlus } from "lucide-react";
+import { Bookmark, BookmarkMinus, BookmarkPlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Questions(props: any) {
   interface Question {
@@ -271,7 +272,7 @@ useEffect(() => {
           credentials: "include",
           // body: JSON.stringify({questionId:questionId , student:id})
         })
-      await handleGetBookMarkQuestion();
+      
 
         const data = await res.json()
         console.log(data)
@@ -281,7 +282,7 @@ useEffect(() => {
       }
     }
 
-    const handleGetBookMarkQuestion = async ()=>{
+    const handleGetBookMarkQuestion = async (id:string)=>{
       try{
         const res =  await fetch(`http://localhost:3000/api/v1/user/questions/bookmarked/${id}`, {
           method:'GET',
@@ -290,18 +291,19 @@ useEffect(() => {
         })
         const data = await res.json();
         console.log(data.questionID)
-        setBookmark(data.student);
+        setBookmark(data);
         console.log("Bookmark : ",bookmark)
       }
-      catch(e){
+      catch(e){         
         console.error('get bookmark error: ', e)
       }
     }
     useEffect(()=>{
-      handleGetBookMarkQuestion()
-    // console.log("Bookmark : ",bookmark)
+     
+    
 
     },[])  
+         
   // @ts-ignore
     // const bookmarks = bookmark.map(item=>item.questionId)
     // console.log("Bookmarks with questionID: ",bookmarks)
@@ -320,7 +322,7 @@ useEffect(() => {
         <p>No saved answers or expired</p>
       )}   <div className="flex justify-around">
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
-          { isBookmark ? <BookmarkMinus onClick={()=>{handleDeleteBookmark(question._id); setIsBookmark(false)}} /> : <BookmarkPlus onClick={()=>{handleAddBookmark(question._id); setIsBookmark(true) }}/> }
+          { isBookmark ? <Bookmark fill="" onClick={()=>{handleDeleteBookmark(question._id); setIsBookmark(false)}} /> : <Bookmark  onClick={()=>{handleAddBookmark(question._id); setIsBookmark(true) }}/> }
           </div>
           <div className="h-96  overflow-y-scroll">
             {question && (
@@ -392,6 +394,7 @@ useEffect(() => {
 
           <button className="border px-4 py-2 mx-2" onClick={handleSubmit}  >Submit test</button>
         </div>
+        <div className="">
         <div className="grid grid-cols-6 gap-2 w-[30vw] h-[30vh] bg-gray-100 p-3 rounded-sm overflow-y-scroll">
           {questions.map((_, i) => (
             <SquareBox
@@ -402,9 +405,17 @@ useEffect(() => {
             />
           ))}
         </div>
-
+      <div className="mt-2">Ansewed: {answered}  , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
+      <Button onClick={()=>handleGetBookMarkQuestion('68bed5576efadf592b5058f2')}>get bookmark</Button>
+      <div>
+      {
+        bookmark.map((item,i)=>(
+          <p key={i}>{item._id}</p>
+        ))
+      }
       </div>
-      <div>Ansewed: {answered} , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
+      </div>
+      </div>
     </div>
   );
 
