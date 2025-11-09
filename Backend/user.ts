@@ -674,4 +674,7 @@ userRouter.post('/upload',userMiddleware,upload.single("file"), async (req:Reque
     res.status(500).json({ success: false, message: "Upload failed" });
   }
 })
+userRouter.get('/question/:questionId', async(req:Request,res:Response)=>{
+    
+})
 
