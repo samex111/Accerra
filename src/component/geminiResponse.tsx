@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowUp, Paperclip } from "lucide-react";
+import { ArrowUp, Ellipsis, Paperclip } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -66,31 +66,39 @@ const GeminiStream: React.FC = () => {
       )}`
     );
 
-    eventSource.onmessage = (event) => {
-      try {
-        const parsedData = JSON.parse(event.data);
-        if (parsedData?.content) {
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            const lastMsg = newMessages[newMessages.length - 1];
-            if (lastMsg.role === "assistant") {
-              lastMsg.content += parsedData.content;
-            }
-            return newMessages;
-          });
-        }
-      } catch {
+   eventSource.onmessage = (event) => {
+    try {
+      const parsedData = JSON.parse(event.data);
+
+      if (parsedData?.content) {
         setMessages((prev) => {
-          const newMessages = [...prev];
-          const lastMsg = newMessages[newMessages.length - 1];
-          if (lastMsg.role === "assistant") {
-            lastMsg.content += event.data;
+          const last = prev[prev.length - 1];
+          if (last?.role === "assistant") {
+            // Return a new array + new object (avoid mutation)
+            return [
+              ...prev.slice(0, -1),
+              { ...last, content: last.content + parsedData.content },
+            ];
+          } else {
+            // No assistant message yet, add one
+            return [...prev, { role: "assistant", content: parsedData.content }];
           }
-          return newMessages;
         });
       }
-    };
-
+    } catch {
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant") {
+          return [
+            ...prev.slice(0, -1),
+            { ...last, content: last.content + event.data },
+          ];
+        } else {
+          return [...prev, { role: "assistant", content: event.data }];
+        }
+      });
+    }
+  };
     eventSource.addEventListener("end", () => {
       eventSource.close();
       setPrompt("");
@@ -109,18 +117,18 @@ const GeminiStream: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col bg-[#FFFF] text-gray-100 h-screen relative left-[16vw] w-[84vw] overflow-hidden">
+    <div className="flex flex-col bg-[#FFFF] text-gray-100 h-screen relative  left-[16vw] w-[84vw] overflow-hidden">
       {/* Header */}
       <header className="p-4 text-center border-b border-gray-700 text-2xl font-semibold text-blue-400">
         Ace AI
       </header>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-600">
+      <div className={`flex-1 overflow-y-auto   px-4 py-6 space-y-6  scrollbar-thin scrollbar-thumb-gray-600`}>
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-${msg.content === '' ? 'pulse' : ''}`}
           >
             <div
               className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${
@@ -134,7 +142,7 @@ const GeminiStream: React.FC = () => {
                 components={{
                   code: ({ node, inline, className, children, ...props }) => {
                     return inline ? (
-                      <code className="bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-medium" {...props}>
+                      <code className={`bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-medium `} {...props}>
                         {children}
                       </code>
                     ) : (
@@ -149,24 +157,24 @@ const GeminiStream: React.FC = () => {
                 }}
               >
                 {msg.role === "assistant" && msg.content === ""
-                  ? "Thinking"
+                  ? `${'Thinking...'}`
                   : msg.content}
               </ReactMarkdown>
 
               {/* Typing cursor */}
               {msg.role === "assistant" && index === messages.length - 1 && msg.content && (
-                <span className="inline-block w-2 h-5 bg-gray-600 animate-pulse ml-1 align-middle">▍</span>
+                <span className="inline-block w-2  h-5 bg-gray-600 animate-pulse ml-1 align-middle">▍</span>
               )}
             </div>
           </div>
-        ))}
+        ))} 
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input Bar */}
-      <div className="border-t border-gray-700 bg-[#1A1A1A]/80 backdrop-blur-md p-4 flex items-center gap-3 fixed bottom-0 w-[84vw] left-[16vw]">
-        <label className="cursor-pointer hover:scale-105 transition-transform">
-          <Paperclip className="text-gray-300 hover:text-white" />
+      <div className="border-t border-gray-700  backdrop-blur-md p-4 flex items-center gap-3 fixed bottom-0 w-[84vw] left-[16vw]">
+        <label className="cursor-pointer  hover:scale-105 transition-transform">
+          <Paperclip fill="" className="text-gray-300 hover:text-white hover:scale-110" />
           <Input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
         </label>
 
