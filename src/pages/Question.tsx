@@ -41,8 +41,9 @@ export default function Questions(props: any) {
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
-  const [bookmark , setBookmark] = useState([]);
   const question = questions[index];
+  const [bookmarks, setBookmarks] = useState<string[]>([]);
+const [bookmarkQuestions, setBookmarkQuestions] = useState<Question[]>([]);
 
 
   // Answers object: { questionId: [selectedOptions] }
@@ -64,7 +65,7 @@ export default function Questions(props: any) {
       localStorage.removeItem("userAnswers");
     }
   }, []);
-
+   
   // Save answers whenever they change
   useEffect(() => {
     localStorage.setItem(
@@ -239,76 +240,83 @@ useEffect(() => {
 }, [status]); 
   const id = localStorage.getItem('StudentID');
  
-    const handleAddBookmark = async(questionId:string)=>{
-      console.log(questionId)
-      console.log(id)
+   const handleAddBookmark = async (questionId: string) => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ questionId, student: id })
+    });
 
-      try{
-        const res  = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`,{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          credentials: "include",
-          body: JSON.stringify({questionId:questionId , student:id})
-        })
-        const data = await res.json()
-        console.log(data)
-      }
-      catch(e){
-    console.error("Error: ",e)
-      }
-    }
-    const handleDeleteBookmark = async(questionId:string)=>{
-      console.log(questionId)
-      console.log(id)
+    const data = await res.json();
+    console.log("Bookmark added:", data);
+    setBookmarks((prev) => [...prev, questionId]);
+  } catch (e) {
+    console.error("Add bookmark error:", e);
+  }
+};
+   
+const handleDeleteBookmark = async (questionId: string) => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
 
-      try{
-        const res  = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`,{
-          method:"DELETE",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          credentials: "include",
-          // body: JSON.stringify({questionId:questionId , student:id})
-        })
-      
+    const data = await res.json();
+    console.log("Bookmark removed:", data);
+    setBookmarks((prev) => prev.filter((id) => id !== questionId));
+  } catch (e) {
+    console.error("Delete bookmark error:", e);
+  }
+};
 
-        const data = await res.json()
-        console.log(data)
-      }
-      catch(e){
-    console.error("Error: ",e)
-      }
-    }
+  const fetchBookmarks = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/v1/user/questions/bookmarked/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
 
-    const handleGetBookMarkQuestion = async (id:string)=>{
-      try{
-        const res =  await fetch(`http://localhost:3000/api/v1/user/questions/bookmarked/${id}`, {
-          method:'GET',
-          headers:{"Content-Type":"application/json"},
-          credentials:"include"
-        })
-        const data = await res.json();
-        console.log(data.questionID)
-        setBookmark(data);
-        console.log("Bookmark : ",bookmark)
-      }
-      catch(e){         
-        console.error('get bookmark error: ', e)
-      }
-    }
-    useEffect(()=>{
-     
-    
+    const data = await res.json();
+    const ids = data.map((b: any) => b._id);
+    console.log("Fetched bookmark IDs:", ids);
+    setBookmarks(ids);
+  } catch (e) {
+    console.error("Fetch bookmarks error:", e);
+  }
+};
+    const fetchBookmarkQuestions = async () => {
+  try {
+    const promises = bookmarks.map((qid) =>
+      fetch(`http://localhost:3000/api/v1/user/question/${qid}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      }).then((res) => res.json())
+    );
 
-    },[])  
-         
-  // @ts-ignore
-    // const bookmarks = bookmark.map(item=>item.questionId)
-    // console.log("Bookmarks with questionID: ",bookmarks)
+    const results = await Promise.all(promises);
+    const questions = results.map((r) => r.response);
+    setBookmarkQuestions(questions);
+    console.log("Fetched bookmarked questions:", questions);
+  } catch (e) {
+    console.error("Fetch bookmark questions error:", e);
+  }
+};
 
+// Load bookmarks initially
+useEffect(() => {
+  if (id) fetchBookmarks();
+}, [id]);
 
+// Auto-fetch bookmarked question details once we have IDs
+useEffect(() => {
+  if (bookmarks.length > 0) fetchBookmarkQuestions();
+}, [bookmarks]);
   // 
   return (
     <div className="w-full h-screen fixed ">
@@ -322,7 +330,12 @@ useEffect(() => {
         <p>No saved answers or expired</p>
       )}   <div className="flex justify-around">
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
-          { isBookmark ? <Bookmark fill="" onClick={()=>{handleDeleteBookmark(question._id); setIsBookmark(false)}} /> : <Bookmark  onClick={()=>{handleAddBookmark(question._id); setIsBookmark(true) }}/> }
+        {bookmarks.includes(question?._id) ? (
+  <Bookmark fill="#2563eb" onClick={() => handleDeleteBookmark(question?._id)} />
+) : (
+  <Bookmark onClick={() => handleAddBookmark(question._id)} />
+)}
+
           </div>
           <div className="h-96  overflow-y-scroll">
             {question && (
@@ -406,14 +419,19 @@ useEffect(() => {
           ))}
         </div>
       <div className="mt-2">Ansewed: {answered}  , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
-      <Button onClick={()=>handleGetBookMarkQuestion('68bed5576efadf592b5058f2')}>get bookmark</Button>
-      <div>
-      {
-        bookmark.map((item,i)=>(
-          <p key={i}>{item._id}</p>
-        ))
-      }
-      </div>
+      <div className="mt-4">
+  <h2 className="font-bold text-lg mb-2">Bookmarked Questions</h2>
+  {bookmarkQuestions.length > 0 ? (
+    bookmarkQuestions.map((q, i) => (
+      <p key={i} className="p-2 border rounded mb-2 bg-white shadow">
+        {q.question}
+      </p>
+    ))
+  ) : (
+    <p>No bookmarked questions yet.</p>
+  )}
+</div>
+
       </div>
       </div>
     </div>
@@ -422,10 +440,68 @@ useEffect(() => {
 
 
 }
-// https://www.upwork.com/jobs/~021968703455552133869
-// https://www.upwork.com/jobs/~021963284564381569506
-// https://www.upwork.com/jobs/~021958751092249657659
 
-//  6:30 to 8:10 problem solve dsa + read more depth about core arrays linked stacks hashmap
-//  3:00 to 4:30 understanding syntax mtlb reading more code + planning what feature to add
-//  6:00 to 10:00 code building projects  
+// Bookmark :  
+// (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+// 0
+// : 
+// {_id: '68ada3b0c4e4c8ff1c8a4e69'}
+// 1
+// : 
+// {_id: '68bbc68a1c78202b646a1e0a'}
+// 2
+// : 
+// {_id: '68bf0bb4ce60f4fea1ede7b5'}
+// 3
+// : 
+// {_id: '68c0453477d080bc119d9a3e'}
+// 4
+// : 
+// {_id: '68c045ea77d080bc119d9a40'}
+// 5
+// : 
+// {_id: '68c046f577d080bc119d9a44'}
+// 6
+// : 
+// {_id: '68c047aa77d080bc119d9a46'}
+// 7
+// : 
+// {_id: '68c0487e77d080bc119d9a48'}
+// 8
+// : 
+// {_id: '68c048e777d080bc119d9a4a'}
+// length
+// : 
+// 9
+// [[Prototype]]
+// : 
+// Array(0)
+
+// {
+//   "response": {
+//     "_id": "68ada3b0c4e4c8ff1c8a4e69",
+//     "question": "what is 7*7",
+//     "option": [
+//       "49",
+//       "12",
+//       "122",
+//       "42"
+//     ],
+//     "answer": [
+//       "49"
+//     ],
+//     "subject": "MATHS",
+//     "year": 2007,
+//     "examType": [
+//       "JEE"
+//     ],
+//     "difficulty": [
+//       "EASY"
+//     ],
+//     "tags": [
+//       "multification"
+//     ],
+//     "createdAt": "2025-08-26T12:08:16.581Z",
+//     "updatedAt": "2025-08-26T12:08:16.581Z",
+//     "__v": 0,
+//     "embedding": [-0.013974297, -0.043944329, -0.003779212, 0.035331242, -0.056248743, -0.004438377, 0.044823218, -0.048866093, -0.009667752, 0.027421262, 0.008700977, -0.024433047, -0.001527065, -0.01907184, 0.001027199, 0.046756767, 0.017577732, 0.046405211, 0.066443823, -0.056248743, -0.00507557, 0.046756767, -0.004811904, -0.018720284, -0.08507622, 0.018808173, 0.033573467, -0.006064318, -0.007778146, -0.012304412, -0.003647379, -0.049217649, 0.009975363, -0.047459874, -0.037089013, 0.006547705, -0.088591769, 0.030585254, 0.034803908, 0.038143679, -0.001516079, -0.011601303, -0.022851052, -0.014589517, 0.039198343, 0.052381642, 0.018280841, 0.015116849, -0.03287036, -0.061522063, -0.043241221, 0.015380516, 0.025311934, 0.004724015, -0.017226176, 0.020565946, -0.032694582, -0.041131891, -0.016698845, -0.028300148, -0.004724015, 0.006415872, -0.007031093, -0.00031173, 0.003933018, -0.041835003, 0.0085252, 0.007646313, -0.011601303, 0.025487712, -0.012392301, -0.0217085, 0.012831745, 0.011952857, -0.041307669, 0.012568078, 0.018456619, 0.020038614, 0.049217649, 0.001779745, 0.008393367, 0.044120107, -0.001702843, -0.050272312, -0.010282973, -0.001955523, -0.007338703, 0.018544506, 0.007997868, 0.015819959, -0.030936807, 0.00953592, -0.038495231, 0.051326979, 0.024433047, -0.010942138, 0.008261534, -0.073123366, -0.062576726, 0.02232372, 0.019774949, -0.007382648, 0.040780339, -0.018544506, 0.062576726, 0.000051497, 0.00325188, -0.027948594, 0.005471069, 0.012304412, -0.000059394, -0.01511
