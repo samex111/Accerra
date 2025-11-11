@@ -55,7 +55,8 @@
     "tailwindcss-animate": "^1.0.7",
     "voyageai": "^0.0.8",
     "ws": "^8.18.3",
-    "zod": "^4.0.17"
+    "zod": "^4.0.17",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

@@ -330,8 +330,9 @@ useEffect(() => {
         <p>No saved answers or expired</p>
       )}   <div className="flex justify-around">
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
+          {/*  */}
         {bookmarks.includes(question?._id) ? (
-  <Bookmark fill="#2563eb" onClick={() => handleDeleteBookmark(question?._id)} />
+  <Bookmark fill="" onClick={() => handleDeleteBookmark(question?._id)} />
 ) : (
   <Bookmark onClick={() => handleAddBookmark(question._id)} />
 )}

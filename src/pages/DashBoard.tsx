@@ -18,6 +18,7 @@ import {
 import { Home, Settings, Bookmark, Pen, Menu, Brain, User } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import GeminiStream from "@/component/geminiResponse";
+import Bookmarks from "@/component/Bookmark";
  
 const items = [
   { title: "Home", icon: Home },
@@ -108,7 +109,7 @@ export default function DashBoard() {
 
         </div>
       </main> : item ==="Understand with AI" ?   <GeminiStream   /> : 
-       <div className="absolute  left-[50vw] top-[50vh]"> Not found </div>
+       <Bookmarks></Bookmarks>
 }
     </div>
   );
