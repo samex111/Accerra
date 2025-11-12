@@ -21,7 +21,7 @@ export default function Bookmarks() {
   }, []); // only run once
 
   return (
-    <div className="left-[16vw] p-4">
+    <div className=" relative left-[16vw] gap-2 w-[84vw] overflow-y-scroll p-4">
       <h2 className="text-2xl font-bold mb-4">Bookmarked Questions</h2>
 
       {bookmarkQuestions.length > 0 ? (
@@ -30,9 +30,9 @@ export default function Bookmarks() {
             key={q._id || i}
             className="flex items-center justify-between p-3 mb-3 bg-white rounded-md shadow border"
           >
-            <p className="text-gray-800 font-medium">{q.question}</p>
+            <p className="text-gray-800 w-[70vw] font-medium">{q.question}</p>
             <Bookmark
-              fill="#2563eb"
+              fill=""
               className="cursor-pointer hover:scale-110 transition-transform"
               onClick={() => removeBookmark(q._id)}
             />

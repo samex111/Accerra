@@ -48,10 +48,13 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
   },
 
   addBookmark: async (questionId: string) => {
+      const id = localStorage.getItem("StudentID");
     try {
       const res = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`, {
         method: "POST",
+         headers:{"Content-Type":"application/json"},
         credentials: "include",
+         body: JSON.stringify({ questionId, student: id })
       });
       if (res.ok) set({ bookmarks: [...get().bookmarks, questionId] });
     } catch (e) {
@@ -64,11 +67,13 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
       const res = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`, {
         method: "DELETE",
         credentials: "include",
+         headers: { "Content-Type": "application/json" },
       });
       if (res.ok)
         set({
           bookmarks: get().bookmarks.filter((id: string) => id !== questionId),
         });
+        await get().fetchBookmarkQuestion()
     } catch (e) {
       console.error("Remove bookmark failed", e);
     }

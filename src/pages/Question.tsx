@@ -3,6 +3,7 @@ import GeminiHint from "../component/geminiHint";
 import SquareBox from "../component/QuestionSquareBox";
 import { Bookmark, BookmarkMinus, BookmarkPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useBookmarkStore } from "@/hooks/useBookmarkStore";
 
 export default function Questions(props: any) {
   interface Question {
@@ -17,6 +18,21 @@ export default function Questions(props: any) {
     difficulty: string[];
     tags: string[];
   }
+  const {
+    bookmarks,
+    bookmarkQuestions,
+    fetchBookmarks,
+    fetchBookmarkQuestion,
+    removeBookmark,addBookmark
+  } = useBookmarkStore();
+
+    useEffect(() => {
+    const loadData = async () => {
+      await fetchBookmarks();             // Fetch only IDs first
+      await fetchBookmarkQuestion();      // Then fetch full question details
+    };
+    loadData();
+  }, []); // only run once
 
 
   type Status = "notVisited" | "notAnswered" | "answered" | "review" | "answeredReview";
@@ -42,8 +58,6 @@ export default function Questions(props: any) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
   const question = questions[index];
-  const [bookmarks, setBookmarks] = useState<string[]>([]);
-const [bookmarkQuestions, setBookmarkQuestions] = useState<Question[]>([]);
 
 
   // Answers object: { questionId: [selectedOptions] }
@@ -240,83 +254,7 @@ useEffect(() => {
 }, [status]); 
   const id = localStorage.getItem('StudentID');
  
-   const handleAddBookmark = async (questionId: string) => {
-  try {
-    const res = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ questionId, student: id })
-    });
-
-    const data = await res.json();
-    console.log("Bookmark added:", data);
-    setBookmarks((prev) => [...prev, questionId]);
-  } catch (e) {
-    console.error("Add bookmark error:", e);
-  }
-};
-   
-const handleDeleteBookmark = async (questionId: string) => {
-  try {
-    const res = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-
-    const data = await res.json();
-    console.log("Bookmark removed:", data);
-    setBookmarks((prev) => prev.filter((id) => id !== questionId));
-  } catch (e) {
-    console.error("Delete bookmark error:", e);
-  }
-};
-
-  const fetchBookmarks = async () => {
-  try {
-    const res = await fetch(`http://localhost:3000/api/v1/user/questions/bookmarked/${id}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-
-    const data = await res.json();
-    const ids = data.map((b: any) => b._id);
-    console.log("Fetched bookmark IDs:", ids);
-    setBookmarks(ids);
-  } catch (e) {
-    console.error("Fetch bookmarks error:", e);
-  }
-};
-    const fetchBookmarkQuestions = async () => {
-  try {
-    const promises = bookmarks.map((qid) =>
-      fetch(`http://localhost:3000/api/v1/user/question/${qid}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      }).then((res) => res.json())
-    );
-
-    const results = await Promise.all(promises);
-    const questions = results.map((r) => r.response);
-    setBookmarkQuestions(questions);
-    console.log("Fetched bookmarked questions:", questions);
-  } catch (e) {
-    console.error("Fetch bookmark questions error:", e);
-  }
-};
-
-// Load bookmarks initially
-useEffect(() => {
-  if (id) fetchBookmarks();
-}, [id]);
-
-// Auto-fetch bookmarked question details once we have IDs
-useEffect(() => {
-  if (bookmarks.length > 0) fetchBookmarkQuestions();
-}, [bookmarks]);
+  
   // 
   return (
     <div className="w-full h-screen fixed ">
@@ -332,9 +270,9 @@ useEffect(() => {
           <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
           {/*  */}
         {bookmarks.includes(question?._id) ? (
-  <Bookmark fill="" onClick={() => handleDeleteBookmark(question?._id)} />
+  <Bookmark fill="" onClick={() => removeBookmark(question?._id)} />
 ) : (
-  <Bookmark onClick={() => handleAddBookmark(question._id)} />
+  <Bookmark onClick={() => addBookmark(question?._id)} />
 )}
 
           </div>
@@ -420,19 +358,6 @@ useEffect(() => {
           ))}
         </div>
       <div className="mt-2">Ansewed: {answered}  , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
-      <div className="mt-4">
-  <h2 className="font-bold text-lg mb-2">Bookmarked Questions</h2>
-  {bookmarkQuestions.length > 0 ? (
-    bookmarkQuestions.map((q, i) => (
-      <p key={i} className="p-2 border rounded mb-2 bg-white shadow">
-        {q.question}
-      </p>
-    ))
-  ) : (
-    <p>No bookmarked questions yet.</p>
-  )}
-</div>
-
       </div>
       </div>
     </div>
