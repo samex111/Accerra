@@ -15,6 +15,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ObjectId } from "mongodb";
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
+import { getEmbedding } from "./get-embeddings.ts";
 
 
 
@@ -463,7 +464,11 @@ userRouter.get("/stream",  async (req, res) => {
     // res.setHeader("credentials","include")
     res.flushHeaders()
     const prompt = req.query.prompt as string;
-    // console.log(res)
+    const fileUrl = req.query.fileUrl as string;
+    const isAnlyze = req.query.isAnlyze as unknown as boolean;
+    console.log("isAnlyze :",isAnlyze)
+    
+    // console.log(res) 
 
     // ❌ If no prompt → send proper JSON
     if (!prompt) {
@@ -471,9 +476,57 @@ userRouter.get("/stream",  async (req, res) => {
         res.end();
         return;
     }
+   // Specify the database and collection
+   try{
+    if(isAnlyze==undefined){
+          const collection = attemtQuestionsModel.collection
+  
+          // Generate embedding for the search query
+          const queryEmbedding = await getEmbedding(prompt);
+  
+          // Define the sample vector search pipeline
+          const pipeline = [
+              {
+                  $vectorSearch: {
+                      index: "vector_index",
+                      queryVector: queryEmbedding,
+                      path: "embedding",
+                      exact: true,
+                      limit: 5
+                  }
+              },
+              {
+                  $project: {
+                      _id: 0,
+                      question: 1,
+                      tags: 1,
+                      score: { $meta: "vectorSearchScore" }
+                  }
+              }
+          ];
 
-    // ✅ Call streaming function
-    await callGeminiStream(prompt, res);
+          let solvedQUestionData:string[] = []; 
+          // run pipeline
+          const result = collection.aggregate(pipeline);
+          for await (const doc of result){
+             solvedQUestionData.push( "Question: "+ doc.question+ ". student ans: "+ doc.answer)
+          }
+          console.log("Solved question ",solvedQUestionData)
+      
+          const rag =  `This is student ask ${prompt} ans this is student solved question related to this query
+                         ${solvedQUestionData} anlyze this and based on this do what user want ask`
+          console.log("Rag: ",rag)               
+         await callGeminiStream(rag,fileUrl, res);
+    }
+    else{
+        console.log("In the else ")
+        await callGeminiStream(prompt,fileUrl, res);
+    }
+}
+catch(e){
+    console.log("error in catch: ",e)
+}
+    
 });
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {

@@ -64,7 +64,7 @@ const GeminiStream: React.FC = () => {
         setIsUploading(false);
       };
 
-      xhr.send(formData);
+      xhr.send(formData); 
     } catch (err: any) {
       alert("Upload error: " + err.message);
       setIsUploading(false);
@@ -81,12 +81,12 @@ const GeminiStream: React.FC = () => {
       { role: "assistant", content: "" },
     ]);
 
-    const query = encodeURIComponent(currentPrompt + (fileUrl || ""));
+    const query = encodeURIComponent(currentPrompt);
     const eventSource = new EventSource(
-      `http://localhost:3000/api/v1/user/stream?prompt=${query}`
+      `http://localhost:3000/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze${isAnalyzing}`
     );
 
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = (event) => { 
       try {
         const parsed = JSON.parse(event.data);
         const chunk = parsed?.content || event.data;
@@ -94,7 +94,7 @@ const GeminiStream: React.FC = () => {
         setMessages((prev) => {
           const last = prev[prev.length - 1];
           if (last.role === "assistant") {
-            return [
+                     return [
               ...prev.slice(0, -1),
               { ...last, content: last.content + chunk },
             ];
@@ -141,7 +141,7 @@ const GeminiStream: React.FC = () => {
     setFileUrl(null);
     setUploadProgress(0);
   };
-
+ 
   return (
     <div className="flex flex-col bg-white h-screen w-[84vw] left-[16vw] text-gray-100 relative overflow-hidden">
       {/* Header */}

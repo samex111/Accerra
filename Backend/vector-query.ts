@@ -1,20 +1,20 @@
 import { getEmbedding } from './get-embeddings.ts';
 import { connectDB } from './db.ts';
-import { QuestionModel } from './Schema.ts';
+import { attemtQuestionsModel } from './Schema.ts';
 
 // MongoDB connection URI and options
 
-async function run() {
+async function run(prompt:string) {
     try {
         // Connect to the MongoDB client
         await connectDB();
 
 
         // Specify the database and collection
-        const collection = QuestionModel.collection
+        const collection = attemtQuestionsModel.collection
 
         // Generate embedding for the search query
-        const queryEmbedding = await getEmbedding("find question on electrostatic");
+        const queryEmbedding = await getEmbedding(prompt);
 
         // Define the sample vector search pipeline
         const pipeline = [
@@ -24,7 +24,7 @@ async function run() {
                     queryVector: queryEmbedding,
                     path: "embedding",
                     exact: true,
-                    limit: 2
+                    limit: 5
                 }
             },
             {
@@ -42,13 +42,11 @@ async function run() {
 
         // print results
         for await (const doc of result) {
-            console.log(doc);
+            console.log("doc: ",doc);
         }
-
+        
     } finally {
         console.log("finally ")
     }
 }
-run().catch(console.dir);
-
-// https://www.canva.com/design/DAG3c7n_Nwk/yWWSJ8RvvjAgkn_L-QlEkw/edit?utm_content=DAG3c7n_Nwk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+// run("find my preformance in electrostactic").catch(console.dir)
