@@ -10,8 +10,8 @@ export async function callGeminiStream(prompt: string, fileUrl: string,
   const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
   let imagePart = null;
-
-  if (fileUrl) {
+  console.log("File url: ",fileUrl)
+  if (fileUrl && fileUrl !== "null") {
     const base64 = await urlToBase64(fileUrl);
     // console.log("Base 64; ",base64)
     imagePart = {
@@ -63,12 +63,14 @@ Never hallucinate. Be supportive and motivating.`
 
   res.write(`event: end\ndata: done\n\n`);
   res.end();
-}``
+}
 
 async function urlToBase64(url: string) {
+  if(url===null){
+   return console.error("Url null hai ")
+  }
   const res = await fetch(url);
-  const res2 = await fetch('https://api.api-ninjas.com/v2/quoteoftheday');
-  console.log("res2: ",res2)
+
   const buffer = await res.arrayBuffer();
   console.log("BUffer: ", buffer)
 

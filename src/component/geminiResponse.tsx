@@ -83,7 +83,7 @@ const GeminiStream: React.FC = () => {
 
     const query = encodeURIComponent(currentPrompt);
     const eventSource = new EventSource(
-      `http://localhost:3000/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze${isAnalyzing}`
+      `http://localhost:3000/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze=${isAnalyzing}`
     );
 
     eventSource.onmessage = (event) => { 

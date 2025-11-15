@@ -465,9 +465,9 @@ userRouter.get("/stream",  async (req, res) => {
     res.flushHeaders()
     const prompt = req.query.prompt as string;
     const fileUrl = req.query.fileUrl as string;
-    const isAnlyze = req.query.isAnlyze as unknown as boolean;
+   const isAnlyze = req.query.isAnlyze === "true";
     console.log("isAnlyze :",isAnlyze)
-    
+     
     // console.log(res) 
 
     // ❌ If no prompt → send proper JSON
@@ -478,7 +478,7 @@ userRouter.get("/stream",  async (req, res) => {
     }
    // Specify the database and collection
    try{
-    if(isAnlyze==undefined){
+    if(isAnlyze){
           const collection = attemtQuestionsModel.collection
   
           // Generate embedding for the search query
@@ -513,13 +513,31 @@ userRouter.get("/stream",  async (req, res) => {
           }
           console.log("Solved question ",solvedQUestionData)
       
-          const rag =  `This is student ask ${prompt} ans this is student solved question related to this query
-                         ${solvedQUestionData} anlyze this and based on this do what user want ask`
-          console.log("Rag: ",rag)               
+          const rag = `
+The user asked the following question:
+"${prompt}"
+
+Below are the most relevant previously solved questions and student answers related to the user’s query:
+
+${solvedQUestionData.map((q,i)=>`${i+1}. ${q}`).join("\n")}
+
+Your task:
+1. Carefully analyze the user's question.
+2. Use the above solved questions as additional context only when relevant.
+3. Do NOT repeat the solved questions unless helpful.
+4. Give a clear, step-by-step explanation.
+5. Highlight key concepts, common mistakes, and shortcuts.
+6. Provide the final answer separately and clearly.
+7. If the context is irrelevant, ignore it and answer normally.
+
+Now generate the best possible explanation.
+`;
+   console.log("Rag: ",rag)               
          await callGeminiStream(rag,fileUrl, res);
     }
     else{
         console.log("In the else ")
+        console.log(fileUrl)
         await callGeminiStream(prompt,fileUrl, res);
     }
 }
@@ -528,6 +546,7 @@ catch(e){
 }
     
 });
+// userRouter.get('')
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
