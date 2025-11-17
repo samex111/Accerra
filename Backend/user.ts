@@ -546,7 +546,7 @@ catch(e){
 }
     
 });
-// userRouter.get('')
+// userRouter.get('/get/quote',async(req:Request))
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);

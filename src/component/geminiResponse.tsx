@@ -18,7 +18,7 @@ const GeminiStream: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  console.log("massage: ",messages)
   // 🌀 Auto-scroll on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -141,16 +141,23 @@ const GeminiStream: React.FC = () => {
     setFileUrl(null);
     setUploadProgress(0);
   };
+  const [bottom,setBottom] = useState(false)
+  useEffect(()=>{
+    if(currentPrompt === '' && messages.length == 0){
+      setBottom(true);
+    }else{setBottom(false)}
+  },[prompt,messages])
+  const btm = bottom?'[50vh]':'0'
  
   return (
     <div className="flex flex-col bg-white h-screen w-[84vw] left-[16vw] text-gray-100 relative overflow-hidden">
       {/* Header */}
-      <header className="p-4 border-b border-gray-700 text-center text-2xl font-semibold text-blue-500">
-        Ace AI
+      <header className="p-4 border-b border-gray-700 text-center text-2xl font-semibold text-black">
+        Accerra AI
       </header>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-500">
+      <div className="flex-1 overflow-y-auto pb-[20vh] px-4 py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-500">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -161,7 +168,7 @@ const GeminiStream: React.FC = () => {
             <div
               className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${
                 msg.role === "user"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-gray-800 text-white"
                   : "bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-100"
               }`}
             >
@@ -202,7 +209,6 @@ const GeminiStream: React.FC = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Image Preview + Upload Progress */}
       {(file || fileUrl || isUploading) && (
         <div className="fixed bottom-24 left-[16vw] w-[84vw] bg-gray-100 dark:bg-gray-800 p-3 flex items-center gap-3 shadow-lg border-t border-gray-700">
           {fileUrl && (
@@ -237,7 +243,8 @@ const GeminiStream: React.FC = () => {
       )}
 
       {/* Input Bar */}
-      <div className="border-t border-gray-700 p-4 flex items-center gap-3 fixed bottom-0 w-[84vw] left-[16vw] bg-white dark:bg-gray-900">
+      <div className={` border-gray-700 p-4  flex items-center gap-3 fixed bottom-${btm} w-[84vw] left-[16vw] bg-white dark:bg-gray-900 scroll-smooth`}>
+        
         <label className="cursor-pointer hover:scale-105 transition-transform">
           <Paperclip className="text-gray-500 hover:text-blue-500" />
           <Input
@@ -252,7 +259,7 @@ const GeminiStream: React.FC = () => {
           onClick={() => setIsAnalyzing((prev) => !prev)}
           className={`rounded-full ml-2 ${
             isAnalyzing
-              ? "bg-blue-600 hover:bg-blue-500"
+              ? "bg-gray-800 hover:bg-gray-600"
               : "bg-gray-600 hover:bg-gray-500"
           }`}
         >
@@ -269,7 +276,7 @@ const GeminiStream: React.FC = () => {
               handleSend();
             }
           }}
-          placeholder="Send a message..."
+          placeholder="Ask questions..."
           className="flex-1 resize-none rounded-2xl bg-[#2A2A2A] text-gray-100 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
@@ -277,10 +284,11 @@ const GeminiStream: React.FC = () => {
           size="icon"
           onClick={handleSend}
           disabled={isUploading}
-          className="rounded-full bg-blue-600 hover:bg-blue-700 transition-transform hover:scale-105"
+          className="rounded-full bg-gray-600 hover:bg-blue-700 transition-transform hover:scale-105"
         >
           <ArrowUp className="text-white" />
         </Button>
+        
       </div>
     </div>
   );
