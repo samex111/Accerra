@@ -82,9 +82,16 @@ const BookMarkedSchema = new Schema({
 const ConversationSchema = new Schema({
     studentId : {type : mongoose.Schema.Types.ObjectId , required:true, ref:"user"},
     title : {type : String , default : "New conversation"},
-
 }, { timestamps: true });
 
+const MessageSchema  = new Schema({
+    conversationId : {type : mongoose.Schema.Types.ObjectId,   index: true, required:true, ref:"conversation"},
+    sender : {type:String, enum:["user","ai"], required:true},
+    message:{type:String,required:true ,trim:true},
+    meta: { type: Schema.Types.Mixed, default: {} },
+},{timestamps:true})
+
+export const MessageModel = mongoose.model('message', MessageSchema);
 export const ConversationModel = mongoose.model('conversation',ConversationSchema)
 export const NoteModel = mongoose.model("notes", notesSchema);
 export const TodoModel = mongoose.model("todo", todosSchema);
