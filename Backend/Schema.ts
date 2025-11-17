@@ -79,7 +79,13 @@ const BookMarkedSchema = new Schema({
     }
 
 })
+const ConversationSchema = new Schema({
+    studentId : {type : mongoose.Schema.Types.ObjectId , required:true, ref:"user"},
+    title : {type : String , default : "New conversation"},
 
+}, { timestamps: true });
+
+export const ConversationModel = mongoose.model('conversation',ConversationSchema)
 export const NoteModel = mongoose.model("notes", notesSchema);
 export const TodoModel = mongoose.model("todo", todosSchema);
 export const attemtQuestionsModel = mongoose.model("attempts", attemtQuestionsSchema);
