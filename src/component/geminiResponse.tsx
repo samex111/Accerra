@@ -206,7 +206,7 @@ const GeminiStream: React.FC = () => {
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} />  
       </div>
 
       {(file || fileUrl || isUploading) && (

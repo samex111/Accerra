@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { attemtQuestionsModel, BookMarkModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
+import { attemtQuestionsModel, BookMarkModel, ConversationModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
 import { Router } from "express";
 import z, { number } from 'zod';
 import dotenv from 'dotenv';
@@ -547,6 +547,19 @@ catch(e){
     
 });
 // userRouter.get('/get/quote',async(req:Request))
+userRouter.post('/create/conversationId',userMiddleware, async(req:Request, res:Response)=>{
+    const studentId = req.userId;
+    try{
+       const conversation =  await ConversationModel.create({
+            studentId:studentId
+        })
+        res.status(200).json(conversation._id)
+    }catch(e){
+        console.log("Error in create convestaion id: ", e)
+    }
+
+})
+
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
