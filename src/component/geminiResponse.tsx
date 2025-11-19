@@ -143,11 +143,10 @@ const GeminiStream: React.FC = () => {
   };
   const [bottom,setBottom] = useState(false)
   useEffect(()=>{
-    if(currentPrompt === '' && messages.length == 0){
+    if(currentPrompt=='' || messages.length == 0){
       setBottom(true);
     }else{setBottom(false)}
-  },[prompt,messages])
-  const btm = bottom?'[50vh]':'0'
+  },[currentPrompt,messages])
  
   return (
     <div className="flex flex-col bg-white h-screen w-[84vw] left-[16vw] text-gray-100 relative overflow-hidden">
@@ -243,7 +242,7 @@ const GeminiStream: React.FC = () => {
       )}
 
       {/* Input Bar */}
-      <div className={` border-gray-700 p-4  flex items-center gap-3 fixed bottom-${btm} w-[84vw] left-[16vw] bg-white dark:bg-gray-900 scroll-smooth`}>
+      <div className={` border-gray-700 p-4  flex items-center gap-3 fixed ${bottom ? "bottom-[50vh]" : "bottom-0"} w-[84vw] left-[16vw] bg-white dark:bg-gray-900 scroll-smooth`}>
         
         <label className="cursor-pointer hover:scale-105 transition-transform">
           <Paperclip className="text-gray-500 hover:text-blue-500" />
