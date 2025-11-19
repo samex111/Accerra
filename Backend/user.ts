@@ -331,7 +331,6 @@ userRouter.get('/todo', userMiddleware, async (req: Request, res: Response) => {
                     id: { $toString: "$_id" }
                 }
             },
-
             // Step 3: Group by date and count
             {
                 $group: {
@@ -587,6 +586,42 @@ userRouter.post('/create/massage/conversation',userMiddleware, async (req:Reques
         msg: "Erorr in parsing create massage wiht converstaion id: " + e 
     })
    }
+})
+userRouter.get('/get/conversation/:conversationId', userMiddleware,async(req:Request,res:Response)=>{
+    // const requireParams = z.object({conversationId:z.string()})
+    // const parseData = requireParams.safeParse(req.params);
+    // console.log("Hello")
+    const {conversationId} = req.params
+    // console.log(conversationId)
+    try{
+        // const response =   await MessageModel.aggregate([
+        //     { $match: { conversationId: new mongoose.Types.ObjectId(conversationId) } },
+        //      {
+        //         $project: {
+        //             date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        //             message: { $toString: "$message" },
+        //             sender: { $toString: "$sender" }
+        //         }
+        //     },
+        //     // Step 3: Group by date and count
+        //     {
+        //         $group: {
+        //             _id: "$date",
+        //             message: { $push: "$message" },
+        //             sender: { $push: "$sender" }
+        //         }
+        //     },
+
+        //     // Step 4: Sort by date ascending
+        //     { $sort: { _id: 1 } }
+        // ])
+        const response = await MessageModel.find({conversationId:conversationId});
+        res.status(200).json(response.sort())
+    }catch(e){
+        res.status(400).json({
+            msg:"error in catch get single  conversation by id :  "+ e
+        })
+    }
 })
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
