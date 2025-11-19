@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { attemtQuestionsModel, BookMarkModel, ConversationModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
+import { attemtQuestionsModel, BookMarkModel, ConversationModel, MessageModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
 import { Router } from "express";
 import z, { number } from 'zod';
 import dotenv from 'dotenv';
@@ -559,7 +559,35 @@ userRouter.post('/create/conversationId',userMiddleware, async(req:Request, res:
     }
 
 })
-
+userRouter.post('/create/massage/conversation',userMiddleware, async (req:Request,res:Response)=>{
+   const requireBody = z.object({
+     conversationId: z.string(),
+        message:z.string(),
+        sender: z.enum(['ai','student'])
+   })
+   const parseData = requireBody.safeParse(req.body);
+   if(!parseData.success){
+    res.status(400).json({
+        msg: "Erorr in parsing create massage wiht converstaion id: " + parseData.error 
+    })
+    return;
+   }
+   const {conversationId,message,sender } = parseData.data;
+   try{
+     await MessageModel.create({
+         conversationId,
+         message,
+         sender
+     })
+     res.status(200).json({
+        msg: "sucefully parsing create massage wiht converstaion id: " + conversationId + message  
+    })
+   }catch(e){
+    res.status(400).json({
+        msg: "Erorr in parsing create massage wiht converstaion id: " + e 
+    })
+   }
+})
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);

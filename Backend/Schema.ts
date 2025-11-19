@@ -86,7 +86,7 @@ const ConversationSchema = new Schema({
 
 const MessageSchema  = new Schema({
     conversationId : {type : mongoose.Schema.Types.ObjectId,   index: true, required:true, ref:"conversation"},
-    sender : {type:String, enum:["user","ai"], required:true},
+    sender : {type:String, enum:["student","ai"], required:true},
     message:{type:String,required:true ,trim:true},
     meta: { type: Schema.Types.Mixed, default: {} },
 },{timestamps:true})
