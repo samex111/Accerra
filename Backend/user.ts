@@ -623,6 +623,19 @@ userRouter.get('/get/conversation/:conversationId', userMiddleware,async(req:Req
         })
     }
 })
+userRouter.get('/get/all/conversation', userMiddleware, async(req:Request,res:Response)=>{
+    // const requireParams = z.object({studentId:z.string()});
+    // const parseData = requireParams.safeParse(req.params);
+    const studentId = req.userId;
+    try{
+        const response = await ConversationModel.find({studentId:studentId});
+        res.status(200).json(response.sort())
+    }catch(e){
+         res.status(400).json({
+            msg:"error in catch get all conversation by id :  "+ e
+        })
+    }
+})
 
 userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
