@@ -19,12 +19,12 @@ const GeminiStream: React.FC = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   console.log("massage: ",messages)
-  // 🌀 Auto-scroll on new message
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 📁 File Upload with Progress
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (!selected) return;
@@ -129,7 +129,7 @@ const GeminiStream: React.FC = () => {
     return () => eventSource.close();
   }, [currentPrompt]);
 
-  // ✉️ Send message
+
   const handleSend = () => {
     if (!userInput.trim()) return;
     setCurrentPrompt(userInput);
@@ -143,7 +143,7 @@ const GeminiStream: React.FC = () => {
   };
   const [bottom,setBottom] = useState(false)
   useEffect(()=>{
-    if(currentPrompt=='' || messages.length == 0){
+    if(currentPrompt=='' && messages.length == 0){
       setBottom(true);
     }else{setBottom(false)}
   },[currentPrompt,messages])
