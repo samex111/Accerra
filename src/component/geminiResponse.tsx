@@ -6,7 +6,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 type Message = { role: "user" | "assistant"; content: string };
-
+interface conversationProps{
+  conversationId:string;
+  sender:'student'|'ai';
+  message:string;
+  createdAt:Date
+}
 const GeminiStream: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
@@ -16,6 +21,7 @@ const GeminiStream: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [conversation, setConvesation] = useState<conversationProps>()
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   console.log("massage: ",messages)
@@ -141,12 +147,26 @@ const GeminiStream: React.FC = () => {
     setFileUrl(null);
     setUploadProgress(0);
   };
+  
   const [bottom,setBottom] = useState(false)
   useEffect(()=>{
     if(currentPrompt=='' && messages.length == 0){
       setBottom(true);
     }else{setBottom(false)}
-  },[currentPrompt,messages])
+  },[currentPrompt,messages]);
+
+  useEffect( ()=>{
+     fetch('http://localhost:3000/api/v1/user/get/conversation/691c791319bb26976e974a94',{
+        method:"GET",
+        headers:{'Content-Type':'application/json'},
+        credentials:"include"
+      })
+      .then((res)=>res.json())
+      .then((data)=>setConvesation(data))
+    
+  })
+  
+
  
   return (
     <div className="flex flex-col bg-white h-screen w-[84vw] left-[16vw] text-gray-100 relative overflow-hidden">
