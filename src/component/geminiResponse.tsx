@@ -6,12 +6,17 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 type Message = { role: "user" | "assistant"; content: string };
-interface conversationProps{
-  conversationId:string;
-  sender:'student'|'ai';
-  message:string;
-  createdAt:Date
+interface conversationProps {
+  conversationId: string;
+  sender: 'student' | 'ai';
+  message: string;
+  createdAt: Date;
 }
+interface handleAddMessageProps {
+    conversationId: string,
+    sender: 'user'|'ai',
+    message: string
+  }
 const GeminiStream: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
@@ -21,10 +26,11 @@ const GeminiStream: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [conversation, setConvesation] = useState<conversationProps>()
+  const [conversation, setConvesation] = useState<conversationProps[]>([])
+  const [conversationId,setConvesationId] = useState<string>('')
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  console.log("massage: ",messages)
+  console.log("massage: ", messages)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -70,7 +76,7 @@ const GeminiStream: React.FC = () => {
         setIsUploading(false);
       };
 
-      xhr.send(formData); 
+      xhr.send(formData);
     } catch (err: any) {
       alert("Upload error: " + err.message);
       setIsUploading(false);
@@ -86,13 +92,16 @@ const GeminiStream: React.FC = () => {
       { role: "user", content: userInput },
       { role: "assistant", content: "" },
     ]);
+    if(!conversationId){
+      handleCreateConversationId()
+    }
 
     const query = encodeURIComponent(currentPrompt);
     const eventSource = new EventSource(
       `http://localhost:3000/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze=${isAnalyzing}`
     );
-
-    eventSource.onmessage = (event) => { 
+   handleAddMessage(conversationId! , 'student' , query)  
+    eventSource.onmessage = (event) => {
       try {
         const parsed = JSON.parse(event.data);
         const chunk = parsed?.content || event.data;
@@ -100,7 +109,7 @@ const GeminiStream: React.FC = () => {
         setMessages((prev) => {
           const last = prev[prev.length - 1];
           if (last.role === "assistant") {
-                     return [
+            return [
               ...prev.slice(0, -1),
               { ...last, content: last.content + chunk },
             ];
@@ -123,6 +132,7 @@ const GeminiStream: React.FC = () => {
 
     eventSource.addEventListener("end", () => {
       eventSource.close();
+   handleAddMessage(conversationId! , 'ai' ,)  
       setCurrentPrompt("");
       setUserInput("");
       setFileUrl(null);
@@ -147,27 +157,59 @@ const GeminiStream: React.FC = () => {
     setFileUrl(null);
     setUploadProgress(0);
   };
-  
-  const [bottom,setBottom] = useState(false)
-  useEffect(()=>{
-    if(currentPrompt=='' && messages.length == 0){
-      setBottom(true);
-    }else{setBottom(false)}
-  },[currentPrompt,messages]);
 
-  useEffect( ()=>{
-     fetch('http://localhost:3000/api/v1/user/get/conversation/691c791319bb26976e974a94',{
-        method:"GET",
-        headers:{'Content-Type':'application/json'},
+  const [bottom, setBottom] = useState(false)
+  useEffect(() => {
+    if (currentPrompt == '' && messages.length == 0) {
+      setBottom(true);
+    } else { setBottom(false) }
+  }, [currentPrompt, messages]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/v1/user/get/conversation/691c791319bb26976e974a94', {
+      method: "GET",
+      headers: { 'Content-Type': 'application/json' },
+      credentials: "include"
+    })
+      .then((res) => res.json())
+      .then((data) => setConvesation(data))
+      .catch((err) => console.error("IN setcONVERSATION: ", err));
+    console.log("conversations: ", conversation);
+  }, [userInput])
+  
+  const handleAddMessage = async (conversationId:string , sender:'student'|'ai', message:string) => {
+    try {
+      const res = await fetch('http://localhost:3000/api/v1/user/create/massage/conversation', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials:"include",
+        body: JSON.stringify({
+          conversationId: conversationId,
+          sender: sender,
+          message: message
+        })
+      });
+      const data = await res.json();
+      console.log(data)
+      
+    } catch (e) {
+      console.error("In the handleAddMessage Catch: ", e)
+    }
+  }
+  const handleCreateConversationId = async ()=>{
+    try{
+      const res =  await fetch('http://localhost:3000/api/v1/user/create/conversationId',{
+        method:"POST",
         credentials:"include"
       })
-      .then((res)=>res.json())
-      .then((data)=>setConvesation(data))
-    
-  })
-  
+      const data = await res.json();
+      console.log('conversationID: ',data)
+      setConvesationId(data!)
+    }catch(e){
+      console.error("Error in the creating conversation id: ",e)
+    }
+  }
 
- 
   return (
     <div className="flex flex-col bg-white h-screen w-[84vw] left-[16vw] text-gray-100 relative overflow-hidden">
       {/* Header */}
@@ -180,16 +222,14 @@ const GeminiStream: React.FC = () => {
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
+              }`}
           >
             <div
-              className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${
-                msg.role === "user"
+              className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${msg.role === "user"
                   ? "bg-gray-800 text-white"
                   : "bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-100"
-              }`}
+                }`}
             >
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -225,7 +265,7 @@ const GeminiStream: React.FC = () => {
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />  
+        <div ref={messagesEndRef} />
       </div>
 
       {(file || fileUrl || isUploading) && (
@@ -263,7 +303,7 @@ const GeminiStream: React.FC = () => {
 
       {/* Input Bar */}
       <div className={` border-gray-700 p-4  flex items-center gap-3 fixed ${bottom ? "bottom-[50vh]" : "bottom-0"} w-[84vw] left-[16vw] bg-white dark:bg-gray-900 scroll-smooth`}>
-        
+
         <label className="cursor-pointer hover:scale-105 transition-transform">
           <Paperclip className="text-gray-500 hover:text-blue-500" />
           <Input
@@ -276,11 +316,10 @@ const GeminiStream: React.FC = () => {
 
         <Button
           onClick={() => setIsAnalyzing((prev) => !prev)}
-          className={`rounded-full ml-2 ${
-            isAnalyzing
+          className={`rounded-full ml-2 ${isAnalyzing
               ? "bg-gray-800 hover:bg-gray-600"
               : "bg-gray-600 hover:bg-gray-500"
-          }`}
+            }`}
         >
           {isAnalyzing ? "Analyzing..." : "Analyze"}
         </Button>
@@ -307,7 +346,7 @@ const GeminiStream: React.FC = () => {
         >
           <ArrowUp className="text-white" />
         </Button>
-        
+
       </div>
     </div>
   );
