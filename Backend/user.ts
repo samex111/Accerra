@@ -454,7 +454,7 @@ userRouter.get('/questions', userMiddleware, async (req: Request, res: Response)
 })
 
 
-userRouter.get("/stream",  async (req, res) => {
+userRouter.get("/stream", async (req, res) => {
     // 🧠 Required SSE headers
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -464,9 +464,9 @@ userRouter.get("/stream",  async (req, res) => {
     res.flushHeaders()
     const prompt = req.query.prompt as string;
     const fileUrl = req.query.fileUrl as string;
-   const isAnlyze = req.query.isAnlyze === "true";
-    console.log("isAnlyze :",isAnlyze)
-     
+    const isAnlyze = req.query.isAnlyze === "true";
+    console.log("isAnlyze :", isAnlyze)
+
     // console.log(res) 
 
     // ❌ If no prompt → send proper JSON
@@ -475,50 +475,50 @@ userRouter.get("/stream",  async (req, res) => {
         res.end();
         return;
     }
-   // Specify the database and collection
-   try{
-    if(isAnlyze){
-          const collection = attemtQuestionsModel.collection
-  
-          // Generate embedding for the search query
-          const queryEmbedding = await getEmbedding(prompt);
-  
-          // Define the sample vector search pipeline
-          const pipeline = [
-              {
-                  $vectorSearch: {
-                      index: "vector_index",
-                      queryVector: queryEmbedding,
-                      path: "embedding",
-                      exact: true,
-                      limit: 5
-                  }
-              },
-              {
-                  $project: {
-                      _id: 0,
-                      question: 1,
-                      tags: 1,
-                      score: { $meta: "vectorSearchScore" }
-                  }
-              }
-          ];
+    // Specify the database and collection
+    try {
+        if (isAnlyze) {
+            const collection = attemtQuestionsModel.collection
 
-          let solvedQUestionData:string[] = []; 
-          // run pipeline
-          const result = collection.aggregate(pipeline);
-          for await (const doc of result){
-             solvedQUestionData.push( "Question: "+ doc.question+ ". student ans: "+ doc.answer)
-          }
-          console.log("Solved question ",solvedQUestionData)
-      
-          const rag = `
+            // Generate embedding for the search query
+            const queryEmbedding = await getEmbedding(prompt);
+
+            // Define the sample vector search pipeline
+            const pipeline = [
+                {
+                    $vectorSearch: {
+                        index: "vector_index",
+                        queryVector: queryEmbedding,
+                        path: "embedding",
+                        exact: true,
+                        limit: 5
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        question: 1,
+                        tags: 1,
+                        score: { $meta: "vectorSearchScore" }
+                    }
+                }
+            ];
+
+            let solvedQUestionData: string[] = [];
+            // run pipeline
+            const result = collection.aggregate(pipeline);
+            for await (const doc of result) {
+                solvedQUestionData.push("Question: " + doc.question + ". student ans: " + doc.answer)
+            }
+            console.log("Solved question ", solvedQUestionData)
+
+            const rag = `
 The user asked the following question:
 "${prompt}"
 
 Below are the most relevant previously solved questions and student answers related to the user’s query:
 
-${solvedQUestionData.map((q,i)=>`${i+1}. ${q}`).join("\n")}
+${solvedQUestionData.map((q, i) => `${i + 1}. ${q}`).join("\n")}
 
 Your task:
 1. Carefully analyze the user's question.
@@ -531,69 +531,69 @@ Your task:
 
 Now generate the best possible explanation.
 `;
-   console.log("Rag: ",rag)               
-         await callGeminiStream(rag,fileUrl, res);
+            console.log("Rag: ", rag)
+            await callGeminiStream(rag, fileUrl, res);
+        }
+        else {
+            console.log("In the else ")
+            console.log(fileUrl)
+            await callGeminiStream(prompt, fileUrl, res);
+        }
     }
-    else{
-        console.log("In the else ")
-        console.log(fileUrl)
-        await callGeminiStream(prompt,fileUrl, res);
+    catch (e) {
+        console.log("error in catch: ", e)
     }
-}
-catch(e){
-    console.log("error in catch: ",e)
-}
-    
+
 });
 // userRouter.get('/get/quote',async(req:Request))
-userRouter.post('/create/conversationId',userMiddleware, async(req:Request, res:Response)=>{
+userRouter.post('/create/conversationId', userMiddleware, async (req: Request, res: Response) => {
     const studentId = req.userId;
-    try{
-       const conversation =  await ConversationModel.create({
-            studentId:studentId
+    try {
+        const conversation = await ConversationModel.create({
+            studentId: studentId
         })
         res.status(200).json(conversation._id)
-    }catch(e){
+    } catch (e) {
         console.log("Error in create convestaion id: ", e)
     }
 
 })
-userRouter.post('/create/massage/conversation',userMiddleware, async (req:Request,res:Response)=>{
-   const requireBody = z.object({
-     conversationId: z.string(),
-        message:z.string(),
-        sender: z.enum(['ai','student'])
-   })
-   const parseData = requireBody.safeParse(req.body);
-   if(!parseData.success){
-    res.status(400).json({
-        msg: "Erorr in parsing create massage wiht converstaion id: " + parseData.error 
+userRouter.post('/create/massage/conversation', userMiddleware, async (req: Request, res: Response) => {
+    const requireBody = z.object({
+        conversationId: z.string(),
+        message: z.string(),
+        sender: z.enum(['ai', 'student'])
     })
-    return;
-   }
-   const {conversationId,message,sender } = parseData.data;
-   try{
-     await MessageModel.create({
-         conversationId,
-         message,
-         sender
-     })
-     res.status(200).json({
-        msg: "sucefully parsing create massage wiht converstaion id: " + conversationId + message  
-    })
-   }catch(e){
-    res.status(400).json({
-        msg: "Erorr in parsing create massage wiht converstaion id: " + e 
-    })
-   }
+    const parseData = requireBody.safeParse(req.body);
+    if (!parseData.success) {
+        res.status(400).json({
+            msg: "Erorr in parsing create massage wiht converstaion id: " + parseData.error
+        })
+        return;
+    }
+    const { conversationId, message, sender } = parseData.data;
+    try {
+        await MessageModel.create({
+            conversationId,
+            message,
+            sender
+        })
+        res.status(200).json({
+            msg: "sucefully parsing create massage wiht converstaion id: " + conversationId + message
+        })
+    } catch (e) {
+        res.status(400).json({
+            msg: "Erorr in parsing create massage wiht converstaion id: " + e
+        })
+    }
 })
-userRouter.get('/get/conversation/:conversationId', userMiddleware,async(req:Request,res:Response)=>{
+userRouter.get('/get/conversation/:conversationId', userMiddleware, async (req: Request, res: Response) => {
     // const requireParams = z.object({conversationId:z.string()})
     // const parseData = requireParams.safeParse(req.params);
     // console.log("Hello")
-    const {conversationId} = req.params
+    const { conversationId } = req.params
     // console.log(conversationId)
-    try{
+    try {
         // const response =   await MessageModel.aggregate([
         //     { $match: { conversationId: new mongoose.Types.ObjectId(conversationId) } },
         //      {
@@ -615,237 +615,280 @@ userRouter.get('/get/conversation/:conversationId', userMiddleware,async(req:Req
         //     // Step 4: Sort by date ascending
         //     { $sort: { _id: 1 } }
         // ])
-        const response = await MessageModel.find({conversationId:conversationId});
+        const response = await MessageModel.find({ conversationId: conversationId });
         res.status(200).json(response.sort())
-    }catch(e){
+    } catch (e) {
         res.status(400).json({
-            msg:"error in catch get single  conversation by id :  "+ e
+            msg: "error in catch get single  conversation by id :  " + e
         })
     }
 })
-userRouter.get('/get/all/conversation', userMiddleware, async(req:Request,res:Response)=>{
-    // const requireParams = z.object({studentId:z.string()});
-    // const parseData = requireParams.safeParse(req.params);
-    const studentId = req.userId;
-    try{
-        const response = await ConversationModel.find({studentId:studentId});
-        res.status(200).json(response.sort())
-    }catch(e){
-         res.status(400).json({
-            msg:"error in catch get all conversation by id :  "+ e
-        })
-    }
-})
-
-userRouter.post('/chat1', userMiddleware,async (req: Request, res: Response) => {
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
-    try {
-        const { messages } = req.body; // Expect array of {role: 'user'|'model', parts: [{text: 'message'}]}
-        if (!messages || !Array.isArray(messages)) {
-            return res.status(400).json({ error: 'Invalid messages format' });
-        }
-
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-    //   res.setHeader("credentials","include")
-        res.flushHeaders(); // Ensure headers are sent
-
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const chat = model.startChat({ history: messages.slice(0, -1) }); // History without last user message
-        const lastMessage = messages[messages.length - 1].parts[0].text;
-
-        const stream = await chat.sendMessageStream(lastMessage);
-
-        for await (const chunk of stream.stream) {
-            const chunkText = await chunk.text();
-            res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
-        }
-
-        res.write('event: done\ndata: {}\n\n'); // Signal end of stream
-        res.end();
-    } catch (error) {
-        console.error('Error in /chat:', error);
-        res.write(`data: ${JSON.stringify({ error: 'An error occurred' })}\n\n`);
-        res.end();
-    }
-});
-userRouter.post('/add/bookmark/question/:questionId', userMiddleware, async (req: Request, res: Response) => {
-    const student = req.userId;
-    const questionId = req.params.questionId;
-    console.log("Student: ", student)
-    const requireBody = z.object({
-        student: z.string(),
-        questionId: z.string()
+userRouter.delete('/delete/convesationId:conversationId', async function (req: Request, res: Response) {
+    const requireParams = z.object({
+        conversationId: z.string().min(6)
     });
-    const parseSucess = requireBody.safeParse(req.body);
-    if (!parseSucess.success) {
-        return res.status(403).json({
-            massage: "error : " + parseSucess.error
-        })
-    }
-    try {
-        await BookMarkModel.create({
-            student,
-            questionId
-        })
-        res.status(200).json({
-            massage: 'question bookmarked'
-        })
-    } catch (e) {
-        return res.status(403).json({
-            massage: "error in catch 1: " + e 
-        })
-    }
-})
+    const parseData = requireParams.safeParse(req.params);
+    
+    const conversationId = parseData.data;
 
-userRouter.delete('/delete/bookmark/:questionId', userMiddleware , async (req: Request, res: Response) => {
-    const questionId  = req.params.questionId
-    try {
-        const deleteBookmark = await BookMarkModel.findOneAndDelete({ questionId:questionId , student: req.userId });
-        if (!deleteBookmark) {
-            res.status(400).json({ msg: "Bookmark not found " })
-        }
-        res.status(200).json({ msg: "Bookmark delete sucessfully" });
-
-    } catch (e) {
-        res.status(400).json({
-            msg: "error in catch: " + e
-        })
-    }
-
-})
-
-
-
-
-userRouter.get('/questions/bookmarked/:studentId', userMiddleware, async (req: Request, res: Response) => {
-    try {
-        const studentId = req.params.studentId;
-        const result = await BookMarkModel.aggregate([
-            { $match: { student: new mongoose.Types.ObjectId(studentId) } },
-            {
-                $project: {
-                    question: { $toString: "$questionId" }
-                }
-            },
-            {
-                $group: {
-                    _id: "$question"
-                }
-            },
-            { $sort: { _id: 1 } }
-        ])
-
-        res.json(result)
-    }
-    catch (e) {
-        res.status(400).json({
-            msg: "err: " + e
-        })
-    }
-})
-
-// API to get daily solved counts for a student
-userRouter.get("/solved/daily/:studentId", userMiddleware, async (req: Request, res: Response) => {
-    try {
-
-        const studentId = req.params.studentId;
-        const result = await attemtQuestionsModel.aggregate([
-            // Step 1: Filter by student (convert string to ObjectId)         
-            { $match: { student: new mongoose.Types.ObjectId(studentId) } },
-
-            // Step 2: Extract only the date part from createdAt
-            {
-                $project: {
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
-                }
-            },
-
-            // Step 3: Group by date and count
-            {
-                $group: {
-                    _id: "$date",
-                    totalSolved: { $sum: 1 }
-                }
-            },
-
-            // Step 4: Sort by date ascending
-            { $sort: { _id: 1 } }
-        ]);
-
-        res.json(result);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-
-userRouter.post('/send/context' , async(req:Request, res:Response)=>{
- 
-} )
-
-// mujhe ye banana hai ki jab user koi prompt bheje to 
-// data  rag pipline se hokar guzre 
-// if user ne bola anylzr my proformance then 
-// data  hamko solved question se laana hai data 
-// also come from notes 
-
-// 1. propmt --> embedding 
-// 2. embedding --> solved questions 
-// 3. embedding --> notes which are relavent
-// 4. embedding --> content modules 
-// 5. embedding --> pyq if level is sufficent 
-// const context = propmt + 2+3+4+5
-// send to ai =  context 
-const upload = multer({ dest: "uploads/" });
- const supabase = createClient(
-          process.env.SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-userRouter.post('/upload',userMiddleware,upload.single("file"), async (req:Request,res:Response)=>{
-
- try {
-    const file = req.file!;
-   
-    // Upload file to Supabase bucket
-    const { data, error } = await supabase.storage
-      .from("uploads")
-      .upload(
-        `ai_uploads/${Date.now()}_${file.originalname}`,
-        fs.readFileSync(file.path),
-        { contentType: file.mimetype }
-      );
-
-    if (error) throw error;
-
-    // Get public URL of uploaded file
-    const { data: publicUrlData } = supabase.storage
-      .from("uploads")
-      .getPublicUrl(data.path);
-
-    const imageUrl = publicUrlData.publicUrl;
-    console.log("✅ Image uploaded:", imageUrl);
-
-    // Return only the URL — no AI call yet
-    res.json({ success: true, imageUrl });
-  } catch (err) {
-    console.error("❌ Upload error:", err);
-    res.status(500).json({ success: false, message: "Upload failed" });
-  }
-})
-userRouter.get('/question/:questionId', async(req:Request,res:Response)=>{
-    const {questionId} = req.params
     try{
-        const response = await QuestionModel.findById({_id:questionId});
+        await ConversationModel.findByIdAndDelete({_id:conversationId})
         res.status(200).json({
-        response
-        })   
+            msg:"id deleted"
+        })
     }catch(e){
-        res.status(400).json({
-            error:'error'+e
+        res.status(403).json({
+            msg:"Not found  : "+e
         })
     }
+
 })
+userRouter.put('/update/convesationId:conversationId', async function (req: Request, res: Response) {
+    const requireParams = z.object({
+        conversationId: z.string().min(6),  
+        title:z.string()
+    });
+    const parseData = requireParams.safeParse(req.params||req.body);
+    
+    const conversationId = parseData.data;
+    const title = parseData.data;
+    
+    
+    try{
+        await ConversationModel.findByIdAndUpdate({_id:conversationId},{title:title}, { new: true })
+        res.status(200).json({
+            msg:"id update"
+        })
+    }catch(e){
+        res.status(403).json({
+            msg:"Not found  : "+e
+        })
+    }
+
+})
+    userRouter.get('/get/all/conversation', userMiddleware, async (req: Request, res: Response) => {
+        // const requireParams = z.object({studentId:z.string()});
+        // const parseData = requireParams.safeParse(req.params);
+        const studentId = req.userId;
+        try {
+            const response = await ConversationModel.find({ studentId: studentId });
+            res.status(200).json(response.sort())
+        } catch (e) {
+            res.status(400).json({
+                msg: "error in catch get all conversation by id :  " + e
+            })
+        }
+    })
+
+    userRouter.post('/chat1', userMiddleware, async (req: Request, res: Response) => {
+        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
+        try {
+            const { messages } = req.body; // Expect array of {role: 'user'|'model', parts: [{text: 'message'}]}
+            if (!messages || !Array.isArray(messages)) {
+                return res.status(400).json({ error: 'Invalid messages format' });
+            }
+
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            //   res.setHeader("credentials","include")
+            res.flushHeaders(); // Ensure headers are sent
+
+            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            const chat = model.startChat({ history: messages.slice(0, -1) }); // History without last user message
+            const lastMessage = messages[messages.length - 1].parts[0].text;
+
+            const stream = await chat.sendMessageStream(lastMessage);
+
+            for await (const chunk of stream.stream) {
+                const chunkText = await chunk.text();
+                res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
+            }
+
+            res.write('event: done\ndata: {}\n\n'); // Signal end of stream
+            res.end();
+        } catch (error) {
+            console.error('Error in /chat:', error);
+            res.write(`data: ${JSON.stringify({ error: 'An error occurred' })}\n\n`);
+            res.end();
+        }
+    });
+    userRouter.post('/add/bookmark/question/:questionId', userMiddleware, async (req: Request, res: Response) => {
+        const student = req.userId;
+        const questionId = req.params.questionId;
+        console.log("Student: ", student)
+        const requireBody = z.object({
+            student: z.string(),
+            questionId: z.string()
+        });
+        const parseSucess = requireBody.safeParse(req.body);
+        if (!parseSucess.success) {
+            return res.status(403).json({
+                massage: "error : " + parseSucess.error
+            })
+        }
+        try {
+            await BookMarkModel.create({
+                student,
+                questionId
+            })
+            res.status(200).json({
+                massage: 'question bookmarked'
+            })
+        } catch (e) {
+            return res.status(403).json({
+                massage: "error in catch 1: " + e
+            })
+        }
+    })
+
+    userRouter.delete('/delete/bookmark/:questionId', userMiddleware, async (req: Request, res: Response) => {
+        const questionId = req.params.questionId
+        try {
+            const deleteBookmark = await BookMarkModel.findOneAndDelete({ questionId: questionId, student: req.userId });
+            if (!deleteBookmark) {
+                res.status(400).json({ msg: "Bookmark not found " })
+            }
+            res.status(200).json({ msg: "Bookmark delete sucessfully" });
+
+        } catch (e) {
+            res.status(400).json({
+                msg: "error in catch: " + e
+            })
+        }
+
+    })
+
+
+
+
+    userRouter.get('/questions/bookmarked/:studentId', userMiddleware, async (req: Request, res: Response) => {
+        try {
+            const studentId = req.params.studentId;
+            const result = await BookMarkModel.aggregate([
+                { $match: { student: new mongoose.Types.ObjectId(studentId) } },
+                {
+                    $project: {
+                        question: { $toString: "$questionId" }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$question"
+                    }
+                },
+                { $sort: { _id: 1 } }
+            ])
+
+            res.json(result)
+        }
+        catch (e) {
+            res.status(400).json({
+                msg: "err: " + e
+            })
+        }
+    })
+
+    // API to get daily solved counts for a student
+    userRouter.get("/solved/daily/:studentId", userMiddleware, async (req: Request, res: Response) => {
+        try {
+
+            const studentId = req.params.studentId;
+            const result = await attemtQuestionsModel.aggregate([
+                // Step 1: Filter by student (convert string to ObjectId)         
+                { $match: { student: new mongoose.Types.ObjectId(studentId) } },
+
+                // Step 2: Extract only the date part from createdAt
+                {
+                    $project: {
+                        date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+                    }
+                },
+
+                // Step 3: Group by date and count
+                {
+                    $group: {
+                        _id: "$date",
+                        totalSolved: { $sum: 1 }
+                    }
+                },
+
+                // Step 4: Sort by date ascending
+                { $sort: { _id: 1 } }
+            ]);
+
+            res.json(result);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Server error" });
+        }
+    });
+
+
+    userRouter.post('/send/context', async (req: Request, res: Response) => {
+
+    })
+
+    // mujhe ye banana hai ki jab user koi prompt bheje to 
+    // data  rag pipline se hokar guzre 
+    // if user ne bola anylzr my proformance then 
+    // data  hamko solved question se laana hai data 
+    // also come from notes 
+
+    // 1. propmt --> embedding 
+    // 2. embedding --> solved questions 
+    // 3. embedding --> notes which are relavent
+    // 4. embedding --> content modules 
+    // 5. embedding --> pyq if level is sufficent 
+    // const context = propmt + 2+3+4+5
+    // send to ai =  context 
+    const upload = multer({ dest: "uploads/" });
+    const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+    userRouter.post('/upload', userMiddleware, upload.single("file"), async (req: Request, res: Response) => {
+
+        try {
+            const file = req.file!;
+
+            // Upload file to Supabase bucket
+            const { data, error } = await supabase.storage
+                .from("uploads")
+                .upload(
+                    `ai_uploads/${Date.now()}_${file.originalname}`,
+                    fs.readFileSync(file.path),
+                    { contentType: file.mimetype }
+                );
+
+            if (error) throw error;
+
+            // Get public URL of uploaded file
+            const { data: publicUrlData } = supabase.storage
+                .from("uploads")
+                .getPublicUrl(data.path);
+
+            const imageUrl = publicUrlData.publicUrl;
+            console.log("✅ Image uploaded:", imageUrl);
+
+            // Return only the URL — no AI call yet
+            res.json({ success: true, imageUrl });
+        } catch (err) {
+            console.error("❌ Upload error:", err);
+            res.status(500).json({ success: false, message: "Upload failed" });
+        }
+    })
+    userRouter.get('/question/:questionId', async (req: Request, res: Response) => {
+        const { questionId } = req.params
+        try {
+            const response = await QuestionModel.findById({ _id: questionId });
+            res.status(200).json({
+                response
+            })
+        } catch (e) {
+            res.status(400).json({
+                error: 'error' + e
+            })
+        }
+    })
 

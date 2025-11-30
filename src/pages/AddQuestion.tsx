@@ -98,7 +98,7 @@ export default function AddQuestion() {
          setQuestion("")
       } else {
 
-        alert(data.msg  || "Failed to add question.");
+        alert(data.msg  || "  : Failed to add question.");
         console.log(data)
         console.log("Payload:", payload);
       }

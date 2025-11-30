@@ -13,10 +13,10 @@ interface conversationProps {
   createdAt: Date;
 }
 interface handleAddMessageProps {
-    conversationId: string,
-    sender: 'user'|'ai',
-    message: string
-  }
+  conversationId: string,
+  sender: 'user' | 'ai',
+  message: string
+}
 const GeminiStream: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
@@ -27,10 +27,12 @@ const GeminiStream: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
   const [conversation, setConvesation] = useState<conversationProps[]>([])
-  const [conversationId,setConvesationId] = useState<string>('')
+  const [conversationId, setConvesationId] = useState<string>('')
+  const [allConversationId, setAllConvesationId] = useState<string>('')
+  let fullResponse = '';
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  console.log("massage: ", messages)
+  console.log("massage1: ", messages)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,7 +94,7 @@ const GeminiStream: React.FC = () => {
       { role: "user", content: userInput },
       { role: "assistant", content: "" },
     ]);
-    if(!conversationId){
+    if (!conversationId) {
       handleCreateConversationId()
     }
 
@@ -100,12 +102,14 @@ const GeminiStream: React.FC = () => {
     const eventSource = new EventSource(
       `http://localhost:3000/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze=${isAnalyzing}`
     );
-   handleAddMessage(conversationId! , 'student' , query)  
+    handleAddMessage(conversationId!, 'student', query)
     eventSource.onmessage = (event) => {
       try {
         const parsed = JSON.parse(event.data);
         const chunk = parsed?.content || event.data;
-
+        console.log("Chunk: ", chunk)
+        fullResponse = fullResponse + chunk;
+        console.log("Full response: ", fullResponse)
         setMessages((prev) => {
           const last = prev[prev.length - 1];
           if (last.role === "assistant") {
@@ -129,10 +133,11 @@ const GeminiStream: React.FC = () => {
         });
       }
     };
-
     eventSource.addEventListener("end", () => {
+      handleAddMessage(conversationId!, 'ai', fullResponse)
+
+      console.log('end')
       eventSource.close();
-   handleAddMessage(conversationId! , 'ai' ,)  
       setCurrentPrompt("");
       setUserInput("");
       setFileUrl(null);
@@ -144,7 +149,6 @@ const GeminiStream: React.FC = () => {
 
     return () => eventSource.close();
   }, [currentPrompt]);
-
 
   const handleSend = () => {
     if (!userInput.trim()) return;
@@ -166,23 +170,45 @@ const GeminiStream: React.FC = () => {
   }, [currentPrompt, messages]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/v1/user/get/conversation/691c791319bb26976e974a94', {
-      method: "GET",
-      headers: { 'Content-Type': 'application/json' },
-      credentials: "include"
-    })
-      .then((res) => res.json())
-      .then((data) => setConvesation(data))
-      .catch((err) => console.error("IN setcONVERSATION: ", err));
-    console.log("conversations: ", conversation);
-  }, [userInput])
-  
-  const handleAddMessage = async (conversationId:string , sender:'student'|'ai', message:string) => {
+    async function fetchConvesations() {
+      await fetch(`http://localhost:3000/api/v1/user/get/conversation/${conversationId}`, {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json' },
+        credentials: "include"
+      })
+        .then((res) => res.json())
+        .then((data) => setConvesation(data)) 
+        .catch((err) => console.error("IN setcONVERSATION: ", err));
+      console.log("conversations: ", conversation);
+    }
+    fetchConvesations();
+  }, [userInput, messages])
+
+  useEffect(()=>{
+    try{
+      fetch('http://localhost:3000/api/v1/user/get/all/conversation',{
+        method:'GET',
+        headers:{'Content-Type':"application/json"},
+        credentials:"include"
+      })
+      .then((res)=>res.json())
+      .then((data)=>{
+        setAllConvesationId(data)
+        console.log(data)
+      })  
+      
+    }
+    catch(e){
+      console.error("Error in get All convessatinID: ", e)
+    }
+  },[])
+
+  const  handleAddMessage = async (conversationId: string, sender: 'student' | 'ai', message: string) => {
     try {
       const res = await fetch('http://localhost:3000/api/v1/user/create/massage/conversation', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials:"include",
+        credentials: "include",
         body: JSON.stringify({
           conversationId: conversationId,
           sender: sender,
@@ -190,23 +216,23 @@ const GeminiStream: React.FC = () => {
         })
       });
       const data = await res.json();
-      console.log(data)
-      
+      console.log("Data: ", data)
+
     } catch (e) {
       console.error("In the handleAddMessage Catch: ", e)
     }
   }
-  const handleCreateConversationId = async ()=>{
-    try{
-      const res =  await fetch('http://localhost:3000/api/v1/user/create/conversationId',{
-        method:"POST",
-        credentials:"include"
+  async function handleCreateConversationId() {
+    try {
+      const res = await fetch('http://localhost:3000/api/v1/user/create/conversationId', {
+        method: "POST",
+        credentials: "include"
       })
       const data = await res.json();
-      console.log('conversationID: ',data)
-      setConvesationId(data!)
-    }catch(e){
-      console.error("Error in the creating conversation id: ",e)
+      console.log('conversationID: ', data)
+      setConvesationId(data)
+    } catch (e) {
+      console.error("Error in the creating conversation id: ", e)
     }
   }
 
@@ -227,8 +253,8 @@ const GeminiStream: React.FC = () => {
           >
             <div
               className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${msg.role === "user"
-                  ? "bg-gray-800 text-white"
-                  : "bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-100"
+                ? "bg-gray-800 text-white"
+                : "bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-100"
                 }`}
             >
               <ReactMarkdown
@@ -317,8 +343,8 @@ const GeminiStream: React.FC = () => {
         <Button
           onClick={() => setIsAnalyzing((prev) => !prev)}
           className={`rounded-full ml-2 ${isAnalyzing
-              ? "bg-gray-800 hover:bg-gray-600"
-              : "bg-gray-600 hover:bg-gray-500"
+            ? "bg-gray-800 hover:bg-gray-600"
+            : "bg-gray-600 hover:bg-gray-500"
             }`}
         >
           {isAnalyzing ? "Analyzing..." : "Analyze"}
