@@ -21,7 +21,7 @@ const LandingPage = () => {
         The original design has a strong white fade at the top so text is readable.
         We use a linear gradient from white (top) to transparent (bottom).
       */}
-      <div className="absolute inset-0 bg-gradient-to-b  from-white via-white/90 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b  from-white via-white/80 to-transparent pointer-events-none" />
 
       {/* Main Content Wrapper (relative z-10 to sit on top of the gradient) */}
       <div className="relative  z-10">
@@ -73,13 +73,13 @@ const LandingPage = () => {
     </div>
 
           {/* Headline */}
-          <h1 className="max-w-4xl text-5xl font-medium tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
+          <h1 className="max-w-4xl text-3xl font-medium tracking-tight text-gray-900 sm:text-3xl md:text-6xl">
             Building the future of <br className="hidden md:block" />
             AI-Native education
           </h1>
 
           {/* Subhead */}
-          <p className="mt-6 max-w-2xl text-lg text-gray-600 md:text-xl">
+          <p className="mt-6 max-w-md  text-lg text-black font-medium md:text-md">
             Helping student unlock the full power of AI - adopt it confidently, 
             scale it efficiently, and manage it effortlessly.
           </p>
