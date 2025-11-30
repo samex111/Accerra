@@ -61,7 +61,7 @@ export default function SignUp() {
 
       if (res.ok) {
         alert("Signup verified 🎉")
-        navigate("/user/signin")
+        // navigate("/user/signin")
       } else {
         alert(data.msg || "OTP verification failed ❌")
         setOtpSent(false)

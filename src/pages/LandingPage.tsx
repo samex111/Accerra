@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Menu } from 'lucide-react';
-
-// Assuming you have a standard Shadcn Button component
+import { Menu , AlignRight} from 'lucide-react';
+        // Assuming you have a standard Shadcn Button component
 // If not, use a standard HTML button with the tailwind classes provided below
 
 const LandingPage = () => {
@@ -12,7 +11,7 @@ const LandingPage = () => {
 
   return (
     <div 
-      className="relative m-0 p-0 min-h-screen w-full bg-cover bg-center bg-no-repeat font-sans"
+      className="relative  min-h-screen bg-cover bg-center bg-no-repeat font-sans"
       style={{ 
         // constraint: image in css background url property
         backgroundImage: `url('${bgImageUrl}')` 
@@ -22,13 +21,13 @@ const LandingPage = () => {
         The original design has a strong white fade at the top so text is readable.
         We use a linear gradient from white (top) to transparent (bottom).
       */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-white/90 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b  from-white via-white/90 to-transparent pointer-events-none" />
 
       {/* Main Content Wrapper (relative z-10 to sit on top of the gradient) */}
-      <div className="relative z-10">
+      <div className="relative  z-10">
         
         {/* --- Navbar --- */}
-        <nav className="container mx-auto flex items-center justify-between px-6 py-6">
+        <nav className="w-full  flex items-center justify-between px-6 py-6">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold tracking-tight text-gray-900">
@@ -38,10 +37,10 @@ const LandingPage = () => {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden items-center gap-8 md:flex">
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900">Integrations</a>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900">Why Accerra</a>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900">Product</a>
+          <div className="hidden  items-center absolute gap-8   md:flex  left-1/2 -translate-x-1/2">
+            <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">Story</a>
+            <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">Why Accerra</a>
+            <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">features</a>
           </div>
 
           {/* Actions */}
@@ -49,7 +48,7 @@ const LandingPage = () => {
             <Button variant="outline" className="rounded-lg border-gray-300 bg-transparent px-6 text-gray-900 hover:bg-gray-50">
               Signup
             </Button>
-            <Button onClick={()=>navigate('/user/signin')} className="rounded-lg bg-black px-6 text-white hover:bg-gray-800">
+            <Button onClick={() => navigate("/user/signin")} className="rounded-lg bg-black px-6 text-white hover:bg-gray-800">
               login
             </Button>
           </div>
@@ -57,7 +56,7 @@ const LandingPage = () => {
           {/* Mobile Menu Toggle */}
           <div className="md:hidden">
             <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
+              <AlignRight className="h-6 w-6"/>
             </Button>
           </div>
         </nav>
