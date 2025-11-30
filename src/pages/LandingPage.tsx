@@ -25,15 +25,16 @@ const LandingPage = () => {
 
       {/* Main Content Wrapper (relative z-10 to sit on top of the gradient) */}
       <div className="relative  z-10">
-        
+      
         {/* --- Navbar --- */}
-        <nav className="w-full  flex items-center justify-between px-6 py-6">
+        <nav className="w-full  flex items-center justify-between px-8 py-6">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold tracking-tight text-gray-900">
               <span className="text-red-500 mr-1">∿</span> 
               Accerra
             </span>
+            
           </div>
 
           {/* Desktop Links */}
@@ -41,11 +42,12 @@ const LandingPage = () => {
             <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">Story</a>
             <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">Why Accerra</a>
             <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">features</a>
+      
           </div>
 
           {/* Actions */}
-          <div onClick={()=>navigate('/user/signup')} className="hidden items-center gap-2 md:flex">
-            <Button variant="outline" className="rounded-lg border-gray-300 bg-transparent px-6 text-gray-900 hover:bg-gray-50">
+          <div  className="hidden items-center gap-2 md:flex">
+            <Button onClick={()=>navigate('/user/signup')} variant="outline" className="rounded-lg border-gray-300 bg-transparent px-6 text-gray-900 hover:bg-gray-50">
               Signup
             </Button>
             <Button onClick={() => navigate("/user/signin")} className="rounded-lg bg-black px-6 text-white hover:bg-gray-800">
@@ -65,6 +67,10 @@ const LandingPage = () => {
         <main className="container mx-auto mt-16 flex flex-col items-center px-4 text-center sm:mt-24">
           
           
+   {/* Actions */}
+             <div className="hidden md:flex items-center gap-2">
+     
+    </div>
 
           {/* Headline */}
           <h1 className="max-w-4xl text-5xl font-medium tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
