@@ -79,7 +79,7 @@ const LandingPage = () => {
           </h1>
 
           {/* Subhead */}
-          <p className="mt-6 max-w-md  text-lg text-black font-medium md:text-md">
+          <p className="mt-6 max-w-md  text-lg text-black font-sans md:text-md">
             Helping student unlock the full power of AI - adopt it confidently, 
             scale it efficiently, and manage it effortlessly.
           </p>

@@ -5,7 +5,7 @@ dotenv.config();
 
 const MONGO_URL = process.env.MONGO_URL as string;
 
-if(!MONGO_URL){
+if(!MONGO_URL){ 
     throw new Error('MongoDB connection string is missing in .env file ')
 }
 
