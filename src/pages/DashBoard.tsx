@@ -1,9 +1,6 @@
-
 import { useState } from "react";
+import { Link, useLocation, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import SolvedBarChart from "@/component/Chart";
-import SelectSubject from "@/component/SelectSubject";
-import Todo from "@/component/Todo";
 import {
   Sidebar,
   SidebarContent,
@@ -15,102 +12,72 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { Home, Settings, Bookmark, Pen, Menu, Brain, User } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import GeminiStream from "@/component/geminiResponse";
-import Bookmarks from "@/component/Bookmark";
- 
-const items = [
-  { title: "Home", icon: Home },
-  { title: "Understand with AI", icon: Brain },
-  { title: "Bookmark", icon: Bookmark },
-  { title: "Settings", icon: Settings },
+import { Home, Settings, Bookmark, Brain } from "lucide-react";
+
+const navItems = [
+  { title: "Home", icon: Home, path: "/dashboard" },
+  { title: "Understand with AI", icon: Brain, path: "/dashboard/ai" },
+  { title: "Bookmark", icon: Bookmark, path: "/dashboard/bookmarks" },
+  { title: "Settings", icon: Settings, path: "/dashboard/settings" },
 ];
 
 export default function DashBoard() {
-  const [open, setOpen] = useState(true);
-  const [item , setItem ] = useState('Home');
+  const location = useLocation(); // Used to highlight the active tab
+
   return (
-    <div className="relative w-full h-screen flex  bg-gradient-to-b from-purple-50 to-pink-100 overflow-hidden">
-      {/* Hamburger */}
-      {/* {useIsMobile() && <button
-        className="absolute top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-md"
-        onClick={() => setOpen(!open)}
-      >
-        <Menu />
-      </button> */}
-{/* } */}
-      {/* Sidebar */}
-      <AnimatePresence>
-        {open && (
-          <motion.aside
-            initial={{ x: -250 }}
-            animate={{ x: 0 }}
-            exit={{ x: -250 }}
-            transition={{ type: "tween" }}
-            className="fixed top-0 left-0 h-full w-1 bg-gray-900 text-white flex flex-col justify-between p-4 z-40 shadow-lg"
-          >
-             <SidebarProvider>
-            <Sidebar className="w-[16vw]">
-              <SidebarContent >
-                <SidebarGroup>
-                  <SidebarGroupLabel className="text-blue-400">Application</SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                           
-                      {items.map((item) => (
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton asChild>
-                            <button onClick={
-                              ()=>{
-                                if(item.title==="Understand with AI"){
-                                  setItem("Understand with AI")
-                                }
-                                else if(item.title === "Bookmark"){
-                                  setItem("Bookmark")
-                                }
-                                else if(item.title === "Settings"){
-                                  setItem("Settings")
-                                }
-                                else{
-                                  setItem("Home")
-                                }
-                              }
-                            } className="flex items-center gap-3  hover:bg-gray-700 rounded-lg px-3 py-2">
-                              <item.icon  size={18} />
-                              <span>{item.title}</span>
-                            </button>
-                          </SidebarMenuButton>
-                          
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </SidebarContent>
-            </Sidebar>
-            </SidebarProvider>
+    <div className="flex h-screen w-full bg-gradient-to-b from-purple-50 to-pink-100 overflow-hidden">
+      <SidebarProvider>
+        <Sidebar className="w-[16vw] border-r border-gray-200">
+          <SidebarContent className="bg-gray-900 text-white">
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-blue-400 px-4 py-6 text-lg font-bold">
+                Accerra AI
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {navItems.map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild isActive={isActive}>
+                          <Link
+                            to={item.path}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                              isActive 
+                                ? "bg-blue-600 text-white shadow-md" 
+                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                            }`}
+                          >
+                            <item.icon size={20} />
+                            <span className="font-medium">{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
 
-           
-        
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
-      {/* Main */}
-      { item === "Home" ?
-      <main className="absolute h-screen  left-[16vw] flex w-[84vw]  flex-col items-center justify-center px-[2vw]  ">
-        <div className="w-full h-[50vh]  flex  justify-between">
-        <SelectSubject />
-        <Todo />
-        </div>
-        <div className=" w-full h-[40vh]" >
-          <SolvedBarChart  />
-
-        </div>
-      </main> : item ==="Understand with AI" ?   <GeminiStream   /> : 
-       <Bookmarks></Bookmarks>
-}
+        {/* Main Content Area */}
+        <main className="flex-1 relative overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="h-full w-full"
+            >
+              {/* Outlet renders the child components based on the URL */}
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </SidebarProvider>
     </div>
   );
 }

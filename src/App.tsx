@@ -1,19 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Questions from "./pages/Question";
-import AddQuestion from "./pages/AddQuestion";
-import AdminSignin from "./component/AdminSignin";
-import AdminSignup from "./component/AdminSignup";
-import Signin from "./component/UserSignin";
-import Signup from "./component/UserSignup";
-import LandingPage from "./pages/LandingPage";
-import ChatApp from "./pages/chat";
+
 import SelectSubject from "./component/SelectSubject";
 import SolvedBarChart from "./component/Chart";
 import GeminiStream from "./component/geminiResponse";
 import { useState } from "react";
-import PracticeQuestion from "./component/PracticeQuestion";
 import Todo from "./component/Todo";
 import DashBoard from "./pages/DashBoard";
+import Bookmarks from "./component/Bookmark";
 
 function App() {
   const [prompt, setPrompt] = useState('Hello how to be crack dev ans in 2 1 para')
@@ -29,25 +22,25 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={
-          <div><LandingPage />
-
-
-            {/* <ChatWithAi></ChatWithAi> */}
-          </div>
-        } />
-
-        <Route path="/admin/signup" element={<AdminSignup />} />
-        <Route path="/admin/signin" element={<AdminSignin />} />
-        <Route path="/user/signup" element={<Signup />} />
-        <Route path="/user/signin" element={<Signin />} />
-        <Route path="/admin/addQuestion" element={<AddQuestion />} />
-        <Route path="/questions/maths" element={<PracticeQuestion subj="MATHS" mode="practice" />} />
-        <Route path="/questions/physics" element={<PracticeQuestion subj="PHYSICS" mode="practice" />} />
-        <Route path="/questions/chemistry" element={<PracticeQuestion subj="CHEMISTRY" mode="practice" />} />
-        <Route path="/questions/test" element={<Questions subj="CHEMISTRY" mode="practice" />} />
-        <Route path="/dashboard" element={<DashBoard />} />
-        <Route path="/user/chat" element={<ChatApp />} />
+        // Inside your Routes in App.tsx
+<Route path="/dashboard" element={<DashBoard />}>
+  {/* Index route renders at /dashboard */}
+  <Route index element={
+    <div className="flex flex-col absolute left-[16vw] items-center justify-center p-8 gap-8">
+       <div className="w-full flex justify-between gap-6">
+         <SelectSubject />
+         <Todo />
+       </div>
+       <div className="w-full   bg-white p-6 rounded-xl shadow-sm">
+         <SolvedBarChart />
+       </div>
+    </div>
+  } />
+  
+  <Route path="ai" element={<GeminiStream />} />
+  <Route path="bookmarks" element={<Bookmarks />} />
+  <Route path="settings" element={<div>Settings Component Here</div>} />
+</Route>
       </Routes>
     </BrowserRouter>
   );
