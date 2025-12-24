@@ -7,6 +7,7 @@ import { useState } from "react";
 import Todo from "./component/Todo";
 import DashBoard from "./pages/DashBoard";
 import Bookmarks from "./component/Bookmark";
+import PracticeQuestion from "./component/PracticeQuestion";
 
 function App() {
   const [prompt, setPrompt] = useState('Hello how to be crack dev ans in 2 1 para')
@@ -22,7 +23,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        // Inside your Routes in App.tsx
+        <Route path="maths" element={<PracticeQuestion subj='MATHS'/>}></Route>
 <Route path="/dashboard" element={<DashBoard />}>
   {/* Index route renders at /dashboard */}
   <Route index element={

@@ -8,7 +8,7 @@ export default function SelectSubject(){
     <>
     <div className="mr-[2vw]">
       <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/questions/maths')}}>Maths</Button>
+      <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/maths')}}>Maths</Button>
     </div>
     <div>
       <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/questions/physics')}}>Physics</Button>
