@@ -1,10 +1,10 @@
 import express from "express";
-import { connectDB } from "./db.ts"; 
-import {userRouter} from './user.ts'
+import { connectDB } from "./db"; 
+import {userRouter} from './user' 
 import cookieParser from "cookie-parser";
-import { adminRouter } from "./admin.ts";
+import { adminRouter } from "./admin";
 import cors from "cors";
-
+ 
 const app = express();
 app.use(express.json());
 app.use(cors({

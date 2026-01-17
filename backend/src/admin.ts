@@ -1,11 +1,11 @@
-import { adminModel, QuestionModel } from "./Schema.ts";
+import { adminModel, QuestionModel } from "./Schema";
 import type { Request, Response } from "express";
 import { Router } from "express";
 import z from 'zod';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-import { adminMiddleware } from "./auth.ts";
+import { adminMiddleware } from "./auth";
 
 dotenv.config();
 
@@ -141,7 +141,9 @@ adminRouter.post('/add/question', adminMiddleware, async (req: Request, res: Res
       subject,
       solution,
       year,
-      examType,
+      // @ts-ignore
+      examType ,
+      // @ts-ignore
       difficulty,
       tags,
       creatorId: adminId

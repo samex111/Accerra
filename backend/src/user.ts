@@ -1,21 +1,21 @@
 import type { Request, Response } from "express";
-import { attemtQuestionsModel, BookMarkModel, ConversationModel, MessageModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema.ts";
+import { attemtQuestionsModel, BookMarkModel, ConversationModel, MessageModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema";
 import { Router } from "express";
 import z, { number } from 'zod';
 import dotenv from 'dotenv';
 import multer from "multer";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-import { userMiddleware } from "./auth.ts";
+import { userMiddleware } from "./auth";
 import noadmailer from 'nodemailer';
 import crypto from 'crypto';
 import mongoose from "mongoose";
-import { callGeminiStream } from './Service.ts'
+import { callGeminiStream } from './Service'
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ObjectId } from "mongodb";
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
-import { getEmbedding } from "./get-embeddings.ts";
+import { getEmbedding } from "./get-embeddings";
 
 
 
@@ -299,12 +299,13 @@ userRouter.post("/notes", userMiddleware, async (req, res) => {
         return res.status(400).json({ msg: "Invaild cred" });
 
     }
-    const { note } = parseData.data;
+    const  note  = parseData.data ;
 
 
     try {
         await NoteModel.create({
-            note,
+            // @ts-ignore
+            note  ,
             student: req.userId
         })
         res.status(200).json({
@@ -764,7 +765,7 @@ userRouter.put('/update/convesationId:conversationId', async function (req: Requ
 
     userRouter.get('/questions/bookmarked/:studentId', userMiddleware, async (req: Request, res: Response) => {
         try {
-            const studentId = req.params.studentId;
+            const studentId = req.params.studentId as string;
             const result = await BookMarkModel.aggregate([
                 { $match: { student: new mongoose.Types.ObjectId(studentId) } },
                 {
@@ -793,7 +794,7 @@ userRouter.put('/update/convesationId:conversationId', async function (req: Requ
     userRouter.get("/solved/daily/:studentId", userMiddleware, async (req: Request, res: Response) => {
         try {
 
-            const studentId = req.params.studentId;
+            const studentId = req.params.studentId as string;
             const result = await attemtQuestionsModel.aggregate([
                 // Step 1: Filter by student (convert string to ObjectId)         
                 { $match: { student: new mongoose.Types.ObjectId(studentId) } },

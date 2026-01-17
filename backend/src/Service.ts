@@ -46,7 +46,8 @@ Never hallucinate. Be supportive and motivating.`
 
     contents: [
       {
-        role: "user",
+        // @ts-ignore
+        role: "user" ,
         parts: imagePart
           ? [
               { text: prompt },

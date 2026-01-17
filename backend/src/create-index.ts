@@ -1,5 +1,5 @@
-    import { attemtQuestionsModel, QuestionModel } from './Schema.ts';
-    import { connectDB } from './db.ts';
+    import { attemtQuestionsModel, QuestionModel } from './Schema';
+    import { connectDB } from './db';
 
     async function run() {
     try {

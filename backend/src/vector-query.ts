@@ -1,6 +1,6 @@
-import { getEmbedding } from './get-embeddings.ts';
-import { connectDB } from './db.ts';
-import { attemtQuestionsModel } from './Schema.ts';
+import { getEmbedding } from './get-embeddings';
+import { connectDB } from './db';
+import { attemtQuestionsModel } from './Schema';
 
 // MongoDB connection URI and options
 

@@ -1,6 +1,6 @@
-import { connectDB } from './db.ts';
-import { getEmbedding } from './get-embeddings.ts';
-import { attemtQuestionsModel, QuestionModel } from './Schema.ts';
+import { connectDB } from './db';
+import { getEmbedding } from './get-embeddings';
+import { attemtQuestionsModel, QuestionModel } from './Schema';
 
 async function run() {
     try {
@@ -13,7 +13,7 @@ async function run() {
         const updateDocuments: any[] = [];
 
         await Promise.all(
-            documents.map(async (doc) => {
+            documents.map(async (doc:any) => {
                 const tags = Array.isArray(doc.tags) ? doc.tags.join(" ") : "";
                 const text = `question:${doc.question } ,tags:${tags}, Status: ${doc.status } user answer: ${doc.userAnswer} .`;
 

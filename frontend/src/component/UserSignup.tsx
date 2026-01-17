@@ -165,7 +165,7 @@ export default function SignUp() {
           <Button
             variant="link"
             className="text-blue-600 hover:text-blue-800"
-            onClick={() => navigate("/user/signin")}
+            onClick={() => navigate("/signin")}
           >
             Already have an account? Login
           </Button>

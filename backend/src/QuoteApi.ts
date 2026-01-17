@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 async function getQuote(){
     try{
         const res = await fetch('https://api.api-ninjas.com/v2/randomquotes?categories=education,inspirational',{
@@ -18,3 +19,4 @@ async function getQuote(){
     }
 }
 getQuote();
+

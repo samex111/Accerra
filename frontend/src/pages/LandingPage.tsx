@@ -47,10 +47,10 @@ const LandingPage = () => {
 
           {/* Actions */}
           <div  className="hidden items-center gap-2 md:flex">
-            <Button onClick={()=>navigate('/user/signup')} variant="outline" className="rounded-lg border-gray-300 bg-transparent px-6 text-gray-900 hover:bg-gray-50">
+            <Button onClick={()=>navigate('/signup')} variant="outline" className="rounded-lg border-gray-300 bg-transparent px-6 text-gray-900 hover:bg-gray-50">
               Signup
             </Button>
-            <Button onClick={() => navigate("/user/signin")} className="rounded-lg bg-black px-6 text-white hover:bg-gray-800">
+            <Button onClick={() => navigate("/signin")} className="rounded-lg bg-black px-6 text-white hover:bg-gray-800">
               login
             </Button>
           </div>
@@ -86,7 +86,7 @@ const LandingPage = () => {
 
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Button onClick={()=>navigate('/user/signup')} className="h-12 rounded-lg bg-black px-8 text-base text-white hover:bg-gray-800">
+            <Button onClick={()=>navigate('/signup')} className="h-12 rounded-lg bg-black px-8 text-base text-white hover:bg-gray-800">
               Get Started
             </Button>
             
