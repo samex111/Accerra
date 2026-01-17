@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
 app.use(cors({
-   origin: ["http://localhost:5173", "https://accerra-sameer.vercel.app/"] , // frontend ka exact origin
+   origin: ["http://localhost:5173", "https://accerra-sameer.vercel.app"] , // frontend ka exact origin
   credentials: true  ,
   methods: ["GET","DELETE","POST","PUT"],
    allowedHeaders: ["Content-Type"]
@@ -29,7 +29,8 @@ app.use('/api/v1/admin' , adminRouter);
 
 app.listen(PORT, () => {
   
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
+
 });
 
 
