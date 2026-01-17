@@ -4,6 +4,7 @@ import {userRouter} from './user'
 import cookieParser from "cookie-parser";
 import { adminRouter } from "./admin";
 import cors from "cors";
+const PORT = process.env.PORT || 3000;
  
 const app = express();
 app.use(express.json());
@@ -15,7 +16,7 @@ app.use(cors({
 }))
 app.use(cookieParser());
 
-const PORT = 3000;
+
 
 // MongoDB connect 
 connectDB();
