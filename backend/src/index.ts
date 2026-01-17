@@ -8,7 +8,7 @@ import cors from "cors";
 const app = express();
 app.use(express.json());
 app.use(cors({
-   origin: "http://localhost:5173",   // frontend ka exact origin
+   origin: ["http://localhost:5173", "https://accerra-sameer.vercel.app/"] , // frontend ka exact origin
   credentials: true  ,
   methods: ["GET","DELETE","POST","PUT"],
    allowedHeaders: ["Content-Type"]
