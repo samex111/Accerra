@@ -13,6 +13,7 @@ import {
   type ChartData
 } from "chart.js";
 import { StudentContext } from "./StudentContext";
+import { API_URL } from "@/config/env";
  
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -49,7 +50,7 @@ export default function SolvedBarChart() {
 
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/solved/daily/${id}` , {
+    fetch(`${API_URL}/api/v1/user/solved/daily/${id}` , {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" }

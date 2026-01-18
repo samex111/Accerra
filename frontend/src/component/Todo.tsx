@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Pen } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { API_URL } from "@/config/env";
+
 
 // Define TypeScript interface for todo items
 interface TodoItem {
@@ -21,7 +23,7 @@ export default function Todo() {
 
   const fetchTodos = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/v1/user/todo', {
+      const res = await fetch(`${API_URL}/api/v1/user/todo`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
@@ -35,7 +37,7 @@ export default function Todo() {
 
   const handleAdd = async () => {
     try {
-      await fetch('http://localhost:3000/api/v1/user/todo', {
+      await fetch(`${API_URL}/api/v1/user/todo`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",
@@ -50,7 +52,7 @@ export default function Todo() {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
+      await fetch(`${API_URL}/api/v1/user/todo/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -62,7 +64,7 @@ export default function Todo() {
 
   const handleEdit = async (id: string, newTodo: string) => {
     try {
-      await fetch(`http://localhost:3000/api/v1/user/todo/${id}`, {
+      await fetch(`{API_URL}/api/v1/user/todo/${id}`, {
         method: "PUT",
         headers: { 'Content-Type': 'application/json' },
         credentials: "include",

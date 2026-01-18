@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { API_URL } from "@/config/env";
 
 type option = {
   prompt:string,
@@ -10,7 +11,7 @@ function GeminiHint({prompt}:option) {
   const [responseText, setResponseText] = useState("");
 
   const handleSend = async () => {
-    const res = await fetch("http://localhost:3000/api/v1/user/gemini", {
+    const res = await fetch(`${API_URL}/api/v1/user/gemini`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),

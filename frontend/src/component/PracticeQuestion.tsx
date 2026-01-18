@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import GeminiHint from "../component/geminiHint";
+import { API_URL } from "@/config/env";
+
 
 export default function PracticeQuestion(props: any) {
   interface Question {
@@ -29,7 +31,7 @@ export default function PracticeQuestion(props: any) {
 
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/question?subject=` + props.subj, {
+    fetch(`${API_URL}/api/v1/user/question?subject=` + props.subj, {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" }
@@ -98,7 +100,7 @@ export default function PracticeQuestion(props: any) {
   ) {
     try {
       const res = await fetch(
-        "http://localhost:3000/api/v1/user/attempt/question",
+        `${API_URL}/api/v1/user/attempt/question`,
         {
           method: "POST",
           credentials: "include",

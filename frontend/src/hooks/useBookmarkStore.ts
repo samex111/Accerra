@@ -1,3 +1,4 @@
+import { API_URL } from "@/config/env";
 import { create } from "zustand";
 
 interface BookmarkStore {
@@ -17,7 +18,7 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
     try {
       const id = localStorage.getItem("StudentID");
       console.log("in the use bookmark hook",id)
-      const res = await fetch(`http://localhost:3000/api/v1/user/questions/bookmarked/${id}`, {
+      const res = await fetch(`${API_URL}/api/v1/user/questions/bookmarked/${id}`, {
         method: "GET",
         credentials: "include",
       });

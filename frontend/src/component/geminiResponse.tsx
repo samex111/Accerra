@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { ArrowUp, Paperclip, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { API_URL } from "@/config/env";
+
 
 type Message = { role: "user" | "assistant"; content: string };
 interface conversationProps {
@@ -53,7 +55,7 @@ const GeminiStream: React.FC = () => {
     try {
       // ✅ Use XMLHttpRequest to track upload progress
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", "http://localhost:3000/api/v1/user/upload");
+      xhr.open("POST", `${API_URL}/api/v1/user/upload`);
       xhr.withCredentials = true;
 
       xhr.upload.onprogress = (event) => {
@@ -100,7 +102,7 @@ const GeminiStream: React.FC = () => {
 
     const query = encodeURIComponent(currentPrompt);
     const eventSource = new EventSource(
-      `http://localhost:3000/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze=${isAnalyzing}`
+      `${API_URL}/api/v1/user/stream?prompt=${query}&fileUrl=${fileUrl}&isAnlyze=${isAnalyzing}`
     );
     handleAddMessage(conversationId!, 'student', query)
     eventSource.onmessage = (event) => {
@@ -171,7 +173,7 @@ const GeminiStream: React.FC = () => {
 
   useEffect(() => {
     async function fetchConvesations() {
-      await fetch(`http://localhost:3000/api/v1/user/get/conversation/${conversationId}`, {
+      await fetch(`${API_URL}/api/v1/user/get/conversation/${conversationId}`, {
         method: "GET",
         headers: { 'Content-Type': 'application/json' },
         credentials: "include"
@@ -186,7 +188,7 @@ const GeminiStream: React.FC = () => {
 
   useEffect(()=>{
     try{
-      fetch('http://localhost:3000/api/v1/user/get/all/conversation',{
+      fetch(`${API_URL}/api/v1/user/get/all/conversation`,{
         method:'GET',
         headers:{'Content-Type':"application/json"},
         credentials:"include"
@@ -205,7 +207,7 @@ const GeminiStream: React.FC = () => {
 
   const  handleAddMessage = async (conversationId: string, sender: 'student' | 'ai', message: string) => {
     try {
-      const res = await fetch('http://localhost:3000/api/v1/user/create/massage/conversation', {
+      const res = await fetch(`${API_URL}/api/v1/user/create/massage/conversation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -224,7 +226,7 @@ const GeminiStream: React.FC = () => {
   }
   async function handleCreateConversationId() {
     try {
-      const res = await fetch('http://localhost:3000/api/v1/user/create/conversationId', {
+      const res = await fetch(`${API_URL}/api/v1/user/create/conversationId`, {
         method: "POST",
         credentials: "include"
       })

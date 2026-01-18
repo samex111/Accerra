@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { User, Lock, Loader2 } from "lucide-react"
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
+import { API_URL } from "@/config/env";
 
 
 export default function Signin() {
@@ -18,11 +19,13 @@ export default function Signin() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState('password')
+  console.log("API URL =", import.meta.env.VITE_API_URL);
 
+  
   const handleSignIn = async () => {
     setLoading(true)
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/signin", {
+      const res = await fetch(`${API_URL}/api/v1/user/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifire: identifier, password }),
@@ -40,6 +43,7 @@ export default function Signin() {
         alert(data.msg || "Signin failed ❌")
       }
     } catch (e) {
+      console.log("Api url: ",API_URL)
       console.error(e)
       alert("Error during signin")
     } finally {

@@ -1,3 +1,4 @@
+import { API_URL } from "@/config/env";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +8,7 @@ export default function Signin() {
     const [password, setPassword] = useState('');
 const handleSignIn = async () => {
         try{
-            const res = await fetch('http://localhost:3000/api/v1/admin/signin', {
+            const res = await fetch(`${API_URL}/api/v1/admin/signin`, {
                 method :"POST",
                 headers:{
                     'Content-Type':"application/json"

@@ -1,3 +1,4 @@
+import { API_URL } from "@/config/env";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +11,7 @@ export default function SignUp(){
 
     const handleSignup = async () => {
         try{
-            const res = await fetch('http://localhost:3000/api/v1/admin/signup', {
+            const res = await fetch(`${API_URL}/api/v1/admin/signup`, {
                 method :"POST",
                 headers:{
                     'Content-Type':"application/json"

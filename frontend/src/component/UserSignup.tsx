@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label" // ✅ correct import (not from ra
 import { Eye, Mail } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
 import { User, Lock, Loader2 } from "lucide-react"
+import { API_URL } from "@/config/env";
+
 
 
 
@@ -24,7 +26,7 @@ export default function SignUp() {
   const handleSignup = async () => {
     setLoading(true)
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/signup", {
+      const res = await fetch(`${API_URL}/api/v1/user/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),
@@ -50,7 +52,7 @@ export default function SignUp() {
   const handleVerifyOtp = async () => {
     setLoading(true)
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/verify-otp", {
+      const res = await fetch(`${API_URL}/api/v1/user/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),

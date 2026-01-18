@@ -11,13 +11,13 @@ export default function SelectSubject(){
       <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/maths')}}>Maths</Button>
     </div>
     <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/questions/physics')}}>Physics</Button>
+      <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/physics')}}>Physics</Button>
     </div>
     <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize}  onClick={()=>{ return navigate('/questions/chemistry')}}>Chemistry</Button>
+      <Button size = "lg" variant={'outline'} className={buttonSize}  onClick={()=>{ return navigate('/chemistry')}}>Chemistry</Button>
     </div>
     <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize}  onClick={()=>{ return navigate('/questions/test')}}>test</Button>
+      <Button size = "lg" variant={'outline'} className={buttonSize}  onClick={()=>{ return navigate('/test')}}>test</Button>
     </div>
     </div>
     </>
