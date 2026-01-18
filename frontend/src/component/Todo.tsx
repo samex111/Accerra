@@ -92,9 +92,7 @@ export default function Todo() {
   console.log('dateStr:',dateStr) 
   const todayTodo = getTodo.filter(item=>item._id===dateStr)
   console.log("today date: ",todayTodo)
-  //  me filter kar sakta hu today ki date ko and then uske based par 
-  // todos show kar sakta hu 
-  // test this code tomarrow 
+ 
    const todossss = todayTodo.map(item=>item.todoss)
    console.log("only today: ",todossss[0])
    console.log(getTodo)
