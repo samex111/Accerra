@@ -85,13 +85,14 @@ adminRouter.post('/signin', async (req: Request, res: Response) => {
       id: admin._id
     }, JWT_ADMIN)
 
-    res.cookie('token', token, {
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-      maxAge: 1000 * 60 * 60 * 24
-    })
-      console.log(token)
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    console.log(token)
     res.status(200).json({
       token: token
     })
@@ -110,7 +111,7 @@ adminRouter.post('/add/question', adminMiddleware, async (req: Request, res: Res
   const requireBody = z.object({
     question: z.string(),
     questionDiagram: z.string().optional(),
-    solution:z.string(),
+    solution: z.string(),
     option: z.array(z.string()),         // multiple options allowed
     answer: z.array(z.string()),
     subject: z.enum(['PHYSICS', 'MATHS', 'CHEMISTRY']),
@@ -129,7 +130,7 @@ adminRouter.post('/add/question', adminMiddleware, async (req: Request, res: Res
     })
   }
 
-  const { question,questionDiagram, option,solution, answer, subject, year, examType, difficulty, tags } = parseDataSuccess.data;
+  const { question, questionDiagram, option, solution, answer, subject, year, examType, difficulty, tags } = parseDataSuccess.data;
 
 
   try {
@@ -142,7 +143,7 @@ adminRouter.post('/add/question', adminMiddleware, async (req: Request, res: Res
       solution,
       year,
       // @ts-ignore
-      examType ,
+      examType,
       // @ts-ignore
       difficulty,
       tags,
