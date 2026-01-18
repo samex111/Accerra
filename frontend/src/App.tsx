@@ -4,12 +4,12 @@ import SelectSubject from "./component/SelectSubject";
 import SolvedBarChart from "./component/Chart";
 import GeminiStream from "./component/geminiResponse";
 import Todo from "./component/Todo";
-import DashBoard from "./pages/DashBoard";
+import DashBoard from "./layouts/DashBoard";
 import Bookmarks from "./component/Bookmark";
 import PracticeQuestion from "./component/PracticeQuestion";
 import LandingPage from "./pages/LandingPage";
-import SignUp from "./component/UserSignup";
-import Signin from "./component/UserSignin";
+import SignUp from "./auth/UserSignup";
+import Signin from "./auth/UserSignin";
 import Questions from "./pages/Question";
 
 

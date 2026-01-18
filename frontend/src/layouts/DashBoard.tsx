@@ -28,7 +28,7 @@ export default function DashBoard() {
     <div className="flex h-screen w-full bg-gradient-to-b from-purple-50 to-pink-100 overflow-hidden">
       <SidebarProvider>
         <Sidebar className="w-[16vw] border-r border-gray-200">
-          <SidebarContent className="bg-gray-900 text-white">
+          <SidebarContent className=" text-black">
             <SidebarGroup>
               <SidebarGroupLabel className="text-blue-400 px-4 py-6 text-lg font-bold">
                 Accerra AI
