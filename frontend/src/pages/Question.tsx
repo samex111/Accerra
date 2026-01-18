@@ -4,6 +4,7 @@ import SquareBox from "../component/QuestionSquareBox";
 import { Bookmark, BookmarkMinus, BookmarkPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmarkStore } from "@/hooks/useBookmarkStore";
+import { API_URL } from "@/config/env";
 
 export default function Questions(props: any) {
   interface Question {
@@ -113,7 +114,7 @@ export default function Questions(props: any) {
   // console.log(a)
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v1/user/questions`, {
+    fetch(`${API_URL}/api/v1/user/questions`, {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" }
@@ -206,7 +207,7 @@ export default function Questions(props: any) {
   ) {
     try {
       const res = await fetch(
-        "http://localhost:3000/api/v1/user/attempt/question",
+        `${API_URL}/api/v1/user/attempt/question`,
         {
           method: "POST",
           credentials: "include",
