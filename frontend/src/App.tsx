@@ -10,6 +10,7 @@ import PracticeQuestion from "./component/PracticeQuestion";
 import LandingPage from "./pages/LandingPage";
 import SignUp from "./component/UserSignup";
 import Signin from "./component/UserSignin";
+import Questions from "./pages/Question";
 
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
         <Route path="/signup" element={<SignUp/>}></Route>
         <Route path="/signin" element={<Signin/>}></Route>
         <Route path="maths" element={<PracticeQuestion mode='practice' subj='MATHS'/>}></Route>
+        <Route path="physics" element={<PracticeQuestion mode='practice' subj='PHYSICS'/>}></Route>
+        <Route path="chemistry" element={<PracticeQuestion mode='practice' subj='CHEMISTRY'/>}></Route>
+        <Route path="test" element={<Questions />}></Route>
 <Route path="/dashboard" element={<DashBoard />}>
   {/* Index route: No absolute positioning, use flex-grow */}
 <Route index element={
