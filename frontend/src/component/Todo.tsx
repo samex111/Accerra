@@ -2,179 +2,146 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Pen } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { API_URL } from "@/config/env";
 
-
-// Define TypeScript interface for todo items
-interface TodoItem {
-  id: string[];
+interface TodoGroup {
+  _id: string;       // date
   todoss: string[];
-  _id: string;
+  id: string[];
 }
 
 export default function Todo() {
-  const [todo, setTodo] = useState("");
-  const [getTodo, setGetTodo] = useState<TodoItem[]>([]);
+  const [input, setInput] = useState("");
+  const [data, setData] = useState<TodoGroup[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
-  const [isShowHistory,setIsShowHistory] = useState(false);
-  const [history,setHistory] = useState([])
 
-  const fetchTodos = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/v1/user/todo`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: "include",
-      });
-      const data = await res.json();
-      setGetTodo(data);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const today = new Date().toISOString().slice(0, 10);
 
-  const handleAdd = async () => {
-    try {
-      await fetch(`${API_URL}/api/v1/user/todo`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        credentials: "include",
-        body: JSON.stringify({ todo }),
-      });
-      setTodo(""); // Clear input
-      fetchTodos(); // Update UI
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const todayTodos = useMemo(() => {
+    return data.find(d => d._id === today);
+  }, [data, today]);
 
-  const handleDelete = async (id: string) => {
-    try {
-      await fetch(`${API_URL}/api/v1/user/todo/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      fetchTodos();
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  async function fetchTodos() {
+    const res = await fetch(`${API_URL}/api/v1/user/todo`, {
+      credentials: "include",
+    });
+    const json = await res.json();
+    setData(json);
+  }
 
-  const handleEdit = async (id: string, newTodo: string) => {
-    try {
-      await fetch(`{API_URL}/api/v1/user/todo/${id}`, {
-        method: "PUT",
-        headers: { 'Content-Type': 'application/json' },
-        credentials: "include",
-        body: JSON.stringify({ todo: newTodo }),
-      });
-      setEditingId(null);
-      setEditText("");
-      fetchTodos();
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  async function addTodo() {
+    if (!input.trim()) return;
+    await fetch(`${API_URL}/api/v1/user/todo`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ todo: input }),
+    });
+    setInput("");
+    fetchTodos();
+  }
 
-  const startEditing = (id: string, currentTodo: string) => {
-    setEditingId(id);
-    setEditText(currentTodo);
-  };
+  async function deleteTodo(id: string) {
+    await fetch(`${API_URL}/api/v1/user/todo/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    fetchTodos();
+  }
+
+  async function saveEdit(id: string) {
+    await fetch(`${API_URL}/api/v1/user/todo/${id}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ todo: editText }),
+    });
+    setEditingId(null);
+    setEditText("");
+    fetchTodos();
+  }
 
   useEffect(() => {
     fetchTodos();
   }, []);
-  console.log(getTodo)
-  const d = new Date()
-  const dateStr = d.toISOString().slice(0, 10);
-  console.log('dateStr:',dateStr) 
-  const todayTodo = getTodo.filter(item=>item._id===dateStr)
-  console.log("today date: ",todayTodo)
- 
-   const todossss = todayTodo.map(item=>item.todoss)
-   console.log("only today: ",todossss[0])
-   console.log(getTodo)
-   const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
 
-console.log('Today:', today.toDateString());
-console.log('Yesterday:', yesterday.toDateString());
-
-
-
-   
   return (
-    <Card className="p-4  shadow-md  w-[30vw] h-[40vh] overflow-y-auto rounded-sm">
-      <div className="flex space-x-1">
-      <Pen /><h1 className="text-xl font-bold">Todo list</h1>
+    <Card className="p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Pen className="h-4 w-4" />
+        <h2 className="font-semibold">Todo List</h2>
       </div>
-      <div className="flex gap-2 mb-4">
+
+      {/* Input */}
+      <div className="flex gap-2">
         <Input
-          placeholder="Add todo"
-          type="text"
-          value={todo}
-          onChange={(e) => setTodo(e.target.value)}
-          className="bg-gradient-to-r from-pink-300 to-blue-200 placeholder:text-black text-black"
+          placeholder="Add a task"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
-        <Button
-          onClick={handleAdd}
-          className="bg-blue-600 hover:bg-blue-900"
-        >
-          Add
-        </Button>
-        <Button onClick={()=>setIsShowHistory(!isShowHistory)} className="ml-2 bg-gray-500 rounded-md p-2 text-white">history</Button>
+        <Button onClick={addTodo}>Add</Button>
       </div>
 
+      {/* List */}
+      <div className="space-y-2">
+        {!todayTodos && (
+          <p className="text-sm text-muted-foreground">
+            No todos for today
+          </p>
+        )}
 
-      <div>
-        {todayTodo.map((item, idx) => (
-          <div key={idx} className="mb-2">
-            {item.todoss.map((t: string, i: number) => (
-              <div key={i} className="flex items-center gap-2">
-                {editingId === item.id[i] ? (
-                  <>
-                    <Input
-                      type="text"
-                      value={editText}
-                     onChange={(e) => setEditText(e.target.value)}
-                      className="bg-gradient-to-r from-pink-300 to-blue-200 placeholder:text-black text-black"
+        {todayTodos?.todoss.map((t, i) => {
+          const id = todayTodos.id[i];
 
-                    />
-                    <Button
-                      onClick={() => handleEdit(item.id[i], editText)}
-
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      onClick={() => setEditingId(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <p className="w-[20vw] ">{t}</p>
-                    <Button className="mt-1"
-                      onClick={() => startEditing(item.id[i], t)}
-                    > 
-                      Edit
-                    </Button>
-                    <Button className="nt-1"
-                      onClick={() => handleDelete(item.id[i])}
-                    >
-                      Delete
-                    </Button>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        ))}
-        
+          return (
+            <div
+              key={id}
+              className="flex items-center gap-2 rounded-md border p-2"
+            >
+              {editingId === id ? (
+                <>
+                  <Input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                  />
+                  <Button size="sm" onClick={() => saveEdit(id)}>
+                    Save
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setEditingId(null)}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="flex-1 truncate">{t}</p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingId(id);
+                      setEditText(t);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => deleteTodo(id)}
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
     </Card>
   );

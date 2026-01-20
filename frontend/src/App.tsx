@@ -11,6 +11,8 @@ import LandingPage from "./pages/LandingPage";
 import SignUp from "./auth/UserSignup";
 import Signin from "./auth/UserSignin";
 import Questions from "./pages/Question";
+import UserLayout from "./layout/AppLayout";
+import DashboardOverview from "./layouts/DashBoard";
 
 
 function App() {
@@ -25,7 +27,7 @@ function App() {
         <Route path="physics" element={<PracticeQuestion mode='practice' subj='PHYSICS'/>}></Route>
         <Route path="chemistry" element={<PracticeQuestion mode='practice' subj='CHEMISTRY'/>}></Route>
         <Route path="test" element={<Questions />}></Route>
-<Route path="/dashboard" element={<DashBoard />}>
+<Route path="/dashboards" element={<DashBoard />}>
   {/* Index route: No absolute positioning, use flex-grow */}
 <Route index element={
   <div className="absolute left-[16vw] space-y-6">
@@ -45,11 +47,11 @@ function App() {
 
        {/* Todo List - Takes 5 columns on large screens */}
        {/* <div className="xl:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 h-full min-h-[300px]"> */}
-          <Todo />
+          {/* <Todo /> */}
        {/* </div> */}
        
        {/* Chart - Full Width */}
-       <div className="xl:col-span-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+       {/* <div className="xl:col-span-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-slate-800 text-lg">Solved Analytics</h3>
             <span className="text-xs font-medium px-2.5 py-1 bg-green-100 text-green-700 rounded-full">Active</span>
@@ -57,16 +59,50 @@ function App() {
           <div className="w-full h-[400px]">
              <SolvedBarChart />
           </div>
-       </div>
+       </div> */}
     </div>
   </div>
 } />
 
   
-  <Route path="ai" element={<GeminiStream />} />
+  {/* <Route path="ai" element={<GeminiStream />} />
   <Route path="bookmarks" element={<Bookmarks />} />
-  <Route path="settings" element={<div>Settings Component Here</div>} />
+  <Route path="settings" element={<div>Settings Component Here</div>} /> */}
 </Route>
+ <Route 
+          path="/dashboard" 
+          element={
+            <UserLayout>
+              <DashboardOverview/>
+            </UserLayout>
+          } 
+        />
+        <Route 
+          path="/dashboard/bookmarks" 
+          element={
+            <UserLayout>
+              <Bookmarks/>
+            </UserLayout>
+          } 
+        />
+        <Route 
+          path="/dashboard/ai" 
+          element={
+            <UserLayout>
+              <GeminiStream />
+            </UserLayout>
+          } 
+        />
+        <Route 
+          path="/dashboard/settings" 
+          element={
+            <UserLayout>
+              <div className="flex items-center justify-center h-full text-zinc-400">Settings Page Placeholder</div>
+            </UserLayout>
+          } 
+        />
+        
+        
       </Routes>
     </BrowserRouter>
   );

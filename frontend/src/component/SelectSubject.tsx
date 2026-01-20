@@ -1,25 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-export default function SelectSubject(){
- const navigate = useNavigate();
-   const buttonSize  =  "w-[10rem] h-[3rem] mb-1 "
-  return(
-    <>
-    <div className="mr-[2vw]">
-      <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/maths')}}>Maths</Button>
+const subjects = [
+  { label: "Maths", path: "/maths" },
+  { label: "Physics", path: "/physics" },
+  { label: "Chemistry", path: "/chemistry" },
+];
+
+export default function SelectSubject() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="space-y-3">
+      <h3 className="font-semibold">Practice Questions</h3>
+
+      {subjects.map((s) => (
+        <Button
+          key={s.path}
+          variant="outline"
+          className="w-full"
+          onClick={() => navigate(s.path)}
+        >
+          {s.label}
+        </Button>
+      ))}
+
+      <h3 className="font-semibold pt-2">Take Test</h3>
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={() => navigate("/test")}
+      >
+        Start Test
+      </Button>
     </div>
-    <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize} onClick={()=>{ return navigate('/physics')}}>Physics</Button>
-    </div>
-    <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize}  onClick={()=>{ return navigate('/chemistry')}}>Chemistry</Button>
-    </div>
-    <div>
-      <Button size = "lg" variant={'outline'} className={buttonSize}  onClick={()=>{ return navigate('/test')}}>test</Button>
-    </div>
-    </div>
-    </>
-  )
+  );
 }

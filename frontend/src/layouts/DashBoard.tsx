@@ -1,83 +1,57 @@
-import { useState } from "react";
-import { Link, useLocation, Outlet } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import SolvedBarChart from "@/component/Chart";
+import SelectSubject from "@/component/SelectSubject";
+import Todo from "@/component/Todo";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-import { Home, Settings, Bookmark, Brain } from "lucide-react";
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
+import { GraduationCap, Pen } from "lucide-react";
 
-const navItems = [
-  { title: "Home", icon: Home, path: "/dashboard" },
-  { title: "Understand with AI", icon: Brain, path: "/dashboard/ai" },
-  { title: "Bookmark", icon: Bookmark, path: "/dashboard/bookmarks" },
-  { title: "Settings", icon: Settings, path: "/dashboard/settings" },
-];
-
-export default function DashBoard() {
-  const location = useLocation(); // Used to highlight the active tab
-
+export default function DashboardOverview() {
   return (
-    <div className="flex h-screen w-full bg-gradient-to-b from-purple-50 to-pink-100 overflow-hidden">
-      <SidebarProvider>
-        <Sidebar className="w-[16vw] border-r border-gray-200">
-          <SidebarContent className=" text-black">
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-blue-400 px-4 py-6 text-lg font-bold">
-                Accerra AI
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {navItems.map((item) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={isActive}>
-                          <Link
-                            to={item.path}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                              isActive 
-                                ? "bg-blue-600 text-white shadow-md" 
-                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                            }`}
-                          >
-                            <item.icon size={20} />
-                            <span className="font-medium">{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </Sidebar>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-semibold">Dashboard Overview</h1>
+        <p className="text-sm text-muted-foreground">
+          Track your practice, todos and progress
+        </p>
+      </div>
 
-        {/* Main Content Area */}
-        <main className="flex-1 relative overflow-y-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="h-full w-full"
-            >
-              {/* Outlet renders the child components based on the URL */}
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      </SidebarProvider>
+      {/* Top section */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm">Practice</CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <SelectSubject />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm">Today’s Todo</CardTitle>
+            <Pen className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="max-h-[320px] overflow-y-auto">
+            <Todo />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bottom section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Progress (Last 7 Days)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SolvedBarChart />
+        </CardContent>
+      </Card>
     </div>
   );
 }

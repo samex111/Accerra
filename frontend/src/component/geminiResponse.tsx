@@ -237,112 +237,108 @@ const GeminiStream: React.FC = () => {
       console.error("Error in the creating conversation id: ", e)
     }
   }
+return (
+  <div className="flex h-full flex-col bg-background text-foreground">
+    {/* Header */}
+    
 
-  return (
-    <div className="flex flex-col bg-white h-screen w-[84vw] left-[16vw] text-gray-100 relative overflow-hidden">
-      {/* Header */}
-      <header className="p-4 border-b border-gray-700 text-center text-2xl font-semibold text-black">
-        Accerra AI
-      </header>
+    {/* Messages */}
+    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      {messages.map((msg, i) => {
+        const isUser = msg.role === "user";
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto pb-[20vh] px-4 py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-500">
-        {messages.map((msg, i) => (
+        return (
           <div
             key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
+            className={`flex ${isUser ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[70%] px-5 py-3 rounded-2xl shadow-md ${msg.role === "user"
-                ? "bg-gray-800 text-white"
-                : "bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-100"
+              className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow
+                ${isUser
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-foreground"
                 }`}
             >
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code: ({ inline, children, ...props }) =>
+                  code: ({ inline, children }) =>
                     inline ? (
-                      <code
-                        className="bg-gray-300 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-medium"
-                        {...props}
-                      >
+                      <code className="rounded bg-black/10 px-1 py-0.5 text-xs">
                         {children}
                       </code>
                     ) : (
-                      <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto text-sm my-2">
+                      <pre className="rounded-lg bg-black p-3 text-xs text-white overflow-x-auto">
                         <code>{children}</code>
                       </pre>
                     ),
-                  p: ({ children }) => <p className="mb-2">{children}</p>,
+                  p: ({ children }) => (
+                    <p className="mb-2 last:mb-0">{children}</p>
+                  ),
                 }}
               >
                 {msg.role === "assistant" && !msg.content
-                  ? "Thinking..."
+                  ? "Thinking…"
                   : msg.content}
               </ReactMarkdown>
 
               {msg.role === "assistant" &&
                 i === messages.length - 1 &&
                 msg.content && (
-                  <span className="inline-block w-2 h-5 bg-gray-600 animate-pulse ml-1 align-middle">
+                  <span className="inline-block w-2 h-4 bg-muted-foreground animate-pulse ml-1 align-middle">
                     ▍
                   </span>
                 )}
             </div>
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
+        );
+      })}
+      <div ref={messagesEndRef} />
+    </div>
 
-      {(file || fileUrl || isUploading) && (
-        <div className="fixed bottom-24 left-[16vw] w-[84vw] bg-gray-100 dark:bg-gray-800 p-3 flex items-center gap-3 shadow-lg border-t border-gray-700">
+    {/* File preview / upload */}
+    {(file || fileUrl || isUploading) && (
+      <div className="border-t bg-muted/50 px-6 py-3">
+        <div className="flex items-center gap-4">
           {fileUrl && (
             <div className="relative">
               <img
                 src={fileUrl}
                 alt="Preview"
-                className="h-20 w-20 object-cover rounded-lg border"
+                className="h-16 w-16 rounded-md object-cover border"
               />
               <button
                 onClick={removeImage}
-                className="absolute top-1 right-1 bg-black/70 p-1 rounded-full text-white hover:bg-red-600"
+                className="absolute -top-2 -right-2 rounded-full bg-destructive p-1 text-white"
               >
                 <X size={14} />
               </button>
             </div>
           )}
+
           {isUploading && (
             <div className="flex-1">
-              <p className="text-gray-700 dark:text-gray-300 text-sm mb-1">
+              <p className="text-xs text-muted-foreground mb-1">
                 Uploading {uploadProgress}%
               </p>
-              <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2">
+              <div className="h-2 w-full rounded bg-muted">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="h-2 rounded bg-primary transition-all"
                   style={{ width: `${uploadProgress}%` }}
-                ></div>
+                />
               </div>
             </div>
           )}
         </div>
-      )}
+      </div>
+    )}
 
-      {/* Input Bar */}
-      <div className={` border-gray-700 p-4  flex items-center gap-3 fixed ${bottom ? "bottom-[50vh]" : "bottom-0"} w-[84vw] left-[16vw] bg-white dark:bg-gray-900 scroll-smooth`}>
-
-        <label className="cursor-pointer hover:scale-105 transition-transform">
-          <Paperclip className="text-gray-500 hover:text-blue-500" />
-          <Input
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileUpload}
-          />
-        </label>
-
-        <Button
+    {/* Input Bar */}
+    <div className="sticky bottom-0 border-t bg-background px-6 py-4">
+      <div className="flex items-end gap-3">
+        <label className="cursor-pointer flex">
+          <Paperclip className="text-muted-foreground mt-1 hover:text-primary" />
+           <Button
           onClick={() => setIsAnalyzing((prev) => !prev)}
           className={`rounded-full ml-2 ${isAnalyzing
             ? "bg-gray-800 hover:bg-gray-600"
@@ -351,6 +347,13 @@ const GeminiStream: React.FC = () => {
         >
           {isAnalyzing ? "Analyzing..." : "Analyze"}
         </Button>
+          <Input
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileUpload}
+          />
+        </label>
 
         <textarea
           rows={1}
@@ -362,22 +365,23 @@ const GeminiStream: React.FC = () => {
               handleSend();
             }
           }}
-          placeholder="Ask questions..."
-          className="flex-1 resize-none rounded-2xl bg-[#2A2A2A] text-gray-100 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Message Accerra AI…"
+          className="flex-1 resize-none rounded-xl bg-muted px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
 
         <Button
           size="icon"
           onClick={handleSend}
           disabled={isUploading}
-          className="rounded-full bg-gray-600 hover:bg-blue-700 transition-transform hover:scale-105"
+          className="rounded-full"
         >
-          <ArrowUp className="text-white" />
+          <ArrowUp />
         </Button>
-
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default GeminiStream;
