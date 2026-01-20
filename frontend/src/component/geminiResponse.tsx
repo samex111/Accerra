@@ -238,12 +238,17 @@ const GeminiStream: React.FC = () => {
     }
   }
 return (
-  <div className="flex min-h-screen p-0 m-0 min-w-full flex-col bg-background text-foreground">
-    {/* Header */}
-    
+  <div className="flex h-full w-full flex-col bg-background text-foreground">
 
     {/* Messages */}
-    <div className="flex-1  px-6 py-6 space-y-6">
+    <div
+      className="
+        flex-1 overflow-y-auto
+        px-3 py-4
+        sm:px-6 sm:py-6
+        space-y-4 sm:space-y-6
+      "
+    >
       {messages.map((msg, i) => {
         const isUser = msg.role === "user";
 
@@ -253,11 +258,14 @@ return (
             className={`flex ${isUser ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow
+              className={`
+                max-w-[85%] sm:max-w-[75%]
+                rounded-2xl px-3 py-2 sm:px-4 sm:py-3
+                text-sm leading-relaxed shadow
                 ${isUser
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-foreground"
-                }`}
+                  : "bg-muted text-foreground"}
+              `}
             >
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -293,19 +301,20 @@ return (
           </div>
         );
       })}
+
       <div ref={messagesEndRef} />
     </div>
 
-    {/* File preview / upload */}
+    {/* File preview */}
     {(file || fileUrl || isUploading) && (
-      <div className="border-t bg-muted/50 px-6 py-3">
-        <div className="flex items-center gap-4">
+      <div className="border-t bg-muted/50 px-3 py-2 sm:px-6 sm:py-3">
+        <div className="flex items-center gap-3">
           {fileUrl && (
             <div className="relative">
               <img
                 src={fileUrl}
                 alt="Preview"
-                className="h-16 w-16 rounded-md object-cover border"
+                className="h-14 w-14 sm:h-16 sm:w-16 rounded-md object-cover border"
               />
               <button
                 onClick={removeImage}
@@ -334,20 +343,21 @@ return (
     )}
 
     {/* Input Bar */}
-    <div className="sticky bottom-0 border-t bg-background px-6 py-4">
-      <div className="flex items-end gap-3">
-          <Button
+    <div className="border-t bg-background px-3 py-2 sm:px-6 sm:py-4">
+      <div className="flex items-end gap-2 sm:gap-3">
+
+        {/* Analyze */}
+        <Button
           onClick={() => setIsAnalyzing((prev) => !prev)}
-          className={`rounded-full ml-2 mb-1 ${isAnalyzing
-            ? "bg-gray-800 hover:bg-gray-600"
-            : "bg-gray-600 hover:bg-gray-500"
-            }`}
+          size="sm"
+          className="h-9"
         >
-          {isAnalyzing ? "Analyzing..." : "Analyze"}
+          {isAnalyzing ? "Analyzing" : "Analyze"}
         </Button>
-        <label className="cursor-pointer flex">
-          <Paperclip className="text-muted-foreground mb-2 hover:text-primary" />
-         
+
+        {/* Upload */}
+        <label className="cursor-pointer flex items-center">
+          <Paperclip className="text-muted-foreground hover:text-primary" />
           <Input
             type="file"
             className="hidden"
@@ -356,6 +366,7 @@ return (
           />
         </label>
 
+        {/* Textarea */}
         <textarea
           rows={1}
           value={userInput}
@@ -367,14 +378,19 @@ return (
             }
           }}
           placeholder="Message Accerra AI…"
-          className="flex-1 resize-none rounded-xl bg-muted px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="
+            flex-1 resize-none rounded-xl bg-muted
+            px-3 py-2 sm:px-4 sm:py-3
+            text-sm focus:outline-none focus:ring-2 focus:ring-primary
+          "
         />
 
+        {/* Send */}
         <Button
           size="icon"
           onClick={handleSend}
           disabled={isUploading}
-          className="rounded-full"
+          className="h-9 w-9"
         >
           <ArrowUp />
         </Button>
