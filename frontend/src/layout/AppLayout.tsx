@@ -1,7 +1,7 @@
 import  { Button } from "@/components/ui/button";
 import { School, LayoutDashboard, GraduationCap,BookPlus , Users, ClipboardCheck,Settings, LogOut, X, Menu } from "lucide-react";
 import { Home,  Bookmark, Brain } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 // import  { SidebarItem } from "@/components/ui/sidebar";
 const SidebarItem = ({ icon: Icon, label, path, active }:any) => {
@@ -76,6 +76,9 @@ export default function UserLayout({ children }:any)  {
       </div>
     </div>
   );
+  useEffect(() => {
+  setIsMobileMenuOpen(false);
+}, [location.pathname]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
