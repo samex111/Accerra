@@ -238,12 +238,12 @@ const GeminiStream: React.FC = () => {
     }
   }
 return (
-  <div className="flex h-full flex-col bg-background text-foreground">
+  <div className="flex min-h-screen p-0 m-0 min-w-full flex-col bg-background text-foreground">
     {/* Header */}
     
 
     {/* Messages */}
-    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+    <div className="flex-1  px-6 py-6 space-y-6">
       {messages.map((msg, i) => {
         const isUser = msg.role === "user";
 

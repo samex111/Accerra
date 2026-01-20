@@ -121,7 +121,7 @@ export default function UserLayout({ children }:any)  {
         )}
 
         {/* Main Content */}
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-zinc-50/50">
+        <main className="flex flex-1 flex-col gap-4 md:p-4 lg:gap-6 lg:p-6 bg-zinc-50/50">
           {children}
         </main>
       </div>
