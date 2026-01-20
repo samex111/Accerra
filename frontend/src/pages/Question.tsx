@@ -5,6 +5,15 @@ import { Bookmark, BookmarkMinus, BookmarkPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmarkStore } from "@/hooks/useBookmarkStore";
 import { API_URL } from "@/config/env";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+
 
 export default function Questions(props: any) {
   interface Question {
@@ -257,98 +266,167 @@ useEffect(() => {
  
   
   // 
-  return (
-    <div className="w-full h-screen fixed ">
-      <div className="flex justify-center gap-2 mt-2">
+ return (
+  <div className="w-full h-full">
 
-        <div className="w-1/2">
-         <h1>Answers Auto-Save with Expiry</h1>
-      {remainingTime !== null && remainingTime > 0 ? (
-        <p>Expires in: {formatTime(remainingTime)}</p>
-      ) : (
-        <p>No saved answers or expired</p>
-      )}   <div className="flex justify-around">
-          <h1 className="text-2xl font-bold mb-1  ">Questions {index + 1} <hr className="border-t-2 border-gray-400" /></h1>
-          {/*  */}
-        {bookmarks.includes(question?._id) ? (
-  <Bookmark fill="" onClick={() => removeBookmark(question?._id)} />
-) : (
-  <Bookmark onClick={() => addBookmark(question?._id)} />
-)}
+    {/* Top mobile bar */}
+    <div className="flex items-center justify-between px-4 py-2 md:hidden border-b">
+      <div>
+        <h1 className="text-sm font-semibold">Questions {index + 1}</h1>
+        {remainingTime !== null && remainingTime > 0 && (
+          <p className="text-xs text-gray-500">
+            Expires in: {formatTime(remainingTime)}
+          </p>
+        )}
+      </div>
 
+      {/* Mobile Menu */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button size="icon" variant="outline">
+            <Menu />
+          </Button>
+        </SheetTrigger>
+
+        <SheetContent side="right" className="w-[85vw]">
+          <SheetHeader>
+            <SheetTitle>Questions</SheetTitle>
+          </SheetHeader>
+
+          <div className="mt-4 grid grid-cols-5 gap-2 overflow-y-auto">
+            {questions.map((_, i) => (
+              <SquareBox
+                key={i}
+                num={i + 1}
+                state={status[i]}
+                onClick={() => setIndex(i)}
+              />
+            ))}
           </div>
-          <div className="h-96  overflow-y-scroll">
-            {question && (
-              <div key={question._id} className=" p-3 mb-4 ">
-                <p className="font-semibold">{question.question}</p>
-                {props.mode === "practice" && (
-                  <GeminiHint
-                    prompt={
-                      question.question +
-                      " hint with formula in 5-8 words" +
-                      question.questionDiagram
-                    }               
-                  />
-                )}
-                <img src={question.questionDiagram}  />
 
-                <div className="mt-2">
-                  {question.option.map((opt, i) => (
-                    <div
-                      key={i}
-                      className="w-full"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`q-${question._id}-${i}`}
-                        name={`q-${question._id}`}
-                        value={opt}
-                        checked={answers[question._id]?.includes(opt) || false}
-                        onChange={(e) => handleChange(e, question._id, index)}
-                        className="peer hidden"
-                      />
-                      <label
-                        htmlFor={`q-${question._id}-${i}`}
-                        className="flex items-center gap-3 w-full p-4 mb-3 text-gray-700 bg-white border-2 border-gray-200 rounded-lg cursor-pointer transition-colors  hover:bg-gray-50 dark:bg-white dark:text-black dark:border-gray-500 dark:hover:bg-gray-300 peer-checked:bg-blue-300 peer-checked:border-blue-300"
-                      >
-                        <span className="peer-checked:text-blue-600">{opt}</span>
-                      </label>
-                    </div>
-                  ))}
+          <div className="mt-4 text-sm">
+            Answered: {answered} <br />
+            Not answered: {notAnswered} <br />
+            Marked: {markedForReview}
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
 
-                </div>
+    {/* Main Layout */}
+    <div className="flex justify-center gap-4 px-2 md:px-4">
 
-                {/* <button
-            className="px-4 py-2 m-2 border-[4px] hover:border-red-700"
-            onClick={() => handleSubmit(question)}
-          >
-            Submit
-          </button> */}
-              </div>
+      {/* LEFT — QUESTION */}
+      <div className="w-full md:w-1/2">
+
+        {/* Desktop Header */}
+        <div className="hidden md:block">
+          <h1>Answers Auto-Save with Expiry</h1>
+          {remainingTime !== null && remainingTime > 0 ? (
+            <p>Expires in: {formatTime(remainingTime)}</p>
+          ) : (
+            <p>No saved answers or expired</p>
+          )}
+
+          <div className="flex justify-around items-center">
+            <h1 className="text-2xl font-bold">
+              Questions {index + 1}
+            </h1>
+
+            {bookmarks.includes(question?._id) ? (
+              <Bookmark fill="" onClick={() => removeBookmark(question?._id)} />
+            ) : (
+              <Bookmark onClick={() => addBookmark(question?._id)} />
             )}
           </div>
-          <hr className="border-t-2 border-gray-400"></hr>
+          <hr className="border-t-2 border-gray-400" />
+        </div>
+
+        {/* Question Body */}
+        <div className="h-[60vh] md:h-96 overflow-y-auto">
+          {question && (
+            <div key={question._id} className="p-3 space-y-3">
+              <p className="font-semibold">{question.question}</p>
+
+              {props.mode === "practice" && (
+                <GeminiHint
+                  prompt={`${question.question} hint with formula in 5-8 words`}
+                />
+              )}
+
+              {question.questionDiagram && (
+                <img
+                  src={question.questionDiagram}
+                  className="max-h-60 mx-auto"
+                />
+              )}
+
+              {/* Options */}
+              <div className="mt-2">
+                {question.option.map((opt, i) => (
+                  <div key={i}>
+                    <input
+                      type="checkbox"
+                      id={`q-${question._id}-${i}`}
+                      value={opt}
+                      checked={answers[question._id]?.includes(opt) || false}
+                      onChange={(e) =>
+                        handleChange(e, question._id, index)
+                      }
+                      className="peer hidden"
+                    />
+
+                    <label
+                      htmlFor={`q-${question._id}-${i}`}
+                      className="flex items-center gap-3 w-full p-4 mb-3 border-2 rounded-lg cursor-pointer
+                      peer-checked:bg-blue-300 peer-checked:border-blue-300"
+                    >
+                      {opt}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Controls */}
+        <div className="flex flex-wrap gap-2 mt-2">
           <button
             disabled={index === 0}
-            onClick={() => index > 0 && setIndex(index - 1)}
-            className="border py-2 px-4 mr-1 mt-1"
+            onClick={() => setIndex(index - 1)}
+            className="border px-4 py-2"
           >
             Previous
           </button>
+
           <button
             disabled={index === questions.length - 1}
-            onClick={() => index < questions.length - 1 && setIndex(index + 1)}
-            className="py-2 px-4 border mx-2  "
+            onClick={() => setIndex(index + 1)}
+            className="border px-4 py-2"
           >
             Next
           </button>
 
-          <button className="py-2 px-4 border mx-2  " onClick={() => markForReview(index)}>Mark for review</button>
+          <button
+            className="border px-4 py-2"
+            onClick={() => markForReview(index)}
+          >
+            Mark for review
+          </button>
 
-          <button className="border px-4 py-2 mx-2" onClick={handleSubmit}  >Submit test</button>
+          <button
+            className="border px-4 py-2"
+            onClick={handleSubmit}
+          >
+            Submit test
+          </button>
         </div>
-        <div className="">
-        <div className="grid grid-cols-6 gap-2 w-[30vw] h-[30vh] bg-gray-100 p-3 rounded-sm overflow-y-scroll">
+      </div>
+
+      {/* RIGHT — QUESTION BOXES (DESKTOP ONLY) */}
+      <div className="hidden md:block">
+        <div className="grid grid-cols-6 gap-2 w-[30vw] h-[30vh] bg-gray-100 p-3 overflow-y-auto">
           {questions.map((_, i) => (
             <SquareBox
               key={i}
@@ -358,11 +436,15 @@ useEffect(() => {
             />
           ))}
         </div>
-      <div className="mt-2">Ansewed: {answered}  , Not answed:{notAnswered} , mark for review: {markedForReview}</div>
-      </div>
+
+        <div className="mt-2 text-sm">
+          Answered: {answered}, Not answered: {notAnswered},
+          Marked: {markedForReview}
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 
 
 

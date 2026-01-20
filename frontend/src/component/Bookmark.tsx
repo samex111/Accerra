@@ -21,7 +21,7 @@ export default function Bookmarks() {
   }, []); // only run once
 
   return (
-    <div className=" relative left-[16vw] gap-2 w-[84vw] overflow-y-scroll p-4">
+    <div className=" w-full ">
       <h2 className="text-2xl font-bold mb-4">Bookmarked Questions</h2>
 
       {bookmarkQuestions.length > 0 ? (
