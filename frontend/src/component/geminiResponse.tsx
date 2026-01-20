@@ -238,10 +238,11 @@ const GeminiStream: React.FC = () => {
     }
   }
 return (
-  <div className="flex h-full w-full flex-col bg-background text-foreground">
+  
+  <div className="flex h-full pb-2 md:pb-0 w-full flex-col bg-background text-foreground">
 
     {/* Messages */}
-    <div
+    <div  
       className="
         flex-1 overflow-y-auto
         px-3 py-4
