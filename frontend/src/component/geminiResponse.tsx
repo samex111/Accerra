@@ -336,17 +336,18 @@ return (
     {/* Input Bar */}
     <div className="sticky bottom-0 border-t bg-background px-6 py-4">
       <div className="flex items-end gap-3">
-        <label className="cursor-pointer flex">
-          <Paperclip className="text-muted-foreground mt-1 hover:text-primary" />
-           <Button
+          <Button
           onClick={() => setIsAnalyzing((prev) => !prev)}
-          className={`rounded-full ml-2 ${isAnalyzing
+          className={`rounded-full ml-2 mb-1 ${isAnalyzing
             ? "bg-gray-800 hover:bg-gray-600"
             : "bg-gray-600 hover:bg-gray-500"
             }`}
         >
           {isAnalyzing ? "Analyzing..." : "Analyze"}
         </Button>
+        <label className="cursor-pointer flex">
+          <Paperclip className="text-muted-foreground mb-2 hover:text-primary" />
+         
           <Input
             type="file"
             className="hidden"
