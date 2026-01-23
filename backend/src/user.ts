@@ -92,8 +92,19 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 
 });
 userRouter.post("/verify-otp", async (req, res) => {
-    const { email, otp } = req.body;
+    
+    const requireBody = z.object({
+        email:z.string().describe('enter you email'),
+        otp:z.any().describe('enter your otp')
+    })
+    const parseData = requireBody.safeParse(req.body)
+    if(!parseData.success){
+        return res.status(400).json({
+            msg:"error in verify otp: "+parseData.error
+        })
+    }
 
+     const { email, otp } = parseData.data;
     const user = await UserModel.findOne({ email });
 
     if (!user) return res.status(400).json({ message: "User not found" });
@@ -870,12 +881,12 @@ userRouter.put('/update/convesationId:conversationId', async function (req: Requ
                 .getPublicUrl(data.path);
 
             const imageUrl = publicUrlData.publicUrl;
-            console.log("✅ Image uploaded:", imageUrl);
+            console.log(" Image uploaded:", imageUrl);
 
             // Return only the URL — no AI call yet
             res.json({ success: true, imageUrl });
         } catch (err) {
-            console.error("❌ Upload error:", err);
+            console.error(" Upload error:", err);
             res.status(500).json({ success: false, message: "Upload failed" });
         }
     })

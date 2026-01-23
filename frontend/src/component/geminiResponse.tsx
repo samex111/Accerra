@@ -278,7 +278,7 @@ return (
                       </code>
                     ) : (
                       <pre className="rounded-lg bg-black p-3 text-xs text-white overflow-x-auto">
-                        <code>{children}</code>
+                        <code                   >{children}</code>
                       </pre>
                     ),
                   p: ({ children }) => (

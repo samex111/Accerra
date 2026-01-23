@@ -27,7 +27,7 @@ async function run() {
                         },
                     });
                 } catch (err: any) {
-                    console.log(`❌ Embedding failed for ${doc._id}: ${err.message}`);
+                    console.log(` Embedding failed for ${doc._id}: ${err.message}`);
                 }
             })
         );
@@ -35,7 +35,7 @@ async function run() {
         if (updateDocuments.length > 0) {
             const collection = attemtQuestionsModel.collection;
             const result = await collection.bulkWrite(updateDocuments, { ordered: false });
-            console.log("✅ Documents updated:", result.modifiedCount);
+            console.log(" Documents updated:", result.modifiedCount);
         } else {
             console.log("No documents to update.");
         }
