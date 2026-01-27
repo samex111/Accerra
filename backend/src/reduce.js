@@ -48,5 +48,28 @@
 //       return arr.length 
 
 // }
-.0
+
 //  console.log(searchInsertPosition(arr,7));
+
+// ek esa subarry jo sabse lamba ho and usme array reapet naa ho 
+function LongestSubarray(arr){
+    for(let i=0; i<arr.length; i++){
+        for(let j=i; j<arr.length; j++){
+          
+        }
+    }
+}
+arr = [1,2,3,4,5]
+/* 
+i=0 ---> 
+1,2,3,4,5
+i=1 --> 
+2,3,4,5
+i=2 -->
+3,4,5
+i=3 -->
+4,5
+i=4-->
+5
+
+*/

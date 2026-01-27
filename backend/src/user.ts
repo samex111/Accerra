@@ -94,7 +94,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 userRouter.post("/verify-otp", async (req, res) => {
     
     const requireBody = z.object({
-        email:z.string().describe('enter you email'),
+        email: z.email().describe("enter you email"),
         otp:z.any().describe('enter your otp')
     })
     const parseData = requireBody.safeParse(req.body)
@@ -117,7 +117,7 @@ userRouter.post("/verify-otp", async (req, res) => {
     }
     // @ts-ignore
     if (Date.now() > user.otpExpiry) {
-        user.deleteOne(email);
+        user.deleteOne({email});
         return res.status(400).json({ message: "OTP expired" });
 
     }
