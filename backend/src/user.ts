@@ -179,7 +179,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             maxAge: 1000 * 60 * 60 * 24
         })
         console.log("cookie: ", token)
-        res.json({ studentId: user._id });
+        res.json({ studentId: user._id , email : user.email , username:user.username} );
     }
     else {
         // If the password does not match, return a error indicating the invalid credentials

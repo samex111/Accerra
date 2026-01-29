@@ -19,7 +19,7 @@ export default function Signin() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState('password')
-  console.log("API URL =", import.meta.env.VITE_API_URL);
+  // console.log("API URL =", import.meta.env.VITE_API_URL);
 
   
   const handleSignIn = async () => {
@@ -35,6 +35,8 @@ export default function Signin() {
       const data = await res.json()
       studentContext?.setStudentId(data.studentId)
       localStorage.setItem("StudentID", data.studentId)
+      localStorage.setItem("StudentEmail", data.email)
+      localStorage.setItem("StudentUsername", data.username)
 
       if (res.ok) {
         alert("Signin successful ✅")

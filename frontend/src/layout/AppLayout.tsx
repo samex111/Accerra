@@ -79,7 +79,8 @@ export default function UserLayout({ children }:any)  {
   useEffect(() => {
   setIsMobileMenuOpen(false);
 }, [location.pathname]);
-
+ const email = localStorage.getItem('StudentEmail')
+ console.log(email)
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       {/* Desktop Sidebar */}
@@ -98,9 +99,9 @@ export default function UserLayout({ children }:any)  {
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-zinc-500">user@email.com</span>
+            <span className="text-sm text-zinc-500">{email}</span>
             <div className="h-8 w-8 rounded-full bg-zinc-200 flex items-center justify-center">
-              <span className="font-semibold text-xs">AD</span>
+              <span className="font-semibold text-xs">{email?.charAt(0).toUpperCase()}</span>
             </div>
           </div>
         </header>
