@@ -36,6 +36,22 @@ const transporter = noadmailer.createTransport({
     }
 
 });
+try{
+const check = async () => {return await transporter.verify()};
+console.log("SMTP ready: " + check()) ;
+
+}catch(e){
+    console.log("error in transposrter : " + e)
+}
+
+ 
+console.log(process.env.EMAIL)
+console.log(process.env.PASS)
+console.log({
+  email: process.env.EMAIL,
+  passLength: process.env.PASS?.length,
+});
+
 
 
 userRouter.post('/signup', async (req: Request, res: Response) => {
@@ -44,7 +60,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
         password: z.string().min(8).max(20),
         username: z.string().min(1).max(50)
     });
-
+  
     const parseData = requireBody.safeParse(req.body);
 
     if (!parseData.success) {
@@ -80,7 +96,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
     }
 
     await transporter.sendMail({
-        from: "samxpatel2@gmail.com",
+        from: process.env.EMAIL,
         to: email,
         subject: "Verify your Email",
         text: `Your OTP is ${otp}`
