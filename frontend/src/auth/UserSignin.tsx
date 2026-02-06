@@ -56,8 +56,10 @@ export default function Signin() {
   return (
     <div className="w-full h-screen flex items-center justify-center bg-[linear-gradient(135deg,#f6e8f4_0%,#f0eefa_50%,#dee8fe_100%)] px-4">
       <Card className="w-full max-w-md shadow-md border border-gray-200">
+       
         <CardHeader>
           <CardTitle className="text-2xl text-center font-semibold text-gray-800">
+             <p className="text-black/70 text-sm ">Backend is deployed on a free-tier service and may take a moment to wake up. Thanks for your patience!</p>
             Welcome Back 👋
           </CardTitle>
         </CardHeader>

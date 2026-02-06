@@ -81,6 +81,7 @@ export default function SignUp() {
       <Card className="w-full max-w-md shadow-md border border-gray-200">
         <CardHeader>
           <CardTitle className="text-2xl text-center font-semibold text-gray-800">
+             <p className="text-black/70 text-sm ">Backend is deployed on a free-tier service and may take a moment to wake up. Thanks for your patience!</p>
             Create your account
           </CardTitle>
         </CardHeader>
