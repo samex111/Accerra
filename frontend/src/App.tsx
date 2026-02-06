@@ -97,7 +97,7 @@ function App() {
           path="/dashboard/settings" 
           element={
             <UserLayout>
-              <div className="flex items-center justify-center h-full text-zinc-400">Under maintenance</div>
+              <div className="flex items-center text-4xl justify-center h-full text-zinc-400">Under maintenance</div>
             </UserLayout>
           } 
         />
