@@ -38,12 +38,7 @@ const LandingPage = () => {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden  items-center absolute gap-8   md:flex  left-1/2 -translate-x-1/2">
-            <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">Story</a>
-            <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">Why Accerra</a>
-            <a href="#" className="text-md font-medium text-gray-600 hover:text-gray-900">features</a>
-      
-          </div>
+         
 
           {/* Actions */}
           <div  className="hidden items-center gap-2 md:flex">
@@ -56,11 +51,7 @@ const LandingPage = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="md:hidden">
-            <Button variant="ghost" size="icon">
-              <AlignRight className="h-6 w-6"/>
-            </Button>
-          </div>
+       
         </nav>
 
         {/* --- Hero Section --- */}
