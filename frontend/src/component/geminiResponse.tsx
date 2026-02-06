@@ -242,6 +242,13 @@ return (
   <div className="flex h-full pb-2 md:pb-0 w-full flex-col bg-background text-foreground">
 
     {/* Messages */}
+    {
+      messages.length === 0 && bottom && (
+        <div className="flex items-center justify-center h-full">
+          <p className="text-lg max-w-md text-center text-muted-foreground">This is vector db+rag ai chatbot so if you attempted some questions ask with analyze mode on <br />Thankyou </p>
+        </div>
+      )
+    }
     <div  
       className="
         flex-1 overflow-y-auto
