@@ -245,7 +245,7 @@ return (
     {
       messages.length === 0 && bottom && (
         <div className="flex items-center justify-center h-full">
-          <p className="text-lg max-w-md text-center text-muted-foreground">This is vector db+rag ai chatbot so if you attempted some questions ask with analyze mode on <br />Thankyou </p>
+          <p className="text-lg max-w-md text-center text-muted-foreground">This is vector db+rag ai chatbot so if you attempted some questions ask with analyze mode on to get more personalized responses <br />Thank you</p>
         </div>
       )
     }
