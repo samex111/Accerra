@@ -29,7 +29,7 @@ const LandingPage = () => {
           <nav className="w-full flex items-center justify-between px-6 py-6 max-w-7xl mx-auto">
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold tracking-tight text-gray-900 flex items-center">
-                <span className="text-red-500 mr-2 text-3xl leading-none">∿</span> 
+                <span className="text-[#00c3ff] mr-2 text-3xl leading-none">∿</span> 
                 Accerra
               </span>
             </div>
@@ -47,7 +47,7 @@ const LandingPage = () => {
           {/* Hero Content */}
           <main className="flex-1 flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto pt-10 pb-20">
             <div className="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-sm font-medium text-gray-800 mb-8 shadow-sm">
-              <span className="flex h-2 w-2 rounded-full bg-red-500 mr-2"></span>
+              <span className="flex h-2 w-2 rounded-full bg-[#00c3ff] mr-2"></span>
               The AI Study Engine for JEE & NEET
             </div>
             
