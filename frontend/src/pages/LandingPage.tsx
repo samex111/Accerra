@@ -101,7 +101,7 @@ const LandingPage = () => {
             <ul className="space-y-4">
               {[
                 "Structured, exam-specific question bank",
-                "Real-time AI tutor powered by Google Gemini",
+                "Real-time AI tutor for instant doubt resolution",
                 "Deep performance analytics & trends",
                 "Personalized learning and practice tools"
               ].map((item, i) => (
