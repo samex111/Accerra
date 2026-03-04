@@ -24,14 +24,14 @@ export default function Signin() {
     e.preventDefault();
     setLoading(true)
     setErrorMsg("")
-
+  console.log("Attempting to sign in with:", { identifier, password  }) // Avoid logging actual password
     try {
       const res = await fetch(`${API_URL}/api/v1/user/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Fixed the typo in the payload if your backend expects 'identifier'. 
         // If your backend strictly requires 'identifire', change it back.
-        body: JSON.stringify({ identifier: identifier, password }), 
+        body: JSON.stringify({ identifire: identifier, password }), 
         credentials: "include",
       })
 
