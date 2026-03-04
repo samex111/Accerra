@@ -84,7 +84,7 @@ export default function UserLayout({ children }:any)  {
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       {/* Desktop Sidebar */}
-      <div className="hidden border-r bg-zinc-50/40 md:block">
+      <div className="hidden border-r bg-zinc-50/40 md:block sticky top-0 h-screen">
         {sidebarContent}
       </div>
 
