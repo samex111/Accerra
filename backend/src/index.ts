@@ -21,7 +21,7 @@ app.use(cors({
 
 app.use(cookieParser());
 
-
+ 
 
 // MongoDB connect 
 connectDB();
@@ -29,8 +29,12 @@ connectDB();
 app.use('/api/v1/user' , userRouter);
 app.use('/api/v1/admin' , adminRouter);
 
-
-
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.listen(PORT, () => {
   
