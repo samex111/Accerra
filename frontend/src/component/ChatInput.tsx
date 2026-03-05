@@ -27,7 +27,7 @@ const ChatInput: React.FC<Props> = React.memo(
  console.log("ChatInput props changed")
 })
     return (
-<div className="sticky bottom-0 flex-shrink-0 bg-background border-t px-3 py-2 sm:px-6 sm:py-4">
+<div className="sticky bottom-0  bg-background border-t px-3 py-2 sm:px-6 sm:py-4">
           <div className="flex items-end gap-2 sm:gap-3">
 
           <Button

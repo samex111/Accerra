@@ -1,4 +1,4 @@
-async function getQuote(){
+export async function getQuote(){
     try{
         const res = await fetch('https://api.api-ninjas.com/v2/randomquotes?categories=education,inspirational',{
             method:'GET',
@@ -10,12 +10,13 @@ async function getQuote(){
         const data = await res.json();
 
         const a = data.map((item:any)=>item.quote)
-        console.log(data)
-        console.log(a)
+        
+        return data 
     }
     catch(e){
         console.log("Error in catch: ",e)
     }
 }
-getQuote();
+
+ 
 

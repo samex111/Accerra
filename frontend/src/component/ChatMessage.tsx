@@ -21,7 +21,7 @@ const ChatMessage: React.FC<Props> = React.memo(({ msg, isLast }) => {
         className={`
           max-w-[85%] sm:max-w-[75%]
           rounded-2xl px-3 py-2 sm:px-4 sm:py-3
-          text-sm leading-relaxed shadow   break-words
+          text-sm leading-relaxed shadow  
           ${isUser
             ? "bg-primary text-primary-foreground"
             : "bg-muted text-foreground"}

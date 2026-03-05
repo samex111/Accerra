@@ -16,6 +16,8 @@ import { ObjectId } from "mongodb";
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import { getEmbedding } from "./get-embeddings";
+import { ca } from "zod/v4/locales";
+import { getQuote } from "./QuoteApi";
 
 
 
@@ -53,7 +55,16 @@ console.log({
 });
 
 
-
+userRouter.get('/quote', userMiddleware,async(req:Request, res:Response)=>{
+  try{
+     const  quote = await getQuote();
+     res.status(200).json({
+        quote
+     })
+  }
+  catch(e){
+  }
+});
 userRouter.post('/signup', async (req: Request, res: Response) => {
     const requireBody = z.object({
         email: z.email(),
