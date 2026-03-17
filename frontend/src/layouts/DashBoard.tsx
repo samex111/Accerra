@@ -12,21 +12,29 @@ import { GraduationCap, Pen } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DashboardOverview() {
-  const [quote , setQoute] = useState('');
-   useEffect(()=>{
-    async function getQoute(){
-      const res  = await fetch(`${API_URL}/api/v1/user/qoute`, {
-        method:"GET",
-        headers:{'Content-type':'application/json'},
-        credentials:"include"
+  const [quote , setQuote] = useState('');
+useEffect(() => {
+  async function getQuote() {
+    try {
+      const res = await fetch(`${API_URL}/api/v1/user/quote`, {
+        method: "GET",
+        headers: { "Content-type": "application/json" },
+        credentials: "include",
       });
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
       const data = await res.json();
-      console.log(data)
-      setQoute(data.map((item:any)=>item.quote))
+      console.log("Quote from backend: ", data);
+     setQuote(data.quote[0]?.quote || "");
+    } catch (err) {
+      console.error(err);
+      setQuote("Something went wrong");
     }
-    getQoute()
-   },[])
-   console.log(quote)
+  }
+
+  getQuote();
+}, []);   console.log("Quote:", quote)
   return (
     <div className="space-y-6">
       {/* Header */}
