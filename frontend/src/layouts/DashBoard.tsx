@@ -39,12 +39,12 @@ useEffect(() => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="p-1 text-2xl font-semibold">Dashboard Overview</h1>
+        <h1 className=" text-2xl font-semibold">Dashboard Overview</h1>
         <p className="text-sm text-muted-foreground">
           Track your practice, todos and progress
         </p>
-        <p>
-          {quote}
+        <p className="text-gray-500 mt-2 italic">
+          <i>{quote}</i>
         </p>
       </div>
 

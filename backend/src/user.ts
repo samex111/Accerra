@@ -18,6 +18,7 @@ import fs from "fs";
 import { getEmbedding } from "./get-embeddings";
 import { ca } from "zod/v4/locales";
 import { getQuote } from "./QuoteApi";
+import { Anlyzer } from "./anlyzer";
 
 
 
@@ -221,7 +222,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
 })
 
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY as string;
 console.log(GEMINI_API_KEY)
 const a = process.env.GEMINI_API_KEY;
 console.log(a)
@@ -497,35 +498,30 @@ userRouter.get('/questions', userMiddleware, async (req: Request, res: Response)
 
 
 userRouter.get("/stream", async (req, res) => {
-    // 🧠 Required SSE headers
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader("Connection", "keep-alive");
-    // res.setHeader("credentials","include")
     res.flushHeaders()
     const prompt = req.query.prompt as string;
     const fileUrl = req.query.fileUrl as string;
     const isAnlyze = req.query.isAnlyze === "true";
     console.log("isAnlyze :", isAnlyze)
 
-    // console.log(res) 
 
-    // ❌ If no prompt → send proper JSON
     if (!prompt) {
         res.write(`event: error\ndata: ${JSON.stringify({ error: "Prompt missing" })}\n\n`);
         res.end();
         return;
     }
-    // Specify the database and collection
+    const ans = await Anlyzer(`is this question need vextor search in jee neet stident db ans in yes or No , no extra explaination:-- ${prompt}` , GEMINI_API_KEY );
+    console.log("Ans : ------> ",ans )
     try {
-        if (isAnlyze) {
+        if (ans === 'yes') {  
             const collection = attemtQuestionsModel.collection
 
-            // Generate embedding for the search query
             const queryEmbedding = await getEmbedding(prompt);
 
-            // Define the sample vector search pipeline
             const pipeline = [
                 {
                     $vectorSearch: {
@@ -547,7 +543,6 @@ userRouter.get("/stream", async (req, res) => {
             ];
 
             let solvedQUestionData: string[] = [];
-            // run pipeline
             const result = collection.aggregate(pipeline);
             for await (const doc of result) {
                 solvedQUestionData.push("Question: " + doc.question + ". student ans: " + doc.answer)
