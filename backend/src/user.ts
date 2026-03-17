@@ -55,7 +55,7 @@ console.log({
 });
 
 
-userRouter.get('/quote', userMiddleware,async(req:Request, res:Response)=>{
+userRouter.get('/quote', async(req:Request, res:Response)=>{
   try{
      const  quote = await getQuote();
      res.status(200).json({
@@ -63,6 +63,9 @@ userRouter.get('/quote', userMiddleware,async(req:Request, res:Response)=>{
      })
   }
   catch(e){
+    res.status(400).json({
+        msg: "Not available " + e
+    })
   }
 });
 userRouter.post('/signup', async (req: Request, res: Response) => {

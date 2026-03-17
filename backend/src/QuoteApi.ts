@@ -1,3 +1,5 @@
+import { get } from "mongoose";
+
 export async function getQuote(){
     try{
         const res = await fetch('https://api.api-ninjas.com/v2/randomquotes?categories=education,inspirational',{
@@ -9,14 +11,19 @@ export async function getQuote(){
         })
         const data = await res.json();
 
-        const a = data.map((item:any)=>item.quote)
-        
         return data 
     }
     catch(e){
         console.log("Error in catch: ",e)
     }
 }
-
  
+async function getQuoteFromDB(){
+      const ans = await getQuote();
+      console.log("Quote from API: ", ans);
+      return ans;
+
+}
+const  quote =  getQuoteFromDB();
+console.log("Quote from DB: ", quote);
 

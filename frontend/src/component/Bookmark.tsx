@@ -38,7 +38,7 @@ export default function Bookmarks() {
               key={q._id}
               className="flex items-start justify-between gap-3  rounded-lg border bg-white p-8 shadow-sm"
             >
-              <p className="text-sm  md:text-base text-gray-800 flex-1">
+              <p className="text-sm    text-gray-800 flex-1">
                <span>{i+1}.</span> {q.question}
               </p>
               <div className="relative shrink-0 flex flex-col items-center group">
