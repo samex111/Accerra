@@ -9,11 +9,13 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: [  
+  origin: [   
     "http://localhost:5173",  
     'http://172.22.125.131:5173',
-    "https://accerra-sameer.vercel.app"
-  ],
+    "https://accerra-sameer.vercel.app",
+    "http://10.249.119.131:5173/",
+    '*'
+  ], 
   credentials: true, 
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]

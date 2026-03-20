@@ -21,9 +21,9 @@ const ChatMessage: React.FC<Props> = React.memo(({ msg, isLast }) => {
       className={`
         max-w-[85%] sm:max-w-[75%]
         rounded-2xl px-5 py-3 sm:px-6 sm:py-4
-        text-sm leading-relaxed
+        text-md leading-relaxed
         ${isUser
-          ? "bg-gray-300 text-gray-800"
+          ? " bg-gray-300   text-gray-800"
           : "bg-white text-gray-900"}
       `}
     >
@@ -41,18 +41,18 @@ const ChatMessage: React.FC<Props> = React.memo(({ msg, isLast }) => {
           ),
 
           p: ({ children }) => (
-            <p className="mb-2 leading-relaxed text-gray-300">{children}</p>
+            <p className="mb-2 leading-relaxed text-gray-600">{children}</p>
           ),
 
           ul: ({ children }) => (
-            <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>
+            <ul className="list-disc  mb-2 space-y-1">{children}</ul>
           ),
 
           ol: ({ children }) => (
-            <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>
+            <ol className="list-decimal  mb-2 space-y-1">{children}</ol>
           ),
 
-          li: ({ children }) => <li className="text-gray-300">{children}</li>,
+          li: ({ children }) => <li className="text-gray-600">{children}</li>,
 
           code: ({ inline, children }) =>
             inline ? (
@@ -60,13 +60,13 @@ const ChatMessage: React.FC<Props> = React.memo(({ msg, isLast }) => {
                 {children}
               </code>
             ) : (
-              <pre className="bg-black/80 rounded-xl p-4 text-xs overflow-x-auto border border-white/10">
+              <pre className="bg-black/80 rounded-xl p-2 text-xs overflow-x-auto border border-white/10">
                 <code className="text-green-400">{children}</code>
               </pre>
             ),
 
           strong: ({ children }) => (
-            <strong className="text-white font-semibold">{children}</strong>
+            <strong className="text-gray-800 font-semibold">{children}</strong>
           ),
         }}
       >

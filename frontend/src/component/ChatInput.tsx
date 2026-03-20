@@ -38,6 +38,9 @@ const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
   // set new height based on scrollHeight
   el.style.height = el.scrollHeight + "px";
 };
+useEffect(() => {
+  textareaRef.current?.focus();
+}, []);
  
     return (
       <div className="sticky bottom-0 bg-background border-t px-3 py-3 sm:px-6 sm:py-4">

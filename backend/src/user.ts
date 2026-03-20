@@ -16,7 +16,7 @@ import { ObjectId } from "mongodb";
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import { getEmbedding } from "./get-embeddings";
-import { ca } from "zod/v4/locales";
+import { ca, no } from "zod/v4/locales";
 import { getQuote } from "./QuoteApi";
 import { Anlyzer } from "./anlyzer";
 
@@ -205,7 +205,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             sameSite: "none",
             maxAge: 1000 * 60 * 60 * 24
         })
@@ -233,12 +233,12 @@ userRouter.post("/gemini", async (req, res) => {
         //     prompt :z.string().describe('gfuf'),
         // })
         const response = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY,
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent/?key="+ GEMINI_API_KEY,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                },
+                 },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                 }),
@@ -526,7 +526,7 @@ Rules:
 - Answer "yes" if the question is academic, problem-solving, or similar to past questions.
 - Answer "no" if it is general knowledge, casual, or unrelated.
 
-Respond ONLY with: yes or no
+Respond ONLY with: yes or no 
 
 Question: ${prompt}
 `, GEMINI_API_KEY); 
