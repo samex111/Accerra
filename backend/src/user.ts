@@ -229,6 +229,9 @@ console.log(a)
 userRouter.post("/gemini", async (req, res) => {
     try {
         const { prompt } = req.body;
+        // const requireBody = z.object({
+        //     prompt :z.string().describe('gfuf'),
+        // })
         const response = await fetch(
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY,
             {
@@ -514,10 +517,26 @@ userRouter.get("/stream", async (req, res) => {
         res.end();
         return;
     }
-    const ans = await Anlyzer(`is this question need vextor search in jee neet stident db ans in yes or No , no extra explaination:-- ${prompt}` , GEMINI_API_KEY );
-    console.log("Ans : ------> ",ans )
+    const ans = await Anlyzer(`
+You are a strict classifier.
+
+Decide whether the user's question needs retrieval from a database of previously solved JEE/NEET questions.
+
+Rules:
+- Answer "yes" if the question is academic, problem-solving, or similar to past questions.
+- Answer "no" if it is general knowledge, casual, or unrelated.
+
+Respond ONLY with: yes or no
+
+Question: ${prompt}
+`, GEMINI_API_KEY); 
+    console.log("Ans : ------> ",ans );
+    const cleanAns = ans.trim().toLowerCase();
+    console.log("RAW AI:", ans);
+console.log("CLEAN:", cleanAns);
+
     try {
-        if (ans === 'yes') {  
+        if (cleanAns === "yes") {
             const collection = attemtQuestionsModel.collection
 
             const queryEmbedding = await getEmbedding(prompt);

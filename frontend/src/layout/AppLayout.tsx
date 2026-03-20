@@ -56,16 +56,8 @@ export default function UserLayout({ children }:any)  {
             path="/dashboard/bookmarks" 
             active={isActive('/dashboard/bookmarks')} 
           />
-        
-           <div className="my-2 text-xs font-semibold uppercase text-zinc-500 px-3">
-            System
-          </div>
-          <SidebarItem 
-            icon={Settings} 
-            label="Settings" 
-            path="/dashboard/settings" 
-            active={isActive('/dashboard/settings')} 
-          />
+         
+          
         </nav>
       </div>
       <div className="mt-auto p-4 border-t">
