@@ -206,7 +206,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 1000 * 60 * 60 * 24
         })
         console.log("cookie: ", token)
@@ -362,7 +362,7 @@ userRouter.post("/notes", userMiddleware, async (req, res) => {
         })
     }
 })
-userRouter.get('/todo', userMiddleware, async (req: Request, res: Response) => {
+userRouter.get('/todo',   async (req: Request, res: Response) => {
     const userId = req.userId;
     // hame ye karna hai ki date wise todo show karna hai 
     try {
@@ -846,7 +846,7 @@ userRouter.put('/update/convesationId:conversationId', async function (req: Requ
     })
 
     // API to get daily solved counts for a student
-    userRouter.get("/solved/daily/:studentId", userMiddleware, async (req: Request, res: Response) => {
+    userRouter.get("/solved/daily/:studentId",    async (req: Request, res: Response) => {
         try {
 
             const studentId = req.params.studentId as string;

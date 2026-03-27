@@ -1,40 +1,40 @@
 import { API_URL } from "@/config/env";
 import { create } from "zustand";
 
-interface BookmarkStore {
-  bookmarks: string[];
-  bookmarkQuestions: any[];
+interface notesStore {
+  notes: string[];
+  notesData: any[];
   fetchBookmarks: () => Promise<void>;
   fetchBookmarkQuestion: () => Promise<void>;
   addBookmark: (id: string) => Promise<void>;
   removeBookmark: (id: string) => Promise<void>;
 }
 
-export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
-  bookmarks: [],
-  bookmarkQuestions: [],
+export const useNotesStore = create<notesStore>((set, get) => ({
+  notes: [],
+  notesData: [],
 
   fetchBookmarks: async () => {
     try {
       const id = localStorage.getItem("StudentID");
-      console.log("in the use bookmark hook",id)
-      const res = await fetch(`${API_URL}/api/v1/user/questions/bookmarked/${id}`, {
+      console.log("in the use notes hook",id)
+      const res = await fetch(`${API_URL}/api/v1/user/notes/${id}`, {
         method: "GET",
         credentials: "include",
       });
       const data = await res.json();
-      set({ bookmarks: data.map((b: any) => b._id) }) 
+      set({ notes: data.map((b: any) => b._id) }) 
     } catch (e) {
-      console.error("Fetch bookmarks error:", e);
+      console.error("Fetch notes error:", e);
     }
   },
 
   fetchBookmarkQuestion: async () => {
     try {
-      const bookmarks = get().bookmarks;
-      if (!bookmarks.length) return;
-      const promises = bookmarks.map((qid: string) =>
-        fetch(`${API_URL}/api/v1/user/question/${qid}`, {
+      const notes = get().notes;
+      if (!notes.length) return;
+      const promises = notes.map((qid: string) =>
+        fetch(`${API_URL}/api/v1/user/note/${qid}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -42,41 +42,41 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
       );
       const results = await Promise.all(promises);
       const questions = results.map((r: any) => r.response);
-      set({ bookmarkQuestions: questions });
+      set({ notesData: questions });
     } catch (e) {
-      console.error("Fetch bookmark questions error:", e);
+      console.error("Fetch notes questions error:", e);
     }
   },
 
   addBookmark: async (questionId: string) => {
       const id = localStorage.getItem("StudentID");
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`, {
+      const res = await fetch(`http://localhost:3000/api/v1/user/add/notes/${questionId}`, {
         method: "POST",
          headers:{"Content-Type":"application/json"},
         credentials: "include",
          body: JSON.stringify({ questionId, student: id })
       });
-      if (res.ok) set({ bookmarks: [...get().bookmarks, questionId] });
+      if (res.ok) set({ notes: [...get().notes, questionId] });
     } catch (e) {
-      console.error("Add bookmark failed", e);
+      console.error("Add notes failed", e);
     }
   },
 
   removeBookmark: async (questionId: string) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`, {
+      const res = await fetch(`http://localhost:3000/api/v1/user/delete/notes/${questionId}`, {
         method: "DELETE",
         credentials: "include",
          headers: { "Content-Type": "application/json" },
       });
       if (res.ok)
         set({
-          bookmarks: get().bookmarks.filter((id: string) => id !== questionId),
+          notes: get().notes.filter((id: string) => id !== questionId),
         });
         await get().fetchBookmarkQuestion()
     } catch (e) {
-      console.error("Remove bookmark failed", e);
+      console.error("Remove notes failed", e);
     }
   },
 }));

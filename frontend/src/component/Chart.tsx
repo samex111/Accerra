@@ -50,6 +50,7 @@ export default function SolvedBarChart() {
 
   useEffect(() => {
     fetch(`${API_URL}/api/v1/user/solved/daily/${studentId}`, {
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
       .then(res => res.json())

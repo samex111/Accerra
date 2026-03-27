@@ -29,7 +29,7 @@ app.use(cookieParser());
 connectDB();
 
 app.use('/api/v1/user' , userRouter);
-app.use('/api/v1/admin' , adminRouter);
+app.use('/api/v1/admin' , adminRouter); 
 
 app.get('/health', (req, res) => {
   res.json({ 

@@ -21,7 +21,7 @@ export default function Bookmarks() {
   return (
     <div className="w-full h-full flex flex-col px-4 py-4 md:px-6">
 
-      {/* Mobile title */}
+      {/* Mobile title */}                                    
       <div className="md:hidden mb-3">
         <h2 className="text-lg font-semibold">Bookmarked Questions</h2>
       </div>
