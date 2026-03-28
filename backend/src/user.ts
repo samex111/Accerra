@@ -437,7 +437,7 @@ userRouter.delete("/todo/:id", userMiddleware, async (req, res) => {
     }
 
 })
-userRouter.delete("/note/delete/:id", userMiddleware , async (req, res) => {
+userRouter.delete("/note/delete/:noteId", userMiddleware , async (req, res) => {
     const requireParams = z.object({
         noteId : z.string()
     });
