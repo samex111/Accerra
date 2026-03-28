@@ -1,14 +1,13 @@
 import { API_URL } from "@/config/env";
+import { addNotesProps, notesData } from "@/types/notesTypes";
 import { create } from "zustand";
 
 interface notesStore {
-  notes: string[];
-  notesData: any[];
+  notes: any[];
   fetchNotes: () => Promise<void>;
-  // fetchBookmarkQuestion: () => Promise<void>;
-  addNotes: (id: string) => Promise<void>;
-  removeBookmark: (id: string) => Promise<void>;
-  updateNotes : (id : string , title? : string | undefined, body? : string | undefined) => Promise<void>;
+  addNotes: ({title , body} : addNotesProps) => Promise<void>;
+  removeNote: (id: string) => Promise<void>;
+  updateNote: (id : string ,  {title , body } : addNotesProps) => Promise<void>;
 }
 
 export const useNotesStore = create<notesStore>((set, get) => ({
@@ -17,69 +16,51 @@ export const useNotesStore = create<notesStore>((set, get) => ({
 
   fetchNotes: async () => {
     try {
-      const id = localStorage.getItem("StudentID");
-      console.log("in the use notes hook",id)
       const res = await fetch(`${API_URL}/api/v1/user/notes`, {
         method: "GET",
         credentials: "include",
+        headers: {"Content-Type" : "application/json"}
       });
-      const data = await res.json();
-      set({ notes: data.map((b: any) => b) }) 
+      const data:notesData = await res.json();
+      console.log(data)
+      set({ notes: data.data.map((i:any)=>i) })
     } catch (e) {
       console.error("Fetch notes error:", e);
     }
   },
 
-  // fetchBookmarkQuestion: async () => {
-  //   try {
-  //     const notes = get().notes;
-  //     if (!notes.length) return;
-  //     const promises = notes.map((qid: string) =>
-  //       fetch(`${API_URL}/api/v1/user/note/${qid}`, {
-  //         method: "GET",
-  //         headers: { "Content-Type": "application/json" },
-  //         credentials: "include",
-  //       }).then((res) => res.json())
-  //     );
-  //     const results = await Promise.all(promises);
-  //     const questions = results.map((r: any) => r.response);
-  //     set({ notesData: questions });
-  //   } catch (e) {
-  //     console.error("Fetch notes questions error:", e);
-  //   }
-  // },
+   
 
-  addNotes: async (title? : string , body? : string ) => {
+  addNotes: async ({title ,body } : addNotesProps ) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/user/add/notes`, {
+      const res = await fetch(`${API_URL}/api/v1/user/add/notes`, {
         method: "POST",
          headers:{"Content-Type":"application/json"},
         credentials: "include",
          body: JSON.stringify({  title: title , body: body })
       });
-      if (res.ok) set({ notes: [...get().notes] });
+      console.log("Note addded")
+      if (res.ok) get().fetchNotes();
     } catch (e) {
       console.error("Add notes failed", e);
     }
   },
 
-  removeBookmark: async (notesId: string) => {
+  removeNote: async (notesId: string) => {
     try {
       const res = await fetch(`${API_URL}/api/v1/user/delete/notes/${notesId}`, {
         method: "DELETE",
         credentials: "include",
-         headers: { "Content-Type": "application/json" },
+         headers: { "Content-Type": "application/json" }
       });
       if (res.ok)
-        set({
-          notes: get().notes.filter((id: string) => id !== notesId),
-        });
-        await get().fetchNotes()
+         console.log("note removed ")
+        await get().fetchNotes();
     } catch (e) {
       console.error("Remove notes failed", e);
     }
   },
-  updateNotes : async (notesId:string , title : string | undefined ,body:string | undefined ) =>  {
+  updateNote : async (notesId:string , {title, body } : addNotesProps ) =>  {
    try {
      const res = await fetch(`${API_URL}/api/v1/user/update/note/${notesId}`, {
       method : "PUT",
@@ -88,10 +69,11 @@ export const useNotesStore = create<notesStore>((set, get) => ({
       body : JSON.stringify({title : title , body : body})
      });
      if(res.ok){
-      const data = await res.json()
+      console.log(" note updated ")
+       get().fetchNotes();
      }
    } catch(e){
-
+      console.error("Error in update notes " + e)
    }
   }
 

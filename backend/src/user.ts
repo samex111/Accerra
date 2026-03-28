@@ -331,7 +331,7 @@ userRouter.post("/todo", userMiddleware, async (req, res) => {
         })
     }
 })
-userRouter.post("/notes", userMiddleware, async (req, res) => {
+userRouter.post("/add/notes", userMiddleware, async (req, res) => {
 
 
     const requireBody = z.object({
@@ -366,8 +366,8 @@ userRouter.post("/notes", userMiddleware, async (req, res) => {
 })
 userRouter.get('/notes', userMiddleware, async (req: Request, res: Response) => {
     try{
-        const data = await NoteModel.findById({
-            student : req.userId
+        const data = await NoteModel.find({
+              student : req.userId
         })
         if(!data) {
             return res.status(404).json({

@@ -1,4 +1,5 @@
 import SolvedBarChart from "@/component/Chart";
+import Notes from "@/component/Notes";
 import SelectSubject from "@/component/SelectSubject";
 import Todo from "@/component/Todo";
 import {
@@ -67,6 +68,14 @@ useEffect(() => {
           </CardHeader>
           <CardContent className="max-h-[320px] overflow-y-auto">
             <Todo />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm">Notes</CardTitle>
+          </CardHeader>
+          <CardContent className="max-h-[320px] overflow-y-auto">
+            <Notes/>
           </CardContent>
         </Card>
       </div>
