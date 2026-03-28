@@ -52,6 +52,7 @@ const attemtQuestionsSchema = new Schema({
         required: true
     }
 }, { timestamps: true });
+
 const todosSchema = new Schema({
     todo: { type: String, required: true },
     student: {
@@ -59,15 +60,28 @@ const todosSchema = new Schema({
         ref: 'users',
         required: true
     }
-}, { timestamps: true })
+}, { timestamps: true });
+
 const notesSchema = new Schema({
-    note: [{ type: String, required: true }],
+    title : {type : String  },
+    body : {type :String},
+
     student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
     }
-})
+}, {timestamps : true});
+
+notesSchema.pre('validate', function (next) {
+    if (!this.title && !this.body) {
+        next(new Error('Either title or body must be provided.'));      
+
+    } else {
+        next();
+    }               
+});
+
 const BookMarkedSchema = new Schema({
     questionId: {
         type: mongoose.Schema.Types.ObjectId, required: true, ref: "questions"

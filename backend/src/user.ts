@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { attemtQuestionsModel, BookMarkModel, ConversationModel, MessageModel, NoteModel, QuestionModel, TodoModel, UserModel } from "./Schema";
 import { Router } from "express";
-import z, { number } from 'zod';
+import z, { number, success } from 'zod';
 import dotenv from 'dotenv';
 import multer from "multer";
 import bcrypt from 'bcryptjs'
@@ -335,7 +335,8 @@ userRouter.post("/notes", userMiddleware, async (req, res) => {
 
 
     const requireBody = z.object({
-        note: z.string()
+         title: z.string().optional().describe("Enter your title "),
+         body : z.string().optional().describe("Enter the body of the notes ")
     })
     const parseData = requireBody.safeParse(req.body);
 
@@ -344,25 +345,49 @@ userRouter.post("/notes", userMiddleware, async (req, res) => {
         return res.status(400).json({ msg: "Invaild cred" });
 
     }
-    const  note  = parseData.data ;
+    const  {title , body}  = parseData.data ;
 
 
     try {
-        await NoteModel.create({
-            // @ts-ignore
-            note  ,
+        const newNote = await NoteModel.create({
+            title ,
+            body,
             student: req.userId
-        })
+        });
         res.status(200).json({
-            msg: "note created"
-        })
+             success : true,
+              data : newNote
+        });
     } catch (e: any) {
         res.status(400).json({
             msg: "error" + e.message
-        })
+        });
     }
 })
-userRouter.get('/todo',   async (req: Request, res: Response) => {
+userRouter.get('/notes', userMiddleware, async (req: Request, res: Response) => {
+    try{
+        const data = await NoteModel.findById({
+            student : req.userId
+        })
+        if(!data) {
+            return res.status(404).json({
+                msg : "Notes not found "
+            })
+        }
+        console.log(data)
+        res.status(200).json({
+            success : true,
+            data  : data
+        })
+    }catch(e){
+        return res.status(400).json({
+            success : false,
+            error: "error in notes : -- " + e
+        })
+    }
+}); 
+
+userRouter.get('/todo',userMiddleware,   async (req: Request, res: Response) => {
     const userId = req.userId;
     // hame ye karna hai ki date wise todo show karna hai 
     try {

@@ -51,7 +51,7 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
   addBookmark: async (questionId: string) => {
       const id = localStorage.getItem("StudentID");
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/user/add/bookmark/question/${questionId}`, {
+      const res = await fetch(`${API_URL}api/v1/user/add/bookmark/question/${questionId}`, {
         method: "POST",
          headers:{"Content-Type":"application/json"},
         credentials: "include",
@@ -65,7 +65,7 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
 
   removeBookmark: async (questionId: string) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/user/delete/bookmark/${questionId}`, {
+      const res = await fetch(`${API_URL}api/v1/user/delete/bookmark/${questionId}`, {
         method: "DELETE",
         credentials: "include",
          headers: { "Content-Type": "application/json" },

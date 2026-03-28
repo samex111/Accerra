@@ -25,9 +25,12 @@ export default function Todo() {
 
   async function fetchTodos() {
     const res = await fetch(`${API_URL}/api/v1/user/todo`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
     const json = await res.json();
+    console.log("Fetched todos:", json);
     setData(json);
   }
 
@@ -38,15 +41,25 @@ export default function Todo() {
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ todo: input }),
+    }).then(res=>{
+      if(res.ok) {
+        console.log("Todo added successfully");
+        setInput("");
+        fetchTodos();
+      }
+    }).catch(e=>{
+      console.error("Add todo error:", e);
     });
-    setInput("");
-    fetchTodos();
   }
 
   async function deleteTodo(id: string) {
     await fetch(`${API_URL}/api/v1/user/todo/${id}`, {
       method: "DELETE",
       credentials: "include",
+    }).then(res=>{
+      if(res.ok) {
+        fetchTodos();
+      }
     });
     fetchTodos();
   }
