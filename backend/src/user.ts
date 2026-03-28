@@ -437,34 +437,71 @@ userRouter.delete("/todo/:id", userMiddleware, async (req, res) => {
     }
 
 })
-userRouter.delete("/note/delete/:id", async (req, res) => {
-    const { id } = req.params;
+userRouter.delete("/note/delete/:id", userMiddleware , async (req, res) => {
+    const requireParams = z.object({
+        noteId : z.string()
+    });
+    const parseDataParams = requireParams.safeParse(req.params);
+
+     if(!parseDataParams.success){
+    return res.status(400).json({
+        success : false ,
+        error : parseDataParams.error
+    })
+   }
+    const { noteId } = parseDataParams.data;
     try {
-        const deleteTodo = await NoteModel.findByIdAndDelete(id);
+        const deleteTodo = await NoteModel.findByIdAndDelete(noteId);
         if (!deleteTodo) {
-            res.status(400).json({ msg: "note not found " })
+            res.status(400).json({ success:false, msg: "note not found " })
         }
-        res.status(200).json({ msg: "note delete sucessfully" });
+        res.status(200).json({  success : true , data : deleteTodo,  msg: "note delete sucessfully" });
 
     } catch (e) {
         res.status(400).json({
+            success : false,
             msg: "error: " + e
         })
     }
 
 })
-userRouter.put("/note/update/:id", async (req, res) => {
-    const { id } = req.params;
-    const updateNote = req.body.updateNote;
+userRouter.put("/note/update/:noteId", userMiddleware , async (req, res) => {
+    const requireParams = z.object({
+        noteId : z.string(),
+    });
+    const requireBody = z.object({
+         title: z.string().optional().describe("Enter your title "),
+         body : z.string().optional().describe("Enter the body of the notes ")
+    })
+    const parseDataBody = requireBody.safeParse(req.body);
+    const parseDataParams = requireParams.safeParse(req.params);
+   if(!parseDataBody.success){
+    return res.status(400).json({
+        success : false ,
+        error : parseDataBody.error
+    })
+   }
+   if(!parseDataParams.success){
+    return res.status(400).json({
+        success : false ,
+        error : parseDataParams.error
+    })
+   }
+    const { noteId } = parseDataParams.data;
+    const {title , body} = parseDataBody.data;
     try {
-        const updateData = await NoteModel.findByIdAndUpdate(id, updateNote, { new: true });
+        const updateData = await NoteModel.findByIdAndUpdate(noteId, {title:title , body:body , student:req.userId}, { new: true });
         if (!updateData) {
             res.status(400).json({ msg: "note not found " })
         }
-        res.status(200).json({ msg: "note update sucessfully" });
+        res.status(200).json({
+            success : true,
+            data : updateData
+             });
 
     } catch (e) {
         res.status(400).json({
+            success : false,
             msg: "error: " + e
         })
     }
