@@ -1,6 +1,6 @@
- import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNotesStore } from "@/hooks/useNotes";
-import { Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil, X } from "lucide-react";
 
 export default function Notes() {
   const { notes, fetchNotes, addNotes, removeNote, updateNote } =
@@ -8,162 +8,179 @@ export default function Notes() {
 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-
   const [editId, setEditId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // 🔥 sidebar click pe component mount hoga → fetch
+  // 🚀 Fetch Notes on Mount
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [fetchNotes]);
 
-  // ➕ Add Note
-  const handleAdd = async () => {
-    if (!body?.trim()) return;
-
-    await addNotes({ title, body });
-
+  // 🔄 Reset Form
+  const resetForm = () => {
     setTitle("");
     setBody("");
-  };
-
-  // ✏️ Update Note
-  const handleUpdate = async () => {
-    if (!editId) return;
-
-    await updateNote(editId, { title, body });
-
     setEditId(null);
-    setTitle("");
-    setBody("");
   };
 
-  // 🧠 Edit mode trigger
+  // ➕ Add / ✏️ Update Note
+  const handleSubmit = async () => {
+    if (!body.trim()) return;
+
+    try {
+      setLoading(true);
+
+      if (editId) {
+        await updateNote(editId, { title, body });
+      } else {
+        await addNotes({ title, body });
+      }
+
+      resetForm();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🧠 Edit Mode
   const handleEdit = (note: any) => {
     setEditId(note._id);
     setTitle(note.title || "");
     setBody(note.body || "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-   <div className="w-full max-w-3xl mx-auto p-4 md:p-8">
-  
-  {/* Header Section */}
-  <div className="flex justify-between items-end mb-10 px-2">
-    <div>
-      <h1 className="text-3xl font-black text-black tracking-tighter">Today's Notes</h1>
-      <p className="text-zinc-400 text-sm font-medium mt-1 uppercase tracking-widest">Focus on what matters</p>
-    </div>
-    <div className="bg-orange-500 p-3 rounded-2xl shadow-lg shadow-orange-200">
-      <Pencil size={24} className="text-white rotate-12" />
-    </div>
-  </div>
+    <div className="w-full max-w-3xl mx-auto p-4 md:p-8">
 
-  {/* Main Note Container */}
-  <div className="bg-white border border-zinc-100 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)]">
-    
-    <div className="flex items-center gap-3 mb-8">
-      <div className="w-2 h-8 bg-orange-500 rounded-full" />
-      <h2 className="text-xl font-bold text-black italic">
-        {editId ? "Refining Thought..." : "Capture Idea"}
-      </h2>
-    </div>
-
-    {/* Input Area */}
-    <div className="flex flex-col md:flex-row gap-4 mb-10">
-      <div className="flex-1 flex flex-col gap-3">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder={editId ? "Update note title..." : "Note title..."}
-          className="w-full px-5 py-4 bg-zinc-50 border border-transparent rounded-2xl outline-none text-base font-bold placeholder:text-zinc-300 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-50/50 transition-all"
-        />
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="What's the detail?"
-          className="w-full px-5 py-4 bg-zinc-50 border border-transparent rounded-2xl outline-none text-sm placeholder:text-zinc-300 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-50/50 transition-all resize-none min-h-[100px]"
-        />
-      </div>
-      
-      <button
-        onClick={editId ? handleUpdate : handleAdd}
-        className={`self-start md:self-stretch px-8 py-4 ${
-          editId ? "bg-orange-500" : "bg-black"
-        } text-white font-black rounded-2xl hover:scale-[1.02] active:scale-95 transition-all text-sm uppercase tracking-widest shadow-xl ${
-          editId ? "shadow-orange-200" : "shadow-zinc-200"
-        }`}
-      >
-        {editId ? "Update" : "Add"}
-      </button>
-    </div>
-
-    {/* Notes List Area */}
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-4">
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-300 whitespace-nowrap">Your Feed</span>
-        <div className="h-[1px] w-full bg-zinc-100" />
-      </div>
-
-      {notes.length === 0 ? (
-        <div className="py-12 text-center bg-zinc-50 rounded-[2rem] border border-dashed border-zinc-200">
-          <p className="text-zinc-400 text-sm italic font-medium">Your canvas is currently blank.</p>
+      {/* HEADER */}
+      <div className="flex justify-between items-end mb-10 px-2">
+        <div>
+          <h1 className="text-3xl font-black text-black tracking-tight">
+            Notes
+          </h1>
+          <p className="text-zinc-400 text-xs uppercase tracking-widest mt-1">
+            Capture • Think • Build
+          </p>
         </div>
-      ) : (
-        <div className="grid gap-4">
-          {notes.map((note: any) => (
-            <div
-              key={note._id}
-              className={`group relative p-6 rounded-[2rem] transition-all duration-500 border ${
-                editId === note._id 
-                  ? "bg-orange-50 border-orange-200 shadow-inner" 
-                  : "bg-white border-zinc-50 hover:border-zinc-200 hover:shadow-xl hover:shadow-zinc-500/5"
-              }`}
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className={`text-lg font-black leading-tight ${
-                    editId === note._id ? "text-orange-600" : "text-black"
-                  }`}>
-                    {note.title || "Untitled"}
-                  </h3>
-                  <p className="text-zinc-500 text-sm mt-2 leading-relaxed font-medium">
-                    {note.body}
-                  </p>
-                </div>
 
-                <div className="flex gap-1 ml-4 transition-all group-hover:opacity-100 opacity-0 transform translate-x-2 group-hover:translate-x-0">
-                  <button
-                    className="p-3 text-zinc-400 hover:text-orange-500 hover:bg-orange-100 rounded-xl transition-all"
-                    onClick={() => {
-                      setEditId(note._id);
-                      setTitle(note.title || "");
-                      setBody(note.body || "");
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button 
-                    className="p-3 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                    onClick={() => removeNote(note._id)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+        <div className="bg-orange-500 p-3 rounded-2xl shadow-md">
+          <Pencil size={22} className="text-white" />
+        </div>
+      </div>
+
+      {/* MAIN CARD */}
+      <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm">
+
+        {/* TITLE */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-black">
+            {editId ? "Edit Note" : "New Note"}
+          </h2>
+
+          {editId && (
+            <button
+              onClick={resetForm}
+              className="flex items-center gap-1 text-xs text-zinc-400 hover:text-black transition"
+            >
+              <X size={14} /> Cancel
+            </button>
+          )}
+        </div>
+
+        {/* INPUT */}
+        <div className="flex flex-col gap-3 mb-6">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title (optional)"
+            className="px-4 py-3 bg-zinc-50 rounded-xl border border-transparent focus:border-orange-400 focus:bg-white outline-none text-sm font-semibold transition"
+          />
+
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Write your note..."
+            className="px-4 py-3 bg-zinc-50 rounded-xl border border-transparent focus:border-orange-400 focus:bg-white outline-none text-sm resize-none min-h-[100px] transition"
+          />
+        </div>
+
+        {/* BUTTON */}
+        <button
+          disabled={loading || !body.trim()}
+          onClick={handleSubmit}
+          className={`w-full py-3 rounded-xl text-sm font-bold transition-all
+            ${
+              loading || !body.trim()
+                ? "bg-zinc-200 text-zinc-400 cursor-not-allowed"
+                : editId
+                ? "bg-orange-500 text-white hover:scale-[1.01]"
+                : "bg-black text-white hover:scale-[1.01]"
+            }
+          `}
+        >
+          {loading ? "Saving..." : editId ? "Update Note" : "Add Note"}
+        </button>
+
+        {/* DIVIDER */}
+        <div className="flex items-center gap-3 my-6">
+          <div className="h-[1px] w-full bg-zinc-200" />
+          <span className="text-[10px] uppercase text-zinc-400 tracking-widest">
+            Notes
+          </span>
+          <div className="h-[1px] w-full bg-zinc-200" />
+        </div>
+
+        {/* LIST */}
+        {notes.length === 0 ? (
+          <div className="text-center py-10 text-zinc-400 text-sm">
+            No notes yet. Start writing 🚀
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {notes.map((note: any) => (
+              <div
+                key={note._id}
+                className={`group border rounded-2xl p-4 transition-all
+                  ${
+                    editId === note._id
+                      ? "border-orange-300 bg-orange-50"
+                      : "border-zinc-200 hover:shadow-sm"
+                  }
+                `}
+              >
+                <div className="flex justify-between">
+                  <div>
+                    <h3 className="font-bold text-black text-sm">
+                      {note.title || "Untitled"}
+                    </h3>
+                    <p className="text-zinc-500 text-xs mt-1">
+                      {note.body}
+                    </p>
+                  </div>
+
+                  {/* ACTIONS */}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                    <button
+                      onClick={() => handleEdit(note)}
+                      className="p-2 hover:bg-zinc-100 rounded-lg"
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => removeNote(note._id)}
+                      className="p-2 hover:bg-red-50 text-red-500 rounded-lg"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
-              
-              {/* Subtle visual indicator for active edit */}
-              {editId === note._id && (
-                <div className="absolute top-4 right-4 animate-pulse">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-</div>
   );
 }

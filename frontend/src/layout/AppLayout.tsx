@@ -1,8 +1,11 @@
+import TextSelectionListener from "@/component/TextSelectionListener";
 import  { Button } from "@/components/ui/button";
 import { School, LayoutDashboard, GraduationCap,BookPlus , Users, ClipboardCheck,Settings, LogOut, X, Menu, Pencil } from "lucide-react";
 import { Home,  Bookmark, Brain } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useNotesStore } from "@/hooks/useNotes";
+
 // import  { SidebarItem } from "@/components/ui/sidebar";
 const SidebarItem = ({ icon: Icon, label, path, active }:any) => {
   return (
@@ -24,6 +27,16 @@ export default function UserLayout({ children }:any)  {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const {addNotes} = useNotesStore();
+    const handleAddNote = async (text: string) => {
+     await addNotes({
+      title: "Quick Note",
+      body: text,
+    });
+
+    console.log("Note added:", text);
+  };
+
 
   const isActive = (path: string) => location.pathname === path;
 ``
@@ -127,8 +140,11 @@ export default function UserLayout({ children }:any)  {
         {/* Main Content */}
         <main className="flex flex-1 flex-col gap-4 md:p-4 lg:gap-6 lg:p-6 bg-zinc-50/50 pt-14 lg:pt-[60px]">
           {children}
+            <TextSelectionListener onAdd={handleAddNote} />
         </main>
       </div>
     </div>
   );
 };
+
+ 
