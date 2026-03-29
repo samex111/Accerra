@@ -14,7 +14,7 @@ export default function TextSelectionListener({ onAdd }: any) {
 
         if (rect) {
           setPosition({
-            x: rect.right,
+            x: rect.left + rect.width / 2,
             y: rect.bottom + window.scrollY,
           });
         }
