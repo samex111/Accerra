@@ -3,7 +3,7 @@ import { addNotesProps, notesData } from "@/types/notesTypes";
 import { create } from "zustand";
 
 interface notesStore {
-  notes: any[];
+  notes: notesData["data"];
   fetchNotes: () => Promise<void>;
   addNotes: ({title , body} : addNotesProps) => Promise<void>;
   removeNote: (id: string) => Promise<void>;
@@ -12,8 +12,7 @@ interface notesStore {
 
 export const useNotesStore = create<notesStore>((set, get) => ({
   notes: [],
-  notesData: [],
-
+   
   fetchNotes: async () => {
     try {
       const res = await fetch(`${API_URL}/api/v1/user/notes`, {
@@ -22,8 +21,8 @@ export const useNotesStore = create<notesStore>((set, get) => ({
         headers: {"Content-Type" : "application/json"}
       });
       const data:notesData = await res.json();
-      console.log(data)
-      set({ notes: data.data.map((i:any)=>i) })
+      console.log(data.data.map((i:notesData['data'][0])=>i))
+      set({ notes: data.data.map((i:notesData['data'][0])=>i) })
     } catch (e) {
       console.error("Fetch notes error:", e);
     }
@@ -48,7 +47,7 @@ export const useNotesStore = create<notesStore>((set, get) => ({
 
   removeNote: async (notesId: string) => {
     try {
-      const res = await fetch(`${API_URL}/api/v1/user/delete/notes/${notesId}`, {
+      const res = await fetch(`${API_URL}/api/v1/user/note/delete/${notesId}`, {
         method: "DELETE",
         credentials: "include",
          headers: { "Content-Type": "application/json" }

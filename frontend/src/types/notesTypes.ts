@@ -9,7 +9,8 @@ export interface notesId{
 export interface notesData {
     success : boolean , 
     data : {
-        id : string ,
+        _id : string ,
+        title : string ,
         body : string ,
         studentId : string
         createdAt  : string ,
