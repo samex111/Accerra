@@ -88,9 +88,9 @@ export default function UserLayout({ children }:any)  {
         {sidebarContent}
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex  flex-col">
         {/* Header */}
-        <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-zinc-50/40 px-6 dark:bg-zinc-800/40 justify-between md:justify-end">
+       <header className="fixed top-0 left-0 w-full z-40 flex h-14 lg:h-[60px] items-center gap-4 border-b bg-zinc-50/40 px-6 dark:bg-zinc-800/40 justify-between md:justify-end">
           <Button 
             variant="ghost" 
             className="md:hidden -ml-2" 
@@ -125,7 +125,7 @@ export default function UserLayout({ children }:any)  {
         )}
 
         {/* Main Content */}
-        <main className="flex flex-1 flex-col gap-4 md:p-4 lg:gap-6 lg:p-6 bg-zinc-50/50">
+        <main className="flex flex-1 flex-col gap-4 md:p-4 lg:gap-6 lg:p-6 bg-zinc-50/50 pt-14 lg:pt-[60px]">
           {children}
         </main>
       </div>
