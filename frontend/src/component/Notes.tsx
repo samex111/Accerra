@@ -29,6 +29,7 @@ export default function Notes() {
   };
 
   const handleUpdate = async () => {
+    console.log("Updating note with ID:", editId, "Title:", title, "Body:", body);
     if (!editId) return;
     await updateNote(editId, { title, body });
     setEditId(null);
@@ -37,102 +38,90 @@ export default function Notes() {
   };
 
   return (
-   <div className="w-full h-full flex flex-col px-4 py-8 md:px-12 lg:px-24 gap-10 bg-white min-h-screen">
-  
-  {/* Add / Edit Section */}
-  <div className="bg-white border border-zinc-200 shadow-sm p-6 rounded-2xl flex flex-col gap-4 transition-all focus-within:ring-1 focus-within:ring-zinc-400">
-    <h2 className="text-zinc-900 font-medium text-sm uppercase tracking-wider">
-      {editId ? "Edit Note" : "New Note"}
-    </h2>
+  <div className=" ">
     
-    <input
-      value={title}
-      onChange={(e) => setTitle(e.target.value)}
-      placeholder="Title (optional)"
-      className="bg-transparent text-zinc-900 text-lg font-semibold outline-none placeholder:text-zinc-400"
-    />
-
-    <textarea
-      value={body}
-      onChange={(e) => setBody(e.target.value)}
-      placeholder="Write your note..."
-      className="bg-transparent text-zinc-600 outline-none resize-none min-h-[100px] placeholder:text-zinc-400"
-    />
-
-    <div className="flex justify-end pt-2">
-      {editId ? (
-        <button
-          onClick={handleUpdate}
-          className="bg-zinc-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-zinc-800 transition-colors"
-        >
-          Update Note
-        </button>
-      ) : (
-        <button
-          onClick={handleAdd}
-          className="bg-zinc-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-zinc-800 transition-colors"
-        >
-          Add Note
-        </button>
-      )}
-    </div>
-  </div>
-
-  {/* Notes List */}
-  <div className="flex flex-col gap-4">
-    <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
-       <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest">Your Collection</span>
-       <span className="text-zinc-400 text-xs">{notes.length} notes</span>
+    {/* Header */}
+    <div className="flex justify-between items-center mb-6">
+      <h1 className="text-xl font-bold text-black">Today's Notes</h1>
+      <Pencil size={20} className="text-zinc-400 rotate-12" />
     </div>
 
-    {notes.length === 0 && (
-      <div className="py-12 text-center">
-        <p className="text-zinc-400 italic">No notes found</p>
+    {/* Main Note Container */}
+    <div className="border border-zinc-100 rounded-3xl p-6 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-4">
+        <Pencil size={18} className="text-black -rotate-90" />
+        <h2 className="text-lg font-bold text-black">Note List</h2>
       </div>
-    )}
 
-    <div className="grid grid-cols-1 gap-4">
-     
-      {notes.map((note: notesData['data'][0]) => (
-         
-        <div
-          key={note._id} 
-          className="group bg-white border border-zinc-100 p-5 rounded-2xl flex justify-between items-start hover:border-zinc-300 hover:shadow-md transition-all"
-        >
-          <div className="flex-1">
-            <h3 className="font-bold text-zinc-900 text-lg">
-              {note.title || "Untitled"} 
-            </h3>
-            <p className="text-zinc-500 mt-2 leading-relaxed">
-              {note.body}  
-            </p>
-          </div>
-
-          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-4">
-            {/* Edit */}
-            <button
-              className="p-2 hover:bg-zinc-100 rounded-full text-zinc-600 transition-colors"
-              onClick={() => {
-                setEditId(note._id);
-                setTitle(note.title || "");
-                setBody(note.body || "");
-              }}
-            >
-              <Pencil size={18} />
-            </button>
-
-            {/* Delete */}
-            <button 
-              className="p-2 hover:bg-red-50 rounded-full text-zinc-400 hover:text-red-500 transition-colors"
-              onClick={() => removeNote(note._id)}
-            >
-              <Trash2 size={18} />
-            </button>
-          </div>
+      <div className="flex gap-2 mb-6">
+        <div className="flex-1 flex flex-col gap-2">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder={editId ? "Update title..." : "Add a title..."}
+            className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl outline-none text-sm placeholder:text-zinc-400 focus:border-zinc-400 transition-all"
+          />
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Write details..."
+            className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl outline-none text-sm placeholder:text-zinc-400 focus:border-zinc-400 transition-all resize-none min-h-[60px]"
+          />
         </div>
-      ))}
+        
+        <button
+          onClick={editId ? handleUpdate : handleAdd}
+          className="self-start px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-colors text-sm"
+        >
+          {editId ? "Save" : "Add"}
+        </button>
+      </div>
+
+      {/* Notes List */}
+      <div className="space-y-4">
+        {notes.length === 0 ? (
+          <p className="text-zinc-400 text-sm">No notes for today</p>
+        ) : (
+          notes.map((note: any) => (
+            <div
+              key={note._id}
+              className={`group relative border-b border-zinc-50 pb-4 last:border-0 transition-all ${
+                editId === note._id ? "bg-zinc-50/50 p-3 rounded-xl ring-1 ring-zinc-100" : ""
+              }`}
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className={`font-bold text-black ${editId === note._id ? "text-zinc-400 italic" : ""}`}>
+                    {note.title || "Untitled"}
+                  </h3>
+                  <p className="text-zinc-500 text-sm mt-1">{note.body}</p>
+                </div>
+
+                <div className="flex gap-2 ml-4">
+                  <button
+                    className="text-zinc-300 hover:text-black transition-colors"
+                    onClick={() => {
+                      setEditId(note._id);
+                      setTitle(note.title || "");
+                      setBody(note.body || "");
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button 
+                    className="text-zinc-300 hover:text-red-500 transition-colors"
+                    onClick={() => removeNote(note._id)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
-  </div>
 </div>
   );
 }

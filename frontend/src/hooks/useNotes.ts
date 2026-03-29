@@ -61,7 +61,7 @@ export const useNotesStore = create<notesStore>((set, get) => ({
   },
   updateNote : async (notesId:string , {title, body } : addNotesProps ) =>  {
    try {
-     const res = await fetch(`${API_URL}/api/v1/user/update/note/${notesId}`, {
+     const res = await fetch(`${API_URL}/api/v1/user/note/update/${notesId}`, {
       method : "PUT",
       credentials : "include",
       headers : {"Content-Type" : 'application/json'},

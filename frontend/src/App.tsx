@@ -13,6 +13,7 @@ import Signin from "./auth/UserSignin";
 import Questions from "./pages/Question";
 import UserLayout from "./layout/AppLayout";
 import DashboardOverview from "./layouts/DashBoard";
+import FullNotespage from "./component/FullNotespage";
 
 
 function App() {
@@ -90,6 +91,14 @@ function App() {
           element={
             <UserLayout>
               <GeminiStream />
+            </UserLayout>
+          } 
+        />
+        <Route 
+          path="/dashboard/notes" 
+          element={
+            <UserLayout>
+              <FullNotespage />
             </UserLayout>
           } 
         />

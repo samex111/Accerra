@@ -1,5 +1,5 @@
 import  { Button } from "@/components/ui/button";
-import { School, LayoutDashboard, GraduationCap,BookPlus , Users, ClipboardCheck,Settings, LogOut, X, Menu } from "lucide-react";
+import { School, LayoutDashboard, GraduationCap,BookPlus , Users, ClipboardCheck,Settings, LogOut, X, Menu, Pencil } from "lucide-react";
 import { Home,  Bookmark, Brain } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
@@ -55,6 +55,14 @@ export default function UserLayout({ children }:any)  {
             label="Bookmark" 
             path="/dashboard/bookmarks" 
             active={isActive('/dashboard/bookmarks')} 
+          />
+         
+          
+          <SidebarItem 
+            icon={Pencil} 
+            label="Notes" 
+            path="/dashboard/notes" 
+            active={isActive('/dashboard/notes')} 
           />
          
           
