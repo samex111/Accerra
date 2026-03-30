@@ -1,6 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef} from "react";
 import { useNotesStore } from "@/hooks/useNotes";
 import { Trash2, Pencil, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function Notes() {
   const { notes, fetchNotes, addNotes, removeNote, updateNote } =
@@ -10,6 +18,7 @@ export default function Notes() {
   const [body, setBody] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isCreate , setIsCreate] = useState(false);
 
   // 🚀 Fetch Notes on Mount
   useEffect(() => {
@@ -51,45 +60,38 @@ export default function Notes() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 md:p-8">
+    <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
 
       {/* HEADER */}
-      <div className="flex justify-between items-end mb-10 px-2">
-        <div>
-          <h1 className="text-3xl font-black text-black tracking-tight">
-            Notes
-          </h1>
-          <p className="text-zinc-400 text-xs uppercase tracking-widest mt-1">
-            Capture • Think • Build
-          </p>
-        </div>
+      <div className="flex justify-end items-end mb-10 px-2">
+             <Dialog>
+      {/* Trigger button (optional - customize as needed) */}
+      <DialogTrigger asChild>
+                  <Button onClick={()=>setIsCreate(!isCreate)} className="bg-orange-400">+ Create note</Button>
 
-        <div className="bg-orange-500 p-3 rounded-2xl shadow-md">
-          <Pencil size={22} className="text-white" />
-        </div>
-      </div>
+      </DialogTrigger>
 
-      {/* MAIN CARD */}
-      <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm">
+      <DialogContent className="sm:max-w-lg rounded-3xl">
+        {/* HEADER */}
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-lg font-bold">
+              {editId ? "Edit Note" : "New Note"}
+            </DialogTitle>
 
-        {/* TITLE */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-black">
-            {editId ? "Edit Note" : "New Note"}
-          </h2>
-
-          {editId && (
-            <button
-              onClick={resetForm}
-              className="flex items-center gap-1 text-xs text-zinc-400 hover:text-black transition"
-            >
-              <X size={14} /> Cancel
-            </button>
-          )}
-        </div>
+            {editId && (
+              <button
+                onClick={resetForm}
+                className="flex items-center gap-1 text-xs text-zinc-400 hover:text-black transition"
+              >
+                <X size={14} /> Cancel
+              </button>
+            )}
+          </div>
+        </DialogHeader>
 
         {/* INPUT */}
-        <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col gap-3 my-4">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -121,66 +123,105 @@ export default function Notes() {
         >
           {loading ? "Saving..." : editId ? "Update Note" : "Add Note"}
         </button>
+      </DialogContent>
+    </Dialog>
+      </div>
 
-        {/* DIVIDER */}
-        <div className="flex items-center gap-3 my-6">
-          <div className="h-[1px] w-full bg-zinc-200" />
-          <span className="text-[10px] uppercase text-zinc-400 tracking-widest">
-            Notes
-          </span>
-          <div className="h-[1px] w-full bg-zinc-200" />
+     <div className="rounded-3xl p-6">
+  {notes.length === 0 ? (
+    <div className="text-center py-10 text-zinc-400 text-sm">
+      No notes yet. Start writing 🚀
+    </div>
+  ) : (
+    <div className="space-y-3">
+     
+{notes.map((note: any) => {
+  const isEditing = editId === note._id;
+
+  return (
+    <div
+      key={note._id}
+      onClick={() => {
+        setEditId(note._id);
+        setTitle(note.title || "");
+        setBody(note.body || "");
+      }}
+      className={`group cursor-pointer flex-1 w-full h-[20vh] border rounded-2xl p-4 transition-all
+        ${
+          isEditing
+            ? "border-orange-300 bg-orange-50"
+            : "border-zinc-200 hover:shadow-sm"
+        }
+      `}
+    >
+      <div className="flex justify-between">
+        <div className="w-full">
+          {/* TITLE */}
+          {isEditing ? (
+            <input
+              autoFocus
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full font-bold text-black text-md bg-transparent outline-none"
+              placeholder="Title"
+            />
+          ) : (
+            <h3 className="font-bold text-black text-md">
+              {note.title || "Untitled"}
+            </h3>
+          )}
+
+          {/* BODY */}
+          {isEditing ? (
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full text-zinc-500 text-md mt-1 bg-transparent outline-none resize-none"
+              rows={3}
+              placeholder="Write something..."
+            />
+          ) : (
+            <p className="text-zinc-500 text-md mt-1 line-clamp-3">
+              {note.body}
+            </p>
+          )}
         </div>
 
-        {/* LIST */}
-        {notes.length === 0 ? (
-          <div className="text-center py-10 text-zinc-400 text-sm">
-            No notes yet. Start writing 🚀
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {notes.map((note: any) => (
-              <div
-                key={note._id}
-                className={`group border rounded-2xl p-4 transition-all
-                  ${
-                    editId === note._id
-                      ? "border-orange-300 bg-orange-50"
-                      : "border-zinc-200 hover:shadow-sm"
-                  }
-                `}
-              >
-                <div className="flex justify-between">
-                  <div>
-                    <h3 className="font-bold text-black text-sm">
-                      {note.title || "Untitled"}
-                    </h3>
-                    <p className="text-zinc-500 text-xs mt-1">
-                      {note.body}
-                    </p>
-                  </div>
-
-                  {/* ACTIONS */}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                    <button
-                      onClick={() => handleEdit(note)}
-                      className="p-2 hover:bg-zinc-100 rounded-lg"
-                    >
-                      <Pencil size={16} />
-                    </button>
-
-                    <button
-                      onClick={() => removeNote(note._id)}
-                      className="p-2 hover:bg-red-50 text-red-500 rounded-lg"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* ACTIONS */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="flex gap-1 opacity-0 group-hover:opacity-100 transition"
+        >
+          <button
+            onClick={() => removeNote(note._id)}
+            className="p-2 hover:bg-red-50 text-red-500 rounded-lg"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       </div>
+
+      {/* SAVE BUTTON (only when editing) */}
+      {isEditing && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSubmit(); // update note
+          }}
+          className="   ml-[60vw]  px-3  py-2 text-md bg-orange-500 text-black rounded-lg"
+        >
+          Save
+        </button>
+      )}
+    </div>
+  );
+})}
+    </div>
+  )}
+</div>
+    
     </div>
   );
 }
