@@ -181,14 +181,9 @@ export default function Notes() {
                           placeholder="Write something..."
                         />
                       ) : (
-                        <p onClick={() => {
-                          setExpandedId(note._id);
-                        }}
-                          className={`text-zinc-500 text-md mt-1 ${expandedId === note._id ? "" : "line-clamp-3"
-                            }`}
-                        >
-                          {note.body}
-                        </p>
+                       <p className="text-zinc-500 text-md mt-1 whitespace-pre-wrap">
+  {note.body}
+</p>
                       )}
                     </div>
 
