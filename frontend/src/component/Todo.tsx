@@ -145,7 +145,7 @@ export default function Todo() {
                   </Button>
                   <Button
                     size="sm"
-                    variant="destructive"
+                    variant="outline"
                     onClick={() => deleteTodo(id)}
                   >
                     Delete

@@ -60,6 +60,15 @@ useEffect(() => {
             <SelectSubject />
           </CardContent>
         </Card>
+        
+              <Card>
+        <CardHeader>
+          <CardTitle>Progress (Last 7 Days)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SolvedBarChart />
+        </CardContent>
+      </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -81,14 +90,7 @@ useEffect(() => {
       </div>
 
       {/* Bottom section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Progress (Last 7 Days)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SolvedBarChart />
-        </CardContent>
-      </Card>
+
     </div>
   );
 }
