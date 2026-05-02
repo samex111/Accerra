@@ -955,7 +955,11 @@ userRouter.put('/update/convesationId:conversationId', async function (req: Requ
     userRouter.post('/upload', userMiddleware, upload.single("file"), async (req: Request, res: Response) => {
 
         try {
-            const file = req.file!;
+            const file = req.file;
+
+            if (!file) {
+                return res.status(400).json({ success: false, message: "No file uploaded" });
+            }
 
             // Upload file to Supabase bucket
             const { data, error } = await supabase.storage

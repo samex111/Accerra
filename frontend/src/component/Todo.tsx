@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Pen } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { API_URL } from "@/config/env";
+import { Link } from "react-router-dom";
 
 interface TodoGroup {
   _id: string;       // date
@@ -41,7 +42,7 @@ export default function Todo() {
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ todo: input }),
-    }).then(res=>{
+    }).then(res=>{  
       if(res.ok) {
         console.log("Todo added successfully");
         setInput("");
@@ -83,7 +84,7 @@ export default function Todo() {
   return (
     <Card className="p-4 space-y-3">
       <div className="flex items-center gap-2">
-        <Pen className="h-4 w-4" />
+       <Link to="/dashboard/todos"> <Pen className="h-4 w-4" /></Link>
         <h2 className="font-semibold">Todo List</h2>
       </div>
 

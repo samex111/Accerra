@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNotesStore } from "@/hooks/useNotes";
-import { Trash2, Pencil, X } from "lucide-react";
+import { Trash2, Pencil, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,22 +18,18 @@ export default function Notes() {
   const [body, setBody] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isCreate, setIsCreate] = useState(false);
-  const [expandedId, setExpandedId] = useState(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // 🚀 Fetch Notes on Mount
   useEffect(() => {
     fetchNotes();
   }, [fetchNotes]);
 
-  // 🔄 Reset Form
   const resetForm = () => {
     setTitle("");
     setBody("");
     setEditId(null);
   };
 
-  // ➕ Add / ✏️ Update Note
   const handleSubmit = async () => {
     if (!body.trim()) return;
 
@@ -52,28 +48,30 @@ export default function Notes() {
     }
   };
 
-  // 🧠 Edit Mode
   const handleEdit = (note: any) => {
     setEditId(note._id);
     setTitle(note.title || "");
     setBody(note.body || "");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
-
-      {/* HEADER */}
       <div className="flex justify-end items-end mb-10 px-2">
         <Dialog>
-          {/* Trigger button (optional - customize as needed) */}
           <DialogTrigger asChild>
-            <Button onClick={() => setIsCreate(!isCreate)} className="bg-orange-400">+ Create note</Button>
-
+            <Button
+              onClick={() => {
+                setEditId(null);
+                setTitle("");
+                setBody("");
+              }}
+              className="bg-orange-400"
+            >
+              + Create note
+            </Button>
           </DialogTrigger>
 
           <DialogContent className="sm:max-w-lg rounded-3xl">
-            {/* HEADER */}
             <DialogHeader>
               <div className="flex items-center justify-between">
                 <DialogTitle className="text-lg font-bold">
@@ -82,7 +80,11 @@ export default function Notes() {
 
                 {editId && (
                   <button
-                    onClick={resetForm}
+                    onClick={() => {
+                      setEditId(null);
+                      setTitle("");
+                      setBody("");
+                    }}
                     className="flex items-center gap-1 text-xs text-zinc-400 hover:text-black transition"
                   >
                     <X size={14} /> Cancel
@@ -91,7 +93,6 @@ export default function Notes() {
               </div>
             </DialogHeader>
 
-            {/* INPUT */}
             <div className="flex flex-col gap-3 my-4">
               <input
                 value={title}
@@ -108,18 +109,17 @@ export default function Notes() {
               />
             </div>
 
-            {/* BUTTON */}
             <button
               disabled={loading || !body.trim()}
               onClick={handleSubmit}
               className={`w-full py-3 rounded-xl text-sm font-bold transition-all
-            ${loading || !body.trim()
+              ${loading || !body.trim()
                   ? "bg-zinc-200 text-zinc-400 cursor-not-allowed"
                   : editId
-                    ? "bg-orange-500 text-white hover:scale-[1.01]"
-                    : "bg-black text-white hover:scale-[1.01]"
+                    ? "bg-orange-500 text-white"
+                    : "bg-black text-white"
                 }
-          `}
+            `}
             >
               {loading ? "Saving..." : editId ? "Update Note" : "Add Note"}
             </button>
@@ -134,65 +134,93 @@ export default function Notes() {
           </div>
         ) : (
           <div className="space-y-3">
-
             {notes.map((note: any) => {
               const isEditing = editId === note._id;
+              const isExpanded = expandedId === note._id;
 
               return (
                 <div
                   key={note._id}
-                  onClick={() => {
-                    setEditId(note._id);
-                    setTitle(note.title || "");
-                    setBody(note.body || "");
-                  }}
-                  className={`group cursor-pointer scroll-y-auto  flex-1 w-full h-fit border rounded-2xl p-4 transition-all
-        ${isEditing
+                  className={`group flex-1 w-full border rounded-2xl p-4 transition-all
+                  ${isEditing
                       ? "border-orange-300 bg-orange-50"
                       : "border-zinc-200 hover:shadow-sm"
                     }
-      `}
+                `}
                 >
                   <div className="flex justify-between">
-                    <div className="w-full ">
-                      {/* TITLE */}
-                      {isEditing ? (
-                        <input
-                          autoFocus
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-full font-bold text-black text-md bg-transparent outline-none"
-                          placeholder="Title"
-                        />
-                      ) : (
-                        <h3 className="font-bold text-black text-md">
-                          {note.title || "Untitled"}
-                        </h3>
-                      )}
+                    <div className="w-full">
+                      <div className="flex justify-between">
+                        {isEditing ? (
+                          <input
+                            autoFocus
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full font-bold text-black text-md bg-transparent outline-none"
+                            placeholder="Title"
+                          />
+                        ) : (
+
+                          <h3 className="font-bold text-black text-md">
+                            {note.title || "Untitled"}
+                          </h3>
+                        )}
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedId(isExpanded ? null : note._id);
+                          }}
+                          className="p-1 text-black hover:text-orange-400 transition"
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className={`hover:${'text-orange-400'}`} size={18} />   
+                          ) : (
+                            < ChevronDown size={18} />
+                          )}
+                        </button>
+                      </div>
 
                       {isEditing ? (
                         <textarea
                           value={body}
                           onChange={(e) => setBody(e.target.value)}
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-full text-zinc-500 text-md mt-1 bg-transparent outline-none "
+                          className="w-full text-zinc-500 text-md mt-1 bg-transparent outline-none"
                           rows={7}
                           placeholder="Write something..."
                         />
                       ) : (
-                       <p className="text-zinc-500 text-md mt-1 whitespace-pre-wrap">
-  {note.body}
-</p>
+                        <p
+                          className={`text-zinc-500 text-md mt-1 whitespace-pre-wrap
+                        ${isExpanded
+                              ? "h-auto overflow-auto"
+                              : "h-[15vh] overflow-hidden"
+                            }
+                      `}
+                        >
+                          {note.body}
+                        </p>
                       )}
                     </div>
 
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex gap-1 opacity-0 group-hover:opacity-100 transition"
-                    >
+                    <div className="flex gap-1  opacity-0 group-hover:opacity-100 transition">
                       <button
-                        onClick={() => removeNote(note._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditId(note._id);
+                          setTitle(note.title || "");
+                          setBody(note.body || "");
+                        }}
+                        className="p-2 hover:bg-blue-50  text-blue-500 rounded-lg"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeNote(note._id);
+                        }}
                         className="p-2 hover:bg-red-50 text-red-500 rounded-lg"
                       >
                         <Trash2 size={16} />
@@ -200,25 +228,22 @@ export default function Notes() {
                     </div>
                   </div>
 
-                  {/* SAVE BUTTON (only when editing) */}
-                  { isEditing && <div className="flex justify-end mt-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSubmit();
-                      }}
-                      className="px-4 py-2 text-sm bg-orange-500 text-white rounded-lg"
-                    >
-                      Save
-                    </button>
-                  </div> }
-                </div> 
+                  {isEditing && (
+                    <div className="flex justify-end mt-3">
+                      <button
+                        onClick={() => handleSubmit()}
+                        className="px-4 py-2 text-sm bg-orange-500 text-white rounded-lg"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
         )}
       </div>
-
     </div>
   );
 }

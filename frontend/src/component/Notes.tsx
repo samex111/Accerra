@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNotesStore } from "@/hooks/useNotes";
 import { Bookmark, Trash2, Pencil } from "lucide-react";
 import { notesData } from "@/types/notesTypes";
+import { Link } from "react-router-dom";
 
 export default function Notes() {
   const {
@@ -43,9 +44,9 @@ export default function Notes() {
     {/* Header */}
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-xl font-bold text-black">Today's Notes</h1>
-      <Pencil size={20} className="text-zinc-400 rotate-12" />
+      <Link to="/dashboard/notes"><Pencil  size={20} className="text-zinc-400 rotate-12" /></Link>
     </div>
-
+    
     {/* Main Note Container */}
     <div className="border border-zinc-100 rounded-3xl p-6 transition-all duration-300">
       <div className="flex items-center gap-2 mb-4">

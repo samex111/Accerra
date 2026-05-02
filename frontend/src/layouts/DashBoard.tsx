@@ -13,7 +13,7 @@ import { GraduationCap, Pen } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DashboardOverview() {
-  const [quote , setQuote] = useState('');
+  const [quote , setQuote] = useState<any>('');
 useEffect(() => {
   async function getQuote() {
     try {
@@ -27,7 +27,7 @@ useEffect(() => {
 
       const data = await res.json();
       console.log("Quote from backend: ", data);
-     setQuote(data.quote[0]?.quote || "");
+     setQuote(data.quote[0] || "");
     } catch (err) {
       console.error(err);
       setQuote("Something went wrong");
@@ -44,8 +44,8 @@ useEffect(() => {
         <p className="text-sm text-muted-foreground">
           Track your practice, todos and progress
         </p>
-        <p className="text-gray-500 mt-2 italic">
-          <i>{quote}</i>
+        <p className="text-orange-400 mt-2 italic">
+          <i>{quote?.quote}</i> <b> ~ {quote?.author}</b>
         </p>
       </div>
 
